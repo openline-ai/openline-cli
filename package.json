@@ -12,7 +12,8 @@
     "create": "npm run build",
     "build": "tsc -p .",
     "local": "sudo npm i -g && openline",
-    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
+    "distro": "npx pkg -t macos . --out-path dist"
   },
   "repository": {
     "type": "git",
