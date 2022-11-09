@@ -7,11 +7,11 @@
     "openline": "./build/cli.js"
   },
   "scripts": {
-    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "start:windows": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node\" src/index.ts",
-    "create": "npm run build && npm run test",
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/cli.ts",
+    "start:windows": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node\" src/cli.ts",
+    "create": "npm run build",
     "build": "tsc -p .",
-    "local": "sudo npm i -g && pizza",
+    "local": "sudo npm i -g && openline",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
   "repository": {
@@ -29,10 +29,12 @@
     "clear": "^0.1.0",
     "commander": "^9.4.1",
     "figlet": "^1.5.2",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "shelljs": "^0.8.5"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
+    "@types/shelljs": "^0.8.11",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
