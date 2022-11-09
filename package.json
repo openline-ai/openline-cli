@@ -1,0 +1,24 @@
+{
+  "name": "openline-cli",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">\r   <a href=\"https://openline.ai\">\r     <img\r       src=\"https://www.openline.ai/TeamHero.svg\"\r       alt=\"Openline Logo\"\r       height=\"64\"\r     />\r   </a>\r   <br />\r   <p>\r     <h3>\r       <b>\r         Openline command line interface (CLI)\r       </b>\r     </h3>\r   </p>\r   <p>\r     Openline customerOS is the easiest way to consolidate, warehouse, and build applications with your customer data.\r   </p>\r   <p>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openline-ai/openline-cli.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/openline-ai/openline-cli/issues"
+  },
+  "homepage": "https://github.com/openline-ai/openline-cli#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "typescript": "^4.8.4"
+  }
+}
