@@ -1,6 +1,4 @@
 const shell = require('shelljs')
-import * as golang from './install-go';
-import * as docker from './install-docker';
 
 // checks OS
 function osCheck() :string {
@@ -14,22 +12,22 @@ function osCheck() :string {
     }   
 };
 
+function installDev(os: string) :boolean {
+    if (os == 'linux') {
+        shell.exec('bash /scrips/ubuntu/isntall_dev.sh')
+    } else {
+        console.log('mac coming soon')
+    };
+    return true;
+}
+
 // main function
 export function devSetup() :boolean {
     // determine OS
-    let os = osCheck()
+    let os = osCheck();
     
-    // determine if Go is installed.  If not, install it.
-    let go = golang.goCheck();
-    if (go == false) {
-        let goInstall = golang.installGo(os);
-    }
-    
-    // determine if Docker is installed.  If not, install it.
-    let d = docker.dockerCheck();
-    if (d == false){
-        let dockerInstall = docker.installDocker(os)
-    }
+    // install dev env dependencies
+    installDev(os);
     return false;
 };
 
