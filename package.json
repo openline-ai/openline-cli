@@ -1,6 +1,6 @@
 {
   "name": "openline-cli",
-  "version": "1.0.5",
+  "version": "1.0.9",
   "description": "CLI for the Openline ecosystem",
   "main": "./build/cli.js",
   "bin": {

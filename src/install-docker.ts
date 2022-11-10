@@ -5,10 +5,10 @@ export function dockerCheck() :boolean {
     let data = shell.exec('docker version', {silent:true});
 
     if (data.stdout.length == 0) {
-        console.log('Go is not installed...')
+        console.log('Docker is not installed...')
         return false;
     } else {
-        console.log('Go is already installed.')
+        console.log('Docker is already installed.')
         return true;
     }
 };
@@ -17,6 +17,7 @@ export function installDocker(os: string) :boolean {
     // todo install on windows
     var success = false;
 
+    console.log('Installing Docker...');
     if (os == 'mac') {
         success = installDockerMac()
     }
@@ -32,9 +33,9 @@ export function installDocker(os: string) :boolean {
 // install Docuer on Amazon linux
 function installDockerLinux() :boolean {
     try {
-        shell.exec('curl -fsSL https://get.docker.com | sh;')
-        shell.exec('sudo service docker start')
-        shell.exec('sudo docker run hello-world')
+        shell.exec('sudo yum update')
+        shell.exec('sudo yum search docker')
+        shell.exec('sudo yum install docker')
         return true
     } catch (err: any) {
         console.log(err.message)
