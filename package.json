@@ -1,6 +1,6 @@
 {
   "name": "openline-cli",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "CLI for the Openline ecosystem",
   "main": "./build/cli.js",
   "bin": {
@@ -37,6 +37,7 @@
     "@types/node": "^18.11.9",
     "@types/shelljs": "^0.8.11",
     "nodemon": "^2.0.20",
+    "pkg": "^5.8.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   }
