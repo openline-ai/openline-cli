@@ -14,7 +14,7 @@ function osCheck() :string {
 
 function installDev(os: string) :boolean {
     if (os == 'linux') {
-        shell.exec('bash /scrips/ubuntu/isntall_dev.sh')
+        shell.exec('bash scripts/ubuntu/install_dev.sh')
     } else {
         console.log('mac coming soon')
     };
