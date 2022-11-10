@@ -12,3 +12,5 @@ tar -C /usr/local -xzf "go${VERSION}.linux-${ARCH}.tar.gz"
 rm "go${VERSION}.linux-${ARCH}.tar.gz"
 
 export PATH=$PATH:/usr/local/go/bin
+
+. ~/.profile
