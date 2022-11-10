@@ -83,7 +83,9 @@ function installGoLinux() :boolean {
     }
 };
 
-function devSetup() :boolean {
+
+// main function
+export function devSetup() :boolean {
     let os = osCheck()
     let check = goCheck();
     if (check == false) {
