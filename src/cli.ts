@@ -25,6 +25,7 @@ program
     .description('CLI for the Openline ecosystem')
     .option('-i, --install <app name>', 'install an Openline application')
     .option('-r, --run <app name>', 'run an Openline application')
+    .option('--dev', 'Setup local development environment')
 
 program.parse(process.argv);
 
