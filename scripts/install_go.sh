@@ -13,4 +13,4 @@ rm "go${VERSION}.linux-${ARCH}.tar.gz"
 
 export PATH=$PATH:/usr/local/go/bin
 
-. ~/.profile
+. ~/.bash_profile
