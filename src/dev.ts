@@ -21,6 +21,7 @@ function osCheck() :string {
 // checks if Go is installed on the maching
 function goCheck() :boolean {
     let result = shell.exec('go version', {silent:true}).stdout;
+    console.log(result);
     if (result == null) {
         console.log('Go is not installed...')
         return false;
