@@ -8,6 +8,7 @@ const program = require('commander');
 const shell = require('shelljs')
 
 import * as appInstall from './install';
+import { devSetup } from './dev'
 
 clear();
 console.log(
@@ -31,11 +32,12 @@ program.parse(process.argv);
 
 const options = program.opts();
 if (options.debug) {
+    console.log('');
     console.log(options);
     console.log('');
 };
 
-if(options.install) {
+if (options.install) {
     let app = options.install;
     if(app == 'website') {
         appInstall.installWebsite()
@@ -43,7 +45,11 @@ if(options.install) {
     //console.log(` Install ${options.install}`);
 };
 
-if(options.run) console.log(`Run ${options.run}`);
+if (options.run) console.log(`Run ${options.run}`);
+
+if (options.dev) {
+
+}
 
 if (!process.argv.slice(2).length) {
     program.outputHelp();
