@@ -3,9 +3,7 @@
 const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
-const path = require('path');
 const program = require('commander');
-const shell = require('shelljs')
 
 import * as appInstall from './install';
 import { devSetup } from './dev'
@@ -22,11 +20,11 @@ console.log(' ');
 
 program
     .name('Openline CLI')
-    .version('0.0.1')
+    .version('1.0.0')
     .description('CLI for the Openline ecosystem')
     .option('-i, --install <app name>', 'install an Openline application')
     .option('-r, --run <app name>', 'run an Openline application')
-    .option('--dev', 'Setup local development environment')
+    .option('-D, --dev', 'Setup local development environment')
 
 program.parse(process.argv);
 
@@ -48,7 +46,7 @@ if (options.install) {
 if (options.run) console.log(`Run ${options.run}`);
 
 if (options.dev) {
-
+    devSetup()
 }
 
 if (!process.argv.slice(2).length) {
