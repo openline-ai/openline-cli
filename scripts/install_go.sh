@@ -2,15 +2,13 @@
 
 set -e
 
-ARCH=$(dpkg --print-architecture)
+VERSION=1.19.3
 
-VERSION=1.19.2
+sudo mkdir -p /usr/local
+wget "https://go.dev/dl/go${VERSION}.linux-amd64.tar.gz"
+sudo tar -C /usr/local -xzf "go${VERSION}.linux-amd64.tar.gz"
+sudo rm "go${VERSION}.linux-amd64.tar.gz"
 
-mkdir -p /usr/local
-wget "https://go.dev/dl/go${VERSION}.linux-${ARCH}.tar.gz"
-tar -C /usr/local -xzf "go${VERSION}.linux-${ARCH}.tar.gz"
-rm "go${VERSION}.linux-${ARCH}.tar.gz"
-
-export PATH=$PATH:/usr/local/go/bin
+echo PATH=$PATH:/usr/local/go/bin >> ~/.bash_profile
 
 . ~/.bash_profile
