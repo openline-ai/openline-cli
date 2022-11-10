@@ -52,11 +52,12 @@ function installGoMac() :boolean {
 // installs Go on Amazon linux
 function installGoLinux() :boolean {
     try {
-        shell.exec('sudo yum update')
-        shell.exec('wget https://storage.googleapis.com/golang/getgo/installer_linux')
-        shell.exec('chmod +x ./installer_linux')
-        shell.exec('./installer_linux')
-        shell.exec('source ~/.bash_profile')
+        shell.exec('./scripts/install_go.sh')
+        //shell.exec('sudo yum update')
+        //shell.exec('wget https://storage.googleapis.com/golang/getgo/installer_linux')
+        //shell.exec('chmod +x ./installer_linux')
+        //shell.exec('./installer_linux')
+        //shell.exec('source ~/.bash_profile')
         return true
     } catch (err: any) {
         console.log(err.message)
