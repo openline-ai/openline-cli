@@ -16,7 +16,10 @@
   },
   "pkg": {
     "scripts": "build/**/*.js",
-    "targets": [ "node16-linux-arm64", "node16-macos-arm64"],
+    "targets": [
+      "node16-linux-arm64",
+      "node16-macos-arm64"
+    ],
     "outputPath": "dist"
   },
   "repository": {
@@ -38,11 +41,14 @@
     "shelljs": "^0.8.5"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.0.6",
     "@types/node": "^18.11.9",
     "@types/shelljs": "^0.8.11",
+    "dotenv": "^16.0.3",
     "nodemon": "^2.0.20",
     "pkg": "^5.8.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
-  }
+  },
+  "type": "module"
 }
