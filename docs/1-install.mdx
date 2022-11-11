@@ -1,0 +1,64 @@
+
+The Openline Command Line Interface (CLI) lets to create and manage Openline apps directly from the terminal.  It's an essential part of using Openline.
+
+## Install the Openline CLI
+
+The Openline CLI requires **Git**, the popular version control system.  If you don't already have Git installed, please complete the following before continuing with the rest of the CLI setup.
+
+- [Git installation][git install]
+- [Git initial setup][git setup]
+
+<!---References---->
+
+[git install]: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+[git setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
+
+### Install with an installer
+
+For macOS you can install the Openline CLI via Homebrew using the following command
+
+```bash
+$ brew tap openline/brew && brew install openline
+```
+### Standalone installation with a tarball
+
+The standalone install is a simple tarball with a binary.  It contains its own node.js binary and automatically updates as new versions become available.  
+
+Running the following command will install the CLI in `/usr/local/lib/openline` and `/usr/local/bin/openline`.  Tarball installation is currently only supported on macOS and Linux (x64) operating systems.
+
+```bash
+$ sudo curl https://path-to-package.com/install.sh | sh
+```
+
+### Install with npm
+
+The CLI is built with Node.js and is installable via `npm`; however, the installation does not automatically update.  Only use this method in environments where autoupdating is not ideal, or where fine-grained control over updates is required.  
+
+ARM and BSD based systems must use this installation method.
+
+In order to use this installation method, you must have `node` and `npm` installed on your machine already.
+
+WARNING
+It's strongly recommended to use one of the other installation methods if possible.
+
+This installation method doesn't autoupdate.  It also requires you to use your system's version of Node.js, which can be older that the version Openline develops against.  Openline uses current releases of Node.js and doesn't support older versions.
+
+```bash
+$ npm install -g openline
+```
+
+### Unsupported installations
+
+We don't currently support installation via `apt-get` (Ubuntu / Debian), `yay` (Arch Linux), or `yum` (CentOS) as these version do not autoupdate and we're continuously pushing improvements to the CLI.
+
+We also don't currently support Windows (x64) or (x86) installations.
+
+## Verify your installation
+
+You can verify your installation with the following command:
+
+```bash
+$ openline --version
+```
+
+If everything has been installed correctly, you will see an output that looks like `openline/x.y.z`.
