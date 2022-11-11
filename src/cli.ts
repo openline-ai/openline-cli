@@ -5,7 +5,7 @@ const clear = require('clear');
 const figlet = require('figlet');
 const program = require('commander');
 
-import { devSetup } from './dev'
+import { devSetup } from './dev.js'
 
 clear();
 console.log(
@@ -36,7 +36,7 @@ if (options.debug) {
 
 if (options.install) {
     let app = options.install;
-    if(app == 'website') {
+    if(app == 'customer-os') {
         console.log('tbd')
     };
     //console.log(` Install ${options.install}`);
