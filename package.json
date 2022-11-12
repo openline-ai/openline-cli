@@ -1,54 +1,70 @@
 {
-  "name": "openline-cli",
-  "version": "1.0.9",
-  "description": "CLI for the Openline ecosystem",
-  "main": "./build/cli.js",
-  "bin": {
-    "openline": "./build/cli.js"
-  },
-  "scripts": {
-    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/cli.ts",
-    "start:windows": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node\" src/cli.ts",
-    "create": "npm run build",
-    "build": "tsc -p .",
-    "local": "sudo npm i -g && openline",
-    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
-  },
-  "pkg": {
-    "scripts": "build/**/*.js",
-    "targets": [
-      "node16-linux-arm64",
-      "node16-macos-arm64"
-    ],
-    "outputPath": "dist"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/openline-ai/openline-cli.git"
-  },
+  "name": "openline",
+  "version": "0.0.0",
+  "description": "Openline CLI",
   "author": "mattbr0wn",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/openline-ai/openline-cli/issues"
-  },
-  "homepage": "https://github.com/openline-ai/openline-cli#readme",
+  "bin": "./bin/run",
+  "homepage": "https://github.com/openline-ai/openline-cli",
+  "license": "Apache 2.0",
+  "main": "dist/index.js",
+  "repository": "openline-ai/openline-cli",
+  "files": [
+    "/bin",
+    "/dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
   "dependencies": {
-    "chalk": "^4.1.2",
-    "clear": "^0.1.0",
-    "commander": "^9.4.1",
-    "figlet": "^1.5.2",
-    "path": "^0.12.7",
-    "shelljs": "^0.8.5"
+    "@oclif/core": "^1.19.1",
+    "@oclif/plugin-help": "^5",
+    "@oclif/plugin-plugins": "^2.1.6"
   },
   "devDependencies": {
-    "@supabase/supabase-js": "^2.0.6",
-    "@types/node": "^18.11.9",
-    "@types/shelljs": "^0.8.11",
-    "dotenv": "^16.0.3",
-    "nodemon": "^2.0.20",
-    "pkg": "^5.8.0",
+    "@oclif/test": "^2.2.10",
+    "@types/chai": "^4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.18.3",
+    "chai": "^4",
+    "eslint": "^7.32.0",
+    "eslint-config-oclif": "^4",
+    "eslint-config-oclif-typescript": "^1.0.3",
+    "mocha": "^9",
+    "oclif": "^3",
+    "shx": "^0.3.3",
     "ts-node": "^10.9.1",
+    "tslib": "^2.4.1",
     "typescript": "^4.8.4"
   },
-  "type": "module"
+  "oclif": {
+    "bin": "openline",
+    "dirname": "openline",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-plugins"
+    ],
+    "topicSeparator": " ",
+    "topics": {
+      "hello": {
+        "description": "Say hello to the world and others"
+      }
+    }
+  },
+  "scripts": {
+    "build": "shx rm -rf dist && tsc -b",
+    "lint": "eslint . --ext .ts --config .eslintrc",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "posttest": "yarn lint",
+    "prepack": "yarn build && oclif manifest && oclif readme",
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif readme && git add README.md"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "bugs": "https://github.com/openline-ai/openline-cli/issues",
+  "keywords": [
+    "oclif"
+  ],
+  "types": "dist/index.d.ts"
 }
