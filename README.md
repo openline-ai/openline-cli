@@ -46,8 +46,8 @@ TBD
 
 Download the Openline CLI using the following command
 
-```
-TBD
+```sh-session
+npm install -g
 ```
 
 ## 🙌 Features
