@@ -18,6 +18,7 @@
     "@oclif/core": "^1.19.1",
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.1.6",
+    "@octokit/core": "^4.1.0",
     "@types/figlet": "^1.5.5",
     "figlet": "^1.5.2"
   },
