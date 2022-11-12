@@ -654,15 +654,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oclif/plugin-not-found@npm:^2.3.6":
-  version: 2.3.6
-  resolution: "@oclif/plugin-not-found@npm:2.3.6"
+"@oclif/plugin-not-found@npm:^2.3.7":
+  version: 2.3.8
+  resolution: "@oclif/plugin-not-found@npm:2.3.8"
   dependencies:
     "@oclif/color": ^1.0.1
-    "@oclif/core": ^1.19.1
+    "@oclif/core": ^1.20.3
     fast-levenshtein: ^3.0.0
     lodash: ^4.17.21
-  checksum: c084e51cfb14f29883f3750db5cb60daa75b5fc18c654cefdaed78dc67ea8fa611ba25e6fa549a862bb74cf73baa5362cd5b6a2f8d187fa012acc27fcd6c8c2c
+  checksum: f4b9d63a5dcb68c5c8e627bfb2a3d2670fc1d569532c8793194d9c3dc68309a0feb436f8c7da0d5d3e932ef0247e740fe470fad04f65e88ef45b0de68584dad8
   languageName: node
   linkType: hard
 
@@ -4983,12 +4983,12 @@ __metadata:
   linkType: hard
 
 "oclif@npm:^3":
-  version: 3.2.24
-  resolution: "oclif@npm:3.2.24"
+  version: 3.2.25
+  resolution: "oclif@npm:3.2.25"
   dependencies:
     "@oclif/core": ^1.20.0
     "@oclif/plugin-help": ^5.1.16
-    "@oclif/plugin-not-found": ^2.3.6
+    "@oclif/plugin-not-found": ^2.3.7
     "@oclif/plugin-warn-if-update-available": ^2.0.6
     aws-sdk: ^2.1231.0
     concurrently: ^7.5.0
@@ -5006,7 +5006,7 @@ __metadata:
     yosay: ^2.0.2
   bin:
     oclif: bin/run
-  checksum: 86581117b47f95805a6d18d4e98e29f1890138e4c5873ccfc023575f25daa47e998168b61a5633bfb66a37954078b83a50fd9d7d2c052671201d3ce026f6b369
+  checksum: 89b3a472d554a385a01896649d29608ce417004a69c206c30f7788fab42a6a97f0ccfe3c99acccbfc3a7d5da355172a9ac7fc7364d6b2991341d455298a11d1e
   languageName: node
   linkType: hard
 
@@ -6616,11 +6616,11 @@ __metadata:
 
 "typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>":
   version: 4.8.4
-  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=701156"
+  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 301459fc3eb3b1a38fe91bf96d98eb55da88a9cb17b4ef80b4d105d620f4d547ba776cc27b44cc2ef58b66eda23fe0a74142feb5e79a6fb99f54fc018a696afa
+  checksum: 563a0ef47abae6df27a9a3ab38f75fc681f633ccf1a3502b1108e252e187787893de689220f4544aaf95a371a4eb3141e4a337deb9895de5ac3c1ca76430e5f0
   languageName: node
   linkType: hard
 
