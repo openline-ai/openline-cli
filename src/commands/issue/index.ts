@@ -1,4 +1,5 @@
 import {Command, Flags} from '@oclif/core'
+import * as figlet from 'figlet';
 
 export default class Issue extends Command {
   static description = 'Interact with GitHub issues for openline-ai'
@@ -16,7 +17,9 @@ export default class Issue extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(Issue)
     if (args.action == 'new') {
-      this.log('create a new github issue!')
+      console.log('')
+      this.log(figlet.textSync('Log a new issue...'))
+      
     }
     else if (args.action == 'work') {
       this.log('I will work this issue!')
