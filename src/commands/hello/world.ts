@@ -1,4 +1,8 @@
 import {Command} from '@oclif/core'
+import * as figlet from 'figlet';
+
+console.clear();
+console.log(figlet.textSync('Installing Openline...', { horizontalLayout: 'full' }));
 
 export default class World extends Command {
   static description = 'Say hello world'
