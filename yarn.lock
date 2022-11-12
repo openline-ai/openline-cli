@@ -922,6 +922,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/figlet@npm:^1.5.5":
+  version: 1.5.5
+  resolution: "@types/figlet@npm:1.5.5"
+  checksum: d81483539cb478cdcffa4ba9cd550b8b56925425cdf868cf362023f5f272250133d0cad35e7273fa9df7f40ee088f28febb7805e2928c04f5e0c138d16b0a93d
+  languageName: node
+  linkType: hard
+
 "@types/glob@npm:^7.1.1":
   version: 7.2.0
   resolution: "@types/glob@npm:7.2.0"
@@ -2830,6 +2837,13 @@ __metadata:
   dependencies:
     reusify: ^1.0.4
   checksum: 32cf15c29afe622af187d12fc9cd93e160a0cb7c31a3bb6ace86b7dea3b28e7b72acde89c882663f307b2184e14782c6c664fa315973c03626c7d4bff070bb0b
+  languageName: node
+  linkType: hard
+
+"figlet@npm:^1.5.2":
+  version: 1.5.2
+  resolution: "figlet@npm:1.5.2"
+  checksum: cc860391669b44e119871d589e09a2814aa86351726a5791e0d3e2d098e4fc37171c85fcfed13f4e9000995bd004dc6dbf848da5fe458cf1477e776b7318986f
   languageName: node
   linkType: hard
 
@@ -5037,12 +5051,14 @@ __metadata:
     "@oclif/plugin-plugins": ^2.1.6
     "@oclif/test": ^2.2.10
     "@types/chai": ^4
+    "@types/figlet": ^1.5.5
     "@types/mocha": ^9.0.0
     "@types/node": ^16.18.3
     chai: ^4
     eslint: ^7.32.0
     eslint-config-oclif: ^4
     eslint-config-oclif-typescript: ^1.0.3
+    figlet: ^1.5.2
     mocha: ^9
     oclif: ^3
     shx: ^0.3.3
@@ -6603,11 +6619,11 @@ __metadata:
 
 "typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>":
   version: 4.8.4
-  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=a1c5e5"
+  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 563a0ef47abae6df27a9a3ab38f75fc681f633ccf1a3502b1108e252e187787893de689220f4544aaf95a371a4eb3141e4a337deb9895de5ac3c1ca76430e5f0
+  checksum: 301459fc3eb3b1a38fe91bf96d98eb55da88a9cb17b4ef80b4d105d620f4d547ba776cc27b44cc2ef58b66eda23fe0a74142feb5e79a6fb99f54fc018a696afa
   languageName: node
   linkType: hard
 
