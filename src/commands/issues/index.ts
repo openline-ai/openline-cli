@@ -11,11 +11,13 @@ export default class Issue extends Command {
 
   static examples = [
     'openline issues',
+    'openline issues -all',
     'openline issues -b',
-    'openline issues -m',
+    'openline issues -new',
   ]
   
   static flags = {
+    all: Flags.boolean({char: 'a', description: 'return all issues assigned to me'}),
     bug: Flags.boolean({char: 'b', description: 'return all bugs assigned to me'}),
     milestone: Flags.boolean({char: 'm', description: 'return all issues tageed to a milestone assigned to me'}),
     //new: Flags.boolean({char: 'n', summary: 'create new github issue', description: 'create a new github issue against an openline repo'}),
@@ -62,6 +64,10 @@ export default class Issue extends Command {
         issueCount++
       }
       else if (flags.bug && labels.includes('bug')) {
+        printIssue(issue, labels)
+        issueCount++
+      }
+      else if (flags.all) {
         printIssue(issue, labels)
         issueCount++
       }
