@@ -20,7 +20,7 @@ export default class Issue extends Command {
     all: Flags.boolean({char: 'a', description: 'return all issues assigned to me'}),
     bug: Flags.boolean({char: 'b', description: 'return all bugs assigned to me'}),
     milestone: Flags.boolean({char: 'm', description: 'return all issues tageed to a milestone assigned to me'}),
-    //new: Flags.boolean({char: 'n', summary: 'create new github issue', description: 'create a new github issue against an openline repo'}),
+    new: Flags.boolean({char: 'n', summary: 'create new github issue', description: 'create a new github issue against an openline repo'}),
     //repo: Flags.string({char: 'r', summary: 'openline-ai repo', description: 'the openline repo that cooresponds with the openline product', options: ['cli', 'customer-os', 'contacts', 'oasis', 'website']}),
   }
   
