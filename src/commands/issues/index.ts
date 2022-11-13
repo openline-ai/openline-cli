@@ -7,11 +7,12 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 export default class Issue extends Command {
-  static description = 'Interact with GitHub issues for openline-ai'
+  static description = 'Interact with GitHub issues for openline-ai.  If no flags are set, command will return a list of all open issues assigned to you with a milestone or bug tag.'
 
   static examples = [
-    'openline issue new',
-    'openline issue work'
+    'openline issues',
+    'openline issues -b',
+    'openline issues -m',
   ]
   
   static flags = {
@@ -42,8 +43,26 @@ export default class Issue extends Command {
     let issueCount = 0
 
     resp.data.forEach(issue => {
-      if (flags.milestone && issue.milestone?.title) {
-        printIssue(issue)
+      
+      let labels: any[] = []
+      if (issue.labels) {
+        issue.labels.forEach((l: any) => {
+          labels.push(l.name)
+        })
+      }
+  
+      if (Object.keys(flags).length == 0) {
+        if (issue.milestone?.title || labels.includes('bug')) {
+          printIssue(issue, labels)
+          issueCount++
+        }
+      }
+      else if (flags.milestone && issue.milestone?.title) {
+        printIssue(issue, labels)
+        issueCount++
+      }
+      else if (flags.bug && labels.includes('bug')) {
+        printIssue(issue, labels)
         issueCount++
       }
     })
@@ -59,13 +78,8 @@ export default class Issue extends Command {
   }
 }
 
-function printIssue(issue: any) {
-  let labels :string[] = []
-  if (issue.labels) {
-    issue.labels.forEach((l: { name: string }) => {
-      labels.push(l.name)
-    })
-  }
+// Print issues
+function printIssue(issue: any, labels: string[]) {
   
   let url = issue.html_url
   let issueNumber = issue.number
