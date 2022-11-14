@@ -39,7 +39,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add neo4j https://helm.neo4j.com/neo4j
 helm repo add fusionauth https://fusionauth.github.io/charts
 helm repo update
-echo "✅ helm repo's added"
+echo "✅ helm repo's updated"
 
 #install postgresql
 kubectl apply -f $CUSTOMER_OS_HOME/deployment/k8s/configs/postgresql/postgresql-presistent-volume.yaml --namespace $NAMESPACE_NAME
