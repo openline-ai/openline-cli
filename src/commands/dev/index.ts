@@ -1,28 +1,39 @@
 import {Command, Flags} from '@oclif/core'
 
 export default class Dev extends Command {
-  static description = 'describe the command here'
+  static description = 'starts and stops local development server for openline applications'
 
   static examples = [
-    '<%= config.bin %> <%= command.id %>',
+    'openline dev --start all',
+    'openline dev --start customer-os',
+    'openline dev --stop all',
+    'openline dev --stop oasis',
   ]
 
   static flags = {
-    // flag with a value (-n, --name=VALUE)
-    name: Flags.string({char: 'n', description: 'name to print'}),
-    // flag with no value (-f, --force)
-    force: Flags.boolean({char: 'f'}),
+    start: Flags.string({
+      description: 'start openline application', 
+      options: ['all', 'customer-os', 'oasis', 'contacts'],  
+      required: false,
+    }),
+    stop: Flags.string({
+      description: 'stop openline application', 
+      aliases: ['kill', 'k'], 
+      options: ['all', 'customer-os', 'oasis', 'contacts'],
+      required: false,
+    }),
   }
 
-  static args = [{name: 'file'}]
+  static args = []
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(Dev)
 
-    const name = flags.name ?? 'world'
-    this.log(`hello ${name} from /Users/mbrown/Code/openline/openline-cli/src/commands/dev.ts`)
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`)
+    if (flags.start) {
+      console.log(flags.start)
+    }
+    else if (flags.stop) {
+      console.log(flags.stop)
     }
   }
 }
