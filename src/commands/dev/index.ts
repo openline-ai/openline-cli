@@ -1,4 +1,5 @@
 import {Command, Flags} from '@oclif/core'
+import { getHelpFlagAdditions } from '@oclif/core/lib/help'
 
 export default class Dev extends Command {
   static description = 'starts and stops local development server for openline applications'
@@ -29,7 +30,10 @@ export default class Dev extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(Dev)
 
-    if (flags.start) {
+    if ((flags.start) && (flags.stop)) {
+      console.log('Error:  only one flag can be set at a time')
+    }
+    else if (flags.start) {
       console.log(flags.start)
     }
     else if (flags.stop) {
