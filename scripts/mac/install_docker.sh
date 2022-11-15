@@ -4,13 +4,16 @@ if [[ $(docker --version) == *"Docker version"* ]];
     then
         echo "  👍 Docker already installed"
     else
-        echo "Installing Docker..."
+        echo "  Installing Docker..."
+        echo " ❗️ This can take a while, please let the script do it's thing.  It will prompt when completed."
         softwareupdate --install-rosetta
         
-        if [[ $(arch) == 'arm54' ]]; 
+        if [[ $(arch) == 'arm64' ]]; 
             then
+                echo "  ARM64 detected"
                 curl -L https://desktop.docker.com/mac/main/arm64/Docker.dmg --output Docker.dmg
             else
+                echo "  AMD64 detected"
                 curl -L https://desktop.docker.com/mac/main/amd64/Docker.dmg --output Docker.dmg
         fi
 
@@ -22,6 +25,8 @@ if [[ $(docker --version) == *"Docker version"* ]];
         echo "  ❗️Please open Docker desktop via the GUI to initialize the application before proceeding."
 fi
 
+open -a Docker.app
+rm -r Docker.dmg
 
 
 
