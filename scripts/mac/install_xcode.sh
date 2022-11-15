@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir openline-setup
+
 xcode-select -p
 if [ $? -eq 0 ]; then
     echo "  👍 Xcode already installed"
