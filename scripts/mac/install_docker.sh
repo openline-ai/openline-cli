@@ -2,7 +2,7 @@
 
 if [[ $(docker --version) == *"Docker version"* ]];
     then
-        echo "--- Docker already installed 👍 ---"
+        echo "  👍 Docker already installed"
     else
         echo "Installing Docker..."
         softwareupdate --install-rosetta
@@ -18,8 +18,8 @@ if [[ $(docker --version) == *"Docker version"* ]];
         sudo /Volumes/Docker/Docker.app/Contents/MacOS/install
         sudo hdiutil detach /Volumes/Docker
 
-        echo "✅ Docker install completed."
-        echo "❗️Please open Docker desktop via the GUI to initialize the application before proceeding."
+        echo "  ✅ Docker install completed."
+        echo "  ❗️Please open Docker desktop via the GUI to initialize the application before proceeding."
 fi
 
 
