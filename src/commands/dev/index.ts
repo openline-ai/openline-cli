@@ -101,4 +101,5 @@ function startCustomerOs() {
   console.log('✅ customerOS successfully started!')
   console.log('🦦 To validate the service is reachable run the command =>  openline dev --ping customer-os')
   console.log('🦦 Visit localhost:10010 in your browser to play around with the graph API explorer')
+  shell.exec('rm -r openline-setup.sh')
 }
