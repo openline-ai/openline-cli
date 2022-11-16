@@ -59,6 +59,9 @@ export default class Dev extends Command {
       
       let deploy = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/3-deploy.sh'
       let deployErr = shell.exec(`curl -sL ${deploy} | bash`).code
+
+      let buildDb = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/4-build-db.sh'
+      let buildErr = shell.exec(`curl -sL ${buildDb} | bash`).code
       
     }
     else if (flags.stop) {
