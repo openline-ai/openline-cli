@@ -82,6 +82,11 @@ function startCustomerOs() {
   let configErr = shell.exec(`curl -sL ${getConfig} | bash`).code
   
   let dependErr = shell.exec(`curl -sL ${depend} | bash`).code
+
+  if (osType == 'darwin') {
+    console.log('  🦦 attempting to open Docker GUI...')
+    shell.exec('open -a Docker.app')
+  }
   
   let baseInstall = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/2-base-install.sh'
   let baseErr = shell.exec(`curl -sL ${baseInstall} | bash`).code
