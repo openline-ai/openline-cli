@@ -50,7 +50,7 @@ export default class Dev extends Command {
       let health = shell.exec('curl localhost:10010/health', {silent: true})
       if (health.code == 0) {
         console.log('✅ customer-os API is up and reachable')
-        console.log('🦦 go to localhost:10010 in your browser to play around with the graph API explorer')
+        console.log('🦦 go to https://localhost:10010 in your browser to play around with the graph API explorer')
       }
       else {
         console.log('❌ customer-os API is not reachable')
@@ -100,6 +100,6 @@ function startCustomerOs() {
   
   console.log('✅ customerOS successfully started!')
   console.log('🦦 To validate the service is reachable run the command =>  openline dev --ping customer-os')
-  console.log('🦦 Visit localhost:10010 in your browser to play around with the graph API explorer')
+  console.log('🦦 Visit https://localhost:10010 in your browser to play around with the graph API explorer')
   shell.exec('rm -r openline-setup.sh')
 }
