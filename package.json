@@ -25,7 +25,8 @@
     "dotenv": "^16.0.3",
     "figlet": "^1.5.2",
     "octokit": "^2.0.10",
-    "shelljs": "^0.8.5"
+    "shelljs": "^0.8.5",
+    "ttab": "^0.7.3"
   },
   "devDependencies": {
     "@oclif/test": "^2.2.10",
