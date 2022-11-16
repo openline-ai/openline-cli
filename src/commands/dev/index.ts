@@ -9,7 +9,7 @@ export default class Dev extends Command {
     'openline dev --start all',
     'openline dev --start customer-os',
     'openline dev --stop',
-    'opeline dev -p customer-os'
+    'openline dev -p customer-os',
   ]
 
   static flags = {
