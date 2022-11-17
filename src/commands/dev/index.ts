@@ -43,17 +43,17 @@ export default class Dev extends Command {
       startCustomerOs()
     }
     else if (flags.stop) {
-      shell.exec('minikube delete --all')
+      shell.exec('y | colima delete')
     }
     
     else if (flags.ping == 'customer-os') {
       let health = shell.exec('curl localhost:10010/health', {silent: true})
       if (health.code == 0) {
-        console.log('✅ customer-os API is up and reachable')
+        console.log('✅ customerOS API is up and reachable')
         console.log('🦦 go to http://localhost:10010 in your browser to play around with the graph API explorer')
       }
       else {
-        console.log('❌ customer-os API is not reachable')
+        console.log('❌ customerOS API is not reachable')
         console.log('🦦 run [openline dev --start customer-os] to start the customerOS dev server.')
       }
     }
@@ -68,11 +68,6 @@ function startCustomerOs() {
     console.log('  💻 macOS detected')
     depend = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/1-mac-dependencies.sh'
   } 
-  else if (osType == 'linux') {
-    console.log('  💻 linux OS detected')
-    console.log(' ‼️ we only support Ubuntu at this time')
-    depend = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/1-ubuntu-dependencies.sh'
-  } 
   else {
     console.log('Your OS is currently unsupported :(')
     process.exit(1)
@@ -83,28 +78,13 @@ function startCustomerOs() {
   
   let dependErr = shell.exec(`curl -sL ${depend} | bash`).code
 
-  if (osType == 'darwin') {
-    console.log('  🦦 attempting to open Docker GUI...')
-    shell.exec('open -a Docker.app')
-  }
-  
-  let baseInstall = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/2-base-install.sh'
+  let baseInstall = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/2-install.sh'
   let baseErr = shell.exec(`curl -sL ${baseInstall} | bash`).code
   
-  let deploy = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/3-deploy.sh'
+  let deploy = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/3-db-setup.sh'
   let deployErr = shell.exec(`curl -sL ${deploy} | bash`).code
-
-  let buildDb = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/4-build-db.sh'
-  let buildErr = shell.exec(`curl -sL ${buildDb} | bash`).code
-
-  console.log('  🦦 Opening a new terminal window to start the dev server')
-
-  let tunnel = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/port-forwarding.sh'
-  shell.exec(`curl -sS ${tunnel} -o openline-setup.sh`)
-  shell.exec('ttab -w bash openline-setup.sh')
   
   console.log('✅ customerOS successfully started!')
   console.log('🦦 To validate the service is reachable run the command =>  openline dev --ping customer-os')
   console.log('🦦 Visit http://localhost:10010 in your browser to play around with the graph API explorer')
-  shell.exec('rm -r openline-setup.sh')
 }
