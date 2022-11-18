@@ -21,6 +21,7 @@ export default class Issue extends Command {
     bug: Flags.boolean({char: 'b', description: 'return all bugs assigned to me'}),
     milestone: Flags.boolean({char: 'm', description: 'return all issues tageed to a milestone assigned to me'}),
     new: Flags.boolean({char: 'n', summary: 'create new github issue', description: 'create a new github issue against an openline repo'}),
+    token: Flags.string({char: 't', summary: 'github auth token', description: 'overrides the token set in config'}),
     //repo: Flags.string({char: 'r', summary: 'openline-ai repo', description: 'the openline repo that cooresponds with the openline product', options: ['cli', 'customer-os', 'contacts', 'oasis', 'website']}),
   }
   
@@ -28,10 +29,15 @@ export default class Issue extends Command {
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(Issue)
-    
+
+    let token = process.env.GITHUB_TOKEN
+    if (flags.token) {
+      token = flags.token
+    }
+
     // return a list of issues assigned to me across all repos
     const octokit = new Octokit({
-      auth: process.env.GITHUB_TOKEN,
+      auth: token,
     })
 
     let resp = await octokit.request('GET /orgs/{org}/issues', {
