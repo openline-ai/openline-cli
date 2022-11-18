@@ -89,7 +89,7 @@ export default class Dev extends Command {
     }
       
     else if (flags.kill) {
-      shell.exec('y | colima delete', {silent: true})
+      shell.exec('colima kubernetes reset', {silent: true})
       let killcode = shell.exec('colima stop', {silent: true})
       if (killcode.code == 0) {
         console.log('✅ All Openline services have been stopped and deleted')
