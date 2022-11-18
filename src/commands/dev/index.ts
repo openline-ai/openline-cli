@@ -54,7 +54,7 @@ export default class Dev extends Command {
         if (startCode.code == 0) {
           let isInstalled: boolean = installCheck()
           if (isInstalled == false) {
-            console.log('🦦 installing customerOS. This can take a few minutes')
+            console.log('🦦 installing customerOS. This can take a few minutes...')
             installCustomerOs(!flags.verbose)
           } 
           else {
