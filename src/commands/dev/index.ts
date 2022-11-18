@@ -2,6 +2,7 @@ import {Command, Flags} from '@oclif/core'
 import {getHelpFlagAdditions} from '@oclif/core/lib/help'
 import { start } from 'repl'
 import * as shell from 'shelljs'
+import {dependencies} from './mac'
 
 export default class Dev extends Command {
   static description = 'starts and stops local development server for openline applications'
@@ -123,6 +124,7 @@ export default class Dev extends Command {
       if (isUp.code == 0) {
         console.log('🦦 k8s cluster')
         shell.exec('kubectl get services')
+        shell.exec('kubectl get services -n openline')
         console.log('')
         console.log('🦦 k8s pods: openline')
         shell.exec('kubectl get pods -n openline -o wide')
@@ -164,8 +166,7 @@ function installCustomerOs(verbose: boolean) {
   let osType: string = process.platform
   var depend = ''
   if (osType == 'darwin') {
-    console.log('💻 macOS detected')
-    depend = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/1-mac-dependencies.sh'
+    dependencies(!verbose)
   } 
   else {
     console.log('Your OS is currently unsupported :(')
