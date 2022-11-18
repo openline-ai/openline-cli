@@ -29,6 +29,9 @@ export default class Dev extends Command {
       options: ['all', 'customer-os', 'oasis', 'contacts'], 
       required: false,
     }),
+    status: Flags.boolean({
+      description: 'current status of kubernetes cluser',
+    })
   }
 
   static args = []
@@ -44,6 +47,7 @@ export default class Dev extends Command {
     }
     else if (flags.stop) {
       shell.exec('y | colima delete')
+      shell.exec('colima stop')
     }
     
     else if (flags.ping == 'customer-os') {
@@ -57,9 +61,26 @@ export default class Dev extends Command {
         console.log('🦦 run [openline dev --start customer-os] to start the customerOS dev server.')
       }
     }
+    
+    else if (flags.status) {
+      console.log('🦦 k8s pods')
+      shell.exec('kubectl get pods -n openline')
+      console.log('')
+      console.log('🦦 k8s persistent volume claims')
+      shell.exec('kubectl get pvc -n openline')
+      console.log(installCheck())
+    }
   }
 }
 
+function installCheck() :boolean {
+  if (shell.exec('kubectl get ns openline').code == 0) {
+    return true
+  }
+  else {
+    return false
+  }
+}
 
 function startCustomerOs() {
   let osType: string = process.platform
@@ -84,7 +105,9 @@ function startCustomerOs() {
   let deploy = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/3-db-setup.sh'
   let deployErr = shell.exec(`curl -sL ${deploy} | bash`).code
   
+  console.log('')
   console.log('✅ customerOS successfully started!')
   console.log('🦦 To validate the service is reachable run the command =>  openline dev --ping customer-os')
   console.log('🦦 Visit http://localhost:10010 in your browser to play around with the graph API explorer')
+  shell.exec('open http://localhost:10010')
 }
