@@ -1,7 +1,7 @@
 import * as shell from 'shelljs'
 
 export function xcodeCheck() :boolean {
-    let result = shell.exec('xcode-select -p', {silent: true})
+    let result = shell.exec('which xcode-select', {silent: true})
     if (result.code == 0) {
         return true
     }
