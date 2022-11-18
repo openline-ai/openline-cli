@@ -51,27 +51,37 @@ export default class Dev extends Command {
       let isRunning: boolean = runningCheck()
       let isInstalled: boolean = installCheck()
 
+      if (isRunning == true && isInstalled == true) {
+        console.log('✅ customerOS is running...')
+      }
+
+      if (isRunning == true && isInstalled == false) {
+        console.log('🦦 installing customerOS. This can take a few minutes...')
+        installCustomerOs(!flags.verbose)
+      }
+
       if (isRunning == false) {
         console.log('🦦 starting customerOS')
         let startCode = shell.exec('colima start --with-kubernetes --cpu 2 --memory 4 --disk 60', {silent: !flags.verbose})
-        if (startCode.code == 0 && isInstalled == false) {
+        if (startCode.code == 0) {
+          isInstalled = installCheck()
+          if (isInstalled == true) {
+            console.log('✅ customerOS is running...')
+          }
+          else {
+            console.log('🦦 installing customerOS. This can take a few minutes...')
+            installCustomerOs(!flags.verbose)
+          }
+        }
+        else {
           console.log('🦦 installing customerOS. This can take a few minutes...')
           installCustomerOs(!flags.verbose)
         }
-        else if (startCode.code == 0 && isInstalled == true) {
-          console.log('✅ customerOS is running...')
-        } 
-        else {
-          console.log('❌ customerOS failed to start.  Try running again with -v flag to view detailed logs.')
-          console.log(startCode.stderr)
-        }
       }
-      else {
-        console.log('✅ customerOS is running...')
-        }   
-      }
+    }
 
     else if (flags.stop) {
+      console.log('🦦 Stopping all Openline services...')
       let stopCode = shell.exec('colima stop', {silent: !flags.verbose})
       if (stopCode.code == 0) {
         console.log('✅ All Openline services have been stopped')
@@ -84,7 +94,7 @@ export default class Dev extends Command {
     }
       
     else if (flags.kill) {
-      console.log('🦦 killing all Openline services')
+      console.log('🦦 killing all Openline services...')
       shell.exec('colima kubernetes reset', {silent: !flags.verbose})
       let killcode = shell.exec('colima stop', {silent: !flags.verbose})
       if (killcode.code == 0) {
