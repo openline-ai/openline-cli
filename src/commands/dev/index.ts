@@ -31,6 +31,10 @@ export default class Dev extends Command {
     }),
     stop: Flags.boolean({
       description: 'stop openline applications', 
+    }),
+    verbose: Flags.boolean({
+      description: 'enable verbose logging to terminal',
+      char: 'v'
     })
   }
 
@@ -45,22 +49,20 @@ export default class Dev extends Command {
     else if (flags.start == 'customer-os') {
       let isRunning: boolean = runningCheck()
       if (isRunning == false) {
-        console.log('🦦 starting customerOS...')
-        let startCode = shell.exec('colima start --with-kubernetes --cpu 2 --memory 4 --disk 60', {silent: true})
+        console.log('🦦 starting customerOS')
+        let startCode = shell.exec('colima start --with-kubernetes --cpu 2 --memory 4 --disk 60', {silent: !flags.verbose})
         if (startCode.code == 0) {
-          console.log('✅ Colima running')
-          
           let isInstalled: boolean = installCheck()
           if (isInstalled == false) {
-            console.log('🦦 installing customerOS...')
-            installCustomerOs()
+            console.log('🦦 installing customerOS. This can take a few minutes')
+            installCustomerOs(!flags.verbose)
           } 
           else {
             console.log('✅ customerOS is running...')
           }
         }
         else {
-          console.log('❌ Colima failed to start')
+          console.log('❌ customerOS failed to start.  Try running again with -v flag to view detailed logs.')
           console.log(startCode.stderr)
         }
       }
@@ -68,7 +70,7 @@ export default class Dev extends Command {
         let isInstalled: boolean = installCheck()
         if (isInstalled == false) {
           console.log('🦦 installing customerOS...')
-          installCustomerOs()
+          installCustomerOs(!flags.verbose)
           } 
         else {
           console.log('✅ customerOS is running...')
@@ -77,31 +79,32 @@ export default class Dev extends Command {
     }
 
     else if (flags.stop) {
-      let stopCode = shell.exec('colima stop', {silent:true})
+      let stopCode = shell.exec('colima stop', {silent: !flags.verbose})
       if (stopCode.code == 0) {
         console.log('✅ All Openline services have been stopped')
         console.log('✅ Configuration has been saved and will be re-applied on next restart')
       }
       else {
-        console.log('❌ problem stopping Openline services')
+        console.log('❌ problem stopping Openline services.  Try running again with -v flag to view detailed logs.')
         console.log(stopCode.stderr)
       }
     }
       
     else if (flags.kill) {
-      shell.exec('colima kubernetes reset', {silent: true})
-      let killcode = shell.exec('colima stop', {silent: true})
+      console.log('🦦 killing all Openline services')
+      shell.exec('colima kubernetes reset', {silent: !flags.verbose})
+      let killcode = shell.exec('colima stop', {silent: !flags.verbose})
       if (killcode.code == 0) {
         console.log('✅ All Openline services have been stopped and deleted')
       }
       else {
-        console.log('❌ Problem killing openline services')
+        console.log('❌ Problem killing openline services.  Try running again with -v flag to view detailed logs.')
         console.log(killcode.stderr)
       }
     }
     
     else if (flags.ping == 'customer-os') {
-      let health = shell.exec('curl localhost:10010/health', {silent: true})
+      let health = shell.exec('curl localhost:10010/health', {silent: !flags.verbose})
       if (health.code == 0) {
         console.log('✅ customerOS API is up and reachable')
         console.log('🦦 go to http://localhost:10010 in your browser to play around with the graph API explorer')
@@ -113,7 +116,7 @@ export default class Dev extends Command {
     }
     
     else if (flags.status) {
-      let isUp = shell.exec('kubectl get services', {silent: true})
+      let isUp = shell.exec('kubectl get services', {silent: !flags.verbose})
       if (isUp.code == 0) {
         console.log('🦦 k8s cluster')
         shell.exec('kubectl get services')
@@ -152,11 +155,13 @@ function installCheck() :boolean {
   }
 }
 
-function installCustomerOs() {
+
+function installCustomerOs(verbose: boolean) {
+  
   let osType: string = process.platform
   var depend = ''
   if (osType == 'darwin') {
-    console.log('  💻 macOS detected')
+    console.log('💻 macOS detected')
     depend = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/1-mac-dependencies.sh'
   } 
   else {
@@ -165,15 +170,15 @@ function installCustomerOs() {
   }
 
   let getConfig = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/0-get-config.sh'
-  let configErr = shell.exec(`curl -sL ${getConfig} | bash`).code
+  let configErr = shell.exec(`curl -sL ${getConfig} | bash`, {silent: verbose}).code
   
-  let dependErr = shell.exec(`curl -sL ${depend} | bash`).code
+  let dependErr = shell.exec(`curl -sL ${depend} | bash`, {silent: verbose}).code
 
   let baseInstall = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/2-install.sh'
-  let baseErr = shell.exec(`curl -sL ${baseInstall} | bash`).code
+  let baseErr = shell.exec(`curl -sL ${baseInstall} | bash`, {silent: verbose}).code
   
   let deploy = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/3-db-setup.sh'
-  let deployErr = shell.exec(`curl -sL ${deploy} | bash`).code
+  let deployErr = shell.exec(`curl -sL ${deploy} | bash`, {silent: verbose}).code
   
   console.log('')
   console.log('✅ customerOS successfully started!')
