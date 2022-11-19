@@ -1,7 +1,8 @@
 import {Command, Flags, CliUx} from '@oclif/core'
-import * as checks from '../../checks/openline'
 import * as shell from 'shelljs'
-import * as error from '../../errors'
+import * as dev from '../../actions/devServer'
+import * as mac from '../../checks/mac'
+
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -11,45 +12,45 @@ export default class DevStart extends Command {
   ]
 
   static flags = {
+    all: Flags.boolean({char: 'a'}),
     verbose: Flags.boolean({char: 'v'}),
   }
 
   static args = [
     {
       name: 'app',
-      required: true,
+      required: false,
       description: 'the Openline application you would like to start',
-      default: 'all',
-      options: ['all', 'customer-os', 'contacts', 'oasis'] 
+      default: 'customer-os',
+      options: ['customer-os'] 
     }
   ]
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(DevStart)
-    //this.log('Starting ', args.app, flags.verbose)
-    CliUx.ux.action.start('🦦 starting Openline dev server')
-    startDevServer(flags.verbose)
-    CliUx.ux.action.stop()
+    
+    // Base dependency check
+    let depend = mac.dependencies(flags.verbose)
+    if (!depend) {
+      this.exit(1)
+    }
+
+    this.log('🦦 initiating Openline dev server...')
+    let start = dev.startColima(flags.verbose)
+    if (start) {
+      this.log('🦦 installing customerOS...this may take a few mins')
+      let customerOs = dev.installCustomerOs(flags.verbose)
+      if (customerOs) {
+        this.log('')
+        this.log('✅ customerOS started successfully!')
+        this.log('🦦 To validate the service is reachable run the command =>  openline dev ping customer-os')
+        this.log('🦦 Visit http://localhost:10010 in your browser to play around with the graph API explorer')
+        shell.exec('open http://localhost:10010')
+      }
+    }
   }
 }
 
 
-function startDevServer(verbose :boolean) :boolean {
-  let result = false
-  let isRunning = checks.runningCheck(verbose)
 
-  if (!isRunning) {
-    let start = shell.exec('docker run', {silent: !verbose})
-    if (start.code != 0) {
-      error.logError(start.stderr, 'Try reinstalling docker', 'Link to dependencies')
-    }
-    else {
-      result = true
-    }
-  }
-  else {
-    result = true
-  }
-  return result
-} 
 
