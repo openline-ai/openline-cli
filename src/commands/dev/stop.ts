@@ -1,4 +1,6 @@
 import {Command, Flags} from '@oclif/core'
+import * as error from '../../errors'
+import * as shell from 'shelljs'
 
 export default class DevStop extends Command {
   static description = 'describe the command here'
@@ -8,21 +10,35 @@ export default class DevStop extends Command {
   ]
 
   static flags = {
-    // flag with a value (-n, --name=VALUE)
-    name: Flags.string({char: 'n', description: 'name to print'}),
-    // flag with no value (-f, --force)
-    force: Flags.boolean({char: 'f'}),
+    all: Flags.boolean({char: 'a'}),
+    verbose: Flags.boolean({char: 'v'}),
   }
 
-  static args = [{name: 'file'}]
+  static args = [
+    {
+      name: 'app',
+      required: false,
+      description: 'the Openline application you would like to stop',
+      default: 'customer-os',
+      options: ['customer-os'] 
+    }
+  ]
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(DevStop)
 
-    const name = flags.name ?? 'world'
-    this.log(`hello ${name} from /Users/mbrown/Code/openline/openline-cli/src/commands/dev/stop.ts`)
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`)
+    if (flags.all) {
+      this.log('🦦 Stopping all Openline services...')
+    }
+    else if (args.app == 'customer-os') {
+      this.log('🦦 Stopping customerOS...')
+    }
+    let reset = shell.exec('colima delete -f', {silent: !flags.verbose})
+    if (reset.code == 0) {
+      '✅ all Openline services successfully stopped'
+    }
+    else {
+      error.logError(reset.stderr, 'Run this command to nuke your instance and start over => colima delete')
     }
   }
 }
