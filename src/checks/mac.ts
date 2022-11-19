@@ -123,7 +123,6 @@ export function dependencies(verbose: boolean) :boolean {
         }
 
     }
-    console.log('✅ All dependencies installed')
     result = true
     return(result)
 }
