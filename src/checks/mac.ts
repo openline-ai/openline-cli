@@ -1,10 +1,10 @@
 //import * as shell from 'shelljs'
-import * as xcode from './checks/xcode'
-import * as brew from './checks/homebrew'
-import * as docker from './checks/docker'
-import * as colima from './checks/colima'
-import * as kubectl from './checks/kubectl'
-import * as helm from './checks/helm'
+import * as xcode from './xcode'
+import * as brew from './homebrew'
+import * as docker from './docker'
+import * as colima from './colima'
+import * as kubectl from './kubectl'
+import * as helm from './helm'
 
 
 export function dependencies(verbose: boolean) :boolean {

@@ -6,7 +6,7 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
-export default class Issue extends Command {
+export default class Issues extends Command {
   static description = 'Interact with GitHub issues for openline-ai.  If no flags are set, command will return a list of all open issues assigned to you with a milestone or bug tag.'
 
   static examples = [
@@ -28,7 +28,7 @@ export default class Issue extends Command {
   static args = []
 
   public async run(): Promise<void> {
-    const {args, flags} = await this.parse(Issue)
+    const {args, flags} = await this.parse(Issues)
 
     let token = process.env.GITHUB_TOKEN
     if (flags.token) {
