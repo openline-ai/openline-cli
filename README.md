@@ -47,7 +47,7 @@ TBD
 Download the Openline CLI using the following command
 
 ```sh-session
-npm install -g
+npm i openline -g
 ```
 
 ## 🙌 Features
