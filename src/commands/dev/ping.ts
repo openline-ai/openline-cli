@@ -2,7 +2,7 @@ import {Command, Flags} from '@oclif/core'
 import * as shell from 'shelljs'
 
 export default class DevPing extends Command {
-  static description = 'describe the command here'
+  static description = 'heath check to determine if openline service is up'
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',

@@ -1,28 +1,39 @@
 import {Command, Flags} from '@oclif/core'
+import * as checks from '../../checks/openline'
+import * as shell from 'shelljs'
 
 export default class DevStatus extends Command {
-  static description = 'describe the command here'
+  static description = 'view current status of all Openline services'
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
   ]
 
   static flags = {
-    // flag with a value (-n, --name=VALUE)
-    name: Flags.string({char: 'n', description: 'name to print'}),
-    // flag with no value (-f, --force)
-    force: Flags.boolean({char: 'f'}),
+    verbose: Flags.boolean({char: 'v'}),
   }
 
-  static args = [{name: 'file'}]
+  static args = []
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(DevStatus)
 
-    const name = flags.name ?? 'world'
-    this.log(`hello ${name} from /Users/mbrown/Code/openline/openline-cli/src/commands/dev/status.ts`)
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`)
+    let isInstalled = checks.installCheck(flags.verbose)
+    if (isInstalled) {
+      this.log('🦦 k8s cluster')
+      shell.exec('kubectl get services')
+      this.log('')
+      shell.exec('kubectl get services -n openline')
+      this.log('')
+      this.log('🦦 k8s pods: openline')
+      shell.exec('kubectl get pods -n openline -o wide')
+      this.log('')
+      this.log('🦦 k8s persistent volumes')
+      shell.exec('kubectl get pv')
+    }
+    else {
+      console.log('❌ Openline services are not running')
+      console.log('🦦 Try running => openline dev start customer-os')
     }
   }
 }
