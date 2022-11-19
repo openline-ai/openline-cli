@@ -43,74 +43,8 @@ export default class Dev extends Command {
 
 
 
-    if ((flags.start) && (flags.stop)) {
-      console.log('❌ Error:  only one flag can be set at a time')
-    }
-    else if (flags.start == 'customer-os') {
-      let isRunning: boolean = runningCheck()
-      let isInstalled: boolean = installCheck()
-
-      if (isRunning == true && isInstalled == true) {
-        console.log('✅ customerOS is running...')
-      }
-
-      if (isRunning == true && isInstalled == false) {
-        console.log('🦦 installing customerOS. This can take a few minutes...')
-        installCustomerOs(!flags.verbose)
-      }
-
-      if (isRunning == false) {
-        console.log('🦦 starting customerOS')
-        let startCode = shell.exec('colima start --with-kubernetes --cpu 2 --memory 4 --disk 60', {silent: !flags.verbose})
-        if (startCode.code == 0) {
-          isInstalled = installCheck()
-          if (isInstalled == true) {
-            console.log('✅ customerOS is running...')
-          }
-          else {
-            console.log('🦦 installing customerOS. This can take a few minutes...')
-            installCustomerOs(!flags.verbose)
-          }
-        }
-        else {
-          console.log('🦦 installing customerOS. This can take a few minutes...')
-          installCustomerOs(!flags.verbose)
-        }
-      }
-    }
-
-    else if (flags.stop) {
-      console.log('🦦 Stopping all Openline services...')
-      let stopCode = shell.exec('colima stop', {silent: !flags.verbose})
-      if (stopCode.code == 0) {
-        console.log('✅ All Openline services have been stopped')
-        console.log('✅ Configuration has been saved and will be re-applied on next restart')
-      }
-      else {
-        console.log('❌ problem stopping Openline services.  Try running again with -v flag to view detailed logs.')
-        console.log(stopCode.stderr)
-      }
-    }
-      
-    else if (flags.kill) {
-      console.log('🦦 killing all Openline services...')
-      shell.exec('colima kubernetes reset', {silent: !flags.verbose})
-      let killcode = shell.exec('colima stop', {silent: !flags.verbose})
-      if (killcode.code == 0) {
-        console.log('✅ All Openline services have been stopped and deleted')
-      }
-      else {
-        console.log('❌ Problem killing openline services.  Try running again with -v flag to view detailed logs.')
-        console.log(killcode.stderr)
-      }
-    }
-    
     else if (flags.ping == 'customer-os') {
-      let health = shell.exec('curl localhost:10010/health', {silent: !flags.verbose})
-      if (health.code == 0) {
-        console.log('✅ customerOS API is up and reachable')
-        console.log('🦦 go to http://localhost:10010 in your browser to play around with the graph API explorer')
-      }
+      
       else {
         console.log('❌ customerOS API is not reachable')
         console.log('🦦 run [openline dev --start customer-os] to start the customerOS dev server.')
