@@ -3,7 +3,7 @@ import * as error from '../../errors'
 import * as shell from 'shelljs'
 
 export default class DevStop extends Command {
-  static description = 'describe the command here'
+  static description = 'Stop and tear down the Openline development server'
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
