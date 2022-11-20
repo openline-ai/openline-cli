@@ -63,7 +63,19 @@ github:
 
 oasis:
   images:
+    channels-api: "ghcr.io/openline-ai/openline-oasis/channels-api:latest"
+    oasis-api: "ghcr.io/openline-ai/openline-oasis/oasis-api:latest"
+    oasis-gui: "ghcr.io/openline-ai/openline-oasis/oasis-frontend-dev:latest"
   install:
+    channels-api-deployment: "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/channels-api.yaml"
+    channels-api-service: "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/channels-api-k8s-service.yaml"
+    channels-api-loadbalancer: "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/channels-api-k8s-loadbalancer-service.yaml"
+    oasis-api-deployment: "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/oasis-api.yaml"
+    oasis-api-service: "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/oasis-api-k8s-service.yaml"
+    oasis-api-loadbalancer: "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/oasis-api-k8s-loadbalancer-service.yaml"
+    oasis-gui-deployment: "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/oasis-frontend.yaml"
+    oasis-gui-service: "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/oasis-frontend-k8s-service.yaml"
+    oasis-gui-loadbalancer: "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/oasis-frontend-k8s-loadbalancer-service.yaml"
   local-build-dir:                              # path to local working directory to build images from
   repo: "https://github.com/openline-ai/openline-oasis.git"
 
