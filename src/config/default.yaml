@@ -33,6 +33,9 @@ customer-os:
     postgresql-helm-values: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/helm/postgresql/postgresql-values.yaml"
     neo4j-helm-values: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/helm/neo4j/neo4j-values.yaml"
     fusionauth-helm-values: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/helm/fusionauth/fusionauth-values.yaml"
+    # db config
+    neo4j-cypher: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/packages/server/customer-os-api/customer-os.cypher"
+    postgresql-setup: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/scripts/postgresql/setup.sql"
   local-build-dir:                              # path to local working directory to build images from
   repo: "https://github.com/openline-ai/openline-customer-os.git"
 
@@ -85,4 +88,4 @@ voice:
   local-build-dir:                              # path to local working directory to build images from
   repo: "https://github.com/openline-ai/openline-voice.git"
   
-#verbose: false                                  # if set to true, will default to verbose logging on all commands
+#verbose: true                                  # if set to true, will default to verbose logging on all commands
