@@ -1,6 +1,7 @@
 import {Command, Flags} from '@oclif/core'
 import * as error from '../../errors'
 import * as shell from 'shelljs'
+import * as config from 'config'
 
 export default class DevStop extends Command {
   static description = 'Stop and tear down the Openline development server'
@@ -27,13 +28,18 @@ export default class DevStop extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(DevStop)
 
+    let verbose = flags.verbose
+    if (config.has('verbose')) {
+      verbose = config.get('verbose')
+    }
+
     if (flags.all) {
       this.log('🦦 Stopping all Openline services...')
     }
     else if (args.app == 'customer-os') {
       this.log('🦦 Stopping customerOS...')
     }
-    let reset = shell.exec('colima delete -f', {silent: !flags.verbose})
+    let reset = shell.exec('colima delete -f', {silent: !verbose})
     if (reset.code == 0) {
       '✅ all Openline services successfully stopped'
     }

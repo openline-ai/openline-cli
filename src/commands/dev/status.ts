@@ -1,6 +1,7 @@
 import {Command, Flags} from '@oclif/core'
 import * as checks from '../../checks/openline'
 import * as shell from 'shelljs'
+import * as config from 'config'
 
 export default class DevStatus extends Command {
   static description = 'view current status of all Openline services'
@@ -18,7 +19,12 @@ export default class DevStatus extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(DevStatus)
 
-    let isInstalled = checks.installCheck(flags.verbose)
+    let verbose = flags.verbose
+    if (config.has('verbose')) {
+      verbose = config.get('verbose')
+    }
+
+    let isInstalled = checks.installCheck(verbose)
     if (isInstalled) {
       this.log('🦦 k8s cluster')
       shell.exec('kubectl get services')
