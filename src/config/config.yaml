@@ -1,6 +1,7 @@
 # Openline CLI config
 
 contacts:
+  images:
   install:
   local-build-dir:                                # path to local working directory to build images from
   repo: "https://github.com/openline-ai/openline-contacts.git"
@@ -56,11 +57,13 @@ github:
   personal-access-token:                        # generate via https://github.com/settings/tokens
 
 oasis:
+  images:
   install:
   local-build-dir:                              # path to local working directory to build images from
   repo: "https://github.com/openline-ai/openline-oasis.git"
 
 voice:
+  images:
   install:
   local-build-dir:                              # path to local working directory to build images from
   repo: "https://github.com/openline-ai/openline-voice.git"
