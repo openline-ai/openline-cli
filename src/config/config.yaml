@@ -1,0 +1,64 @@
+# Openline CLI config
+
+contacts:
+  install:
+  local-build-dir:                                # path to local working directory to build images from
+  repo: "https://github.com/openline-ai/openline-contacts.git"
+  
+customer-os:
+  install:
+    # kubernetes namespace
+    namespace: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/openline-namespace.json"
+    # kubernetes config for customerOS API
+    customer-os-api-deployment: "https://github.com/openline-ai/openline-customer-os/blob/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/customer-os-api.yaml"
+    customer-os-api-service: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/customer-os-api-k8s-service.yaml"
+    customer-os-api-loadbalancer: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/customer-os-api-k8s-loadbalancer-service.yaml"
+    # kubernetes config for message store API
+    message-store-api-deployment: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/message-store.yaml"
+    message-store-api-service: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/message-store-k8s-service.yaml"
+    # kubernetes config for postgreSQL DB
+    postgresql-persistent-volume: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/postgresql-persistent-volume.yaml"
+    postgresql-persistent-volume-claim: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/postgresql-persistent-volume-claim.yaml"
+    # helm values
+    postgresql-helm-values: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/helm/postgresql/postgresql-values.yaml"
+    neo4j-helm-values: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/helm/neo4j/neo4j-values.yaml"
+    fusionauth-helm-values: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/helm/fusionauth/fusionauth-values.yaml"
+  local-build-dir:                              # path to local working directory to build images from
+  repo: "https://github.com/openline-ai/openline-customer-os.git"
+
+dependencies:
+  colima:
+    mac: "brew install colima"
+  docker:
+    mac: "brew install docker"
+  git:
+    mac: "brew install git"
+  helm:
+    mac: "brew install helm"
+  homebrew:
+    mac: "/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  kubectl:
+    mac: "brew install kubectl"
+  xcode:
+    mac: "xcode-select --install"
+
+dev-server:
+  cpu: 2
+  disk: 30  
+  memory: 4                                     # must be at least 3gb
+   
+github:
+  username:                                   
+  personal-access-token:                        # generate via https://github.com/settings/tokens
+
+oasis:
+  install:
+  local-build-dir:                              # path to local working directory to build images from
+  repo: "https://github.com/openline-ai/openline-oasis.git"
+
+voice:
+  install:
+  local-build-dir:                              # path to local working directory to build images from
+  repo: "https://github.com/openline-ai/openline-voice.git"
+  
+verbose: false                                  # if set to true, will default to verbose logging on all commands
