@@ -1,13 +1,17 @@
 import * as shell from 'shelljs'
 import * as error from '../errors'
 import * as checks from '../checks/openline'
+import * as config from 'config'
 
 export function startColima(verbose :boolean) :boolean {
     let result = false
     let isRunning = checks.runningCheck(verbose)
   
     if (!isRunning) {
-      let start = shell.exec('colima start --with-kubernetes --cpu 2 --memory 4 --disk 60', {silent: !verbose})
+      let cpu: string = config.get('dev-server.cpu')
+      let memory: string = config.get('dev-server.memory')
+      let disk: string = config.get('dev-server.disk')
+      let start = shell.exec(`colima start --with-kubernetes --cpu ${cpu} --memory ${memory} --disk ${disk}`, {silent: !verbose})
       if (start.code != 0) {
         error.logError(start.stderr, 'Try reinstalling Colima', 'https://github.com/abiosoft/colima')
       }

@@ -1,4 +1,6 @@
 import * as shell from 'shelljs'
+import * as config from 'config'
+import { dependencies } from './mac'
 
 export function colimaCheck() :boolean {
     let result = shell.exec('which colima', {silent: true})
@@ -11,7 +13,8 @@ export function colimaCheck() :boolean {
 }
 
 export function installColima() :boolean {
-    let result = shell.exec('brew install colima')
+    let install: string = config.get('dependencies.colima.mac')
+    let result = shell.exec(install)
     if (result.code == 0) {
         return true
     } else {
