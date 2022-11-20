@@ -6,6 +6,10 @@ contacts:
   repo: "https://github.com/openline-ai/openline-contacts.git"
   
 customer-os:
+  images:
+    analytics-api: "ghcr.io/openline-ai/openline-customer-os/analytics-api:latest"
+    customer-os-api: "ghcr.io/openline-ai/openline-customer-os/customer-os-api:latest"
+    message-store-api: "ghcr.io/openline-ai/openline-customer-os/message-store:latest"
   install:
     # kubernetes namespace
     namespace: "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/openline-namespace.json"
