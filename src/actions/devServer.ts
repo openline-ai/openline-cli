@@ -1,7 +1,6 @@
 import * as shell from 'shelljs'
 import * as error from '../errors'
 import * as checks from '../checks/openline'
-import * as mac from '../checks/mac'
 
 export function startColima(verbose :boolean) :boolean {
     let result = false
