@@ -49,7 +49,7 @@ dependencies:
   helm:
     mac: "brew install helm"
   homebrew:
-    mac: "/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    mac: "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
   kubectl:
     mac: "brew install kubectl"
   xcode:
