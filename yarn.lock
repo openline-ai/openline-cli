@@ -5289,7 +5289,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openline@workspace:.":
+"openline@^0.3.7, openline@workspace:.":
   version: 0.0.0-use.local
   resolution: "openline@workspace:."
   dependencies:
@@ -5313,6 +5313,7 @@ __metadata:
     mocha: ^9
     oclif: ^3.2.25
     octokit: ^2.0.10
+    openline: ^0.3.7
     shelljs: ^0.8.5
     shx: ^0.3.3
     ts-node: ^10.9.1
