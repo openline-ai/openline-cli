@@ -1,7 +1,6 @@
 import {Command, Flags} from '@oclif/core'
-import * as checks from '../../checks/openline'
+import * as checks from '../../lib/checks/openline'
 import * as shell from 'shelljs'
-import * as config from 'config'
 
 export default class DevStatus extends Command {
   static description = 'view current status of all Openline services'
@@ -20,9 +19,6 @@ export default class DevStatus extends Command {
     const {args, flags} = await this.parse(DevStatus)
 
     let verbose = flags.verbose
-    if (config.has('verbose')) {
-      verbose = config.get('verbose')
-    }
 
     let isInstalled = checks.installCheck(verbose)
     if (isInstalled) {

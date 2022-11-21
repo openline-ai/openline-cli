@@ -1,8 +1,7 @@
 import {Command, Flags, CliUx} from '@oclif/core'
 import * as shell from 'shelljs'
-import * as dev from '../../actions/devServer'
-import * as mac from '../../checks/mac'
-import * as config from 'config'
+import * as dev from '../../lib/devServer'
+import * as mac from '../../lib/checks/mac'
 
 
 export default class DevStart extends Command {
@@ -31,9 +30,6 @@ export default class DevStart extends Command {
     const {args, flags} = await this.parse(DevStart)
 
     let verbose = flags.verbose
-    if (config.has('verbose')) {
-      verbose = config.get('verbose')
-    }
     
     // Base dependency check
     let depend = mac.dependencies(verbose)
