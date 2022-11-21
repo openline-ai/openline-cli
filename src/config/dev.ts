@@ -42,6 +42,8 @@ export function getConfig() :any {
     // customerOS Neo4j DB
     config.customerOs.neo4jHelmValues = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/helm/neo4j/neo4j-values.yaml"
     config.customerOs.neo4jCypher = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/packages/server/customer-os-api/customer-os.cypher"
+    // customerOS FusionAuth
+    config.customerOs.fusionauthHelmValues = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/7ccde20b421ae5a303d4095085b58d11f064dff8/deployment/infra/helm/fusionauth/fusionauth-values.yaml"
     config.customerOs.repo = "https://github.com/openline-ai/openline-customer-os.git"
 
     // Oasis App config
