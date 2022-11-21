@@ -1,6 +1,7 @@
 import {Command, Flags, CliUx} from '@oclif/core'
 import * as shell from 'shelljs'
-import * as dev from '../../lib/devServer'
+import * as dev from '../../lib/dev/startColima'
+import * as install from '../../lib/dev/installCustomerOs'
 import * as mac from '../../lib/checks/mac'
 
 
@@ -41,7 +42,7 @@ export default class DevStart extends Command {
     let start = dev.startColima(verbose)
     if (start) {
       this.log('🦦 installing customerOS...this may take a few mins')
-      let customerOs = dev.installCustomerOs(verbose)
+      let customerOs = install.installCustomerOs(verbose)
       if (customerOs) {
         this.log('')
         this.log('✅ customerOS started successfully!')
