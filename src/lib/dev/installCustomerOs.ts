@@ -7,27 +7,22 @@ export function installCustomerOs(verbose :boolean) :boolean {
     let result = false
     let isInstalled = checks.installCheck(verbose)
 
-    if (isInstalled) {
-        result = true
-    }
+    if (isInstalled) {return true}
     else {
         let setup = getSetupFiles(verbose)
+        if (!setup) {return false}
         
-        let baseInstall = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/2-install.sh'
-        let base = shell.exec(`curl -sL ${baseInstall} | bash`, {silent: !verbose})
-        if (base.code != 0) {
-            error.logError(base.stderr, '🫣 Looks like our repo references moved.  Update and try again.', 'https://github.com/openline-ai/openline-customer-os/tree/otter/deployment/scripts')
-            return result
-        }
+        let baseInstall = customerOsInstall(verbose)
+        if (!baseInstall) {return false}
 
         let deploy = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/3-db-setup.sh'
         let deployed = shell.exec(`curl -sL ${deploy} | bash`, {silent: !verbose})
         if (deployed.code != 0) {
-            error.logError(base.stderr, '🫣 Looks like our repo references moved.  Update and try again.', 'https://github.com/openline-ai/openline-customer-os/tree/otter/deployment/scripts')
+            error.logError(deployed.stderr, '🫣 Looks like our repo references moved.  Update and try again.', 'https://github.com/openline-ai/openline-customer-os/tree/otter/deployment/scripts')
             return result
         }
         
-        if (setup == true && base.code == 0 && deployed.code == 0) { result = true }
+        if (setup == true && baseInstall == true && deployed.code == 0) { result = true }
     }
 
     return result
@@ -108,3 +103,70 @@ function getSetupFiles(verbose :boolean) :boolean {
 
     return result
 }
+
+function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :boolean {
+    let result = true
+    let config = getConfig()
+    let namespace = 'openline'
+    let reportIssue = 'https://github.com/openline-ai/openline-cli/issues/new/choose'
+
+    // create the namespace in kubernetes
+    let ns = shell.exec('kubectl create -f ./openline-setup/openline-namespace.json', {silent: !verbose})
+    if (ns.code != 0) {
+        error.logError(ns.stderr, 'Unable to create namespace from ./openline-setup/openline-namespace.json', `Report this issue => ${reportIssue}`)
+        return false
+    }
+    
+    // add helm repos
+    let postgre = shell.exec('helm repo add bitnami https://charts.bitnami.com/bitnami', {silent: !verbose})
+    let neo = shell.exec('helm repo add neo4j https://helm.neo4j.com/neo4j', {silent: !verbose})
+    let fauth = shell.exec('helm repo add fusionauth https://fusionauth.github.io/charts', {silent: !verbose})
+
+    // install neo4j
+    let neoInstall = shell.exec(`helm install neo4j-customer-os neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ./openline-setup/neo4j-helm-values.yaml --namespace ${namespace}`, {silent: !verbose})
+    if (neoInstall.code != 0) {
+        error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone', `Report this issue => ${reportIssue}`)
+        return false
+    }
+
+    // setup PostgreSQL persistent volume
+    let pv = shell.exec(`kubectl apply -f ./openline-setup/postgresql-persistent-volume.yaml --namespace ${namespace}`, {silent: !verbose})
+    if (pv.code != 0) {
+        error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume', `Report this issue => ${reportIssue}`)
+        return false
+    }
+
+    let pvc = shell.exec(`kubectl apply -f ./openline-setup/postgresql-persistent-volume-claim.yaml --namespace ${namespace}`, {silent: !verbose})
+    if (pvc.code != 0) {
+        error.logError(pvc.stderr, 'Unable to setup postgreSQL persistent volume claim', `Report this issue => ${reportIssue}`)
+        return false
+    }
+
+    // install PostgreSQL
+    let postgresql = shell.exec(`helm install --values ./openline-setup/postgresql-values.yaml postgresql-customer-os-dev bitnami/postgresql --namespace ${namespace}`, {silent: !verbose})
+    if (postgresql.code != 0) {
+        error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql', `Report this issue => ${reportIssue}`)
+        return false
+    }
+
+    // install customerOS API container image
+    let cosApiImage = config.customerOs.apiImage.concat(imageVersion.toLowerCase())
+    let cosPull = shell.exec(`docker pull ${cosApiImage}`, {silent: !verbose})
+    if (cosPull.code !=0) {
+        error.logError(cosPull.stderr, `Unable to pull image ${cosApiImage}`, `Report this issue => ${reportIssue}`)
+        return false
+    }
+
+    let cosDeploy = shell.exec(`kubectl apply -f openline-setup/customer-os-api.yaml --namespace ${namespace}`, {silent: !verbose})
+    if (cosDeploy.code != 0) {
+        error.logError(cosDeploy.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
+        return false
+    }
+
+
+
+
+    return result
+}
+
+customerOsInstall(false)
