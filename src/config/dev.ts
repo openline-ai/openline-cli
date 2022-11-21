@@ -11,7 +11,7 @@ export function getConfig() :any {
     // Contacts App config
     config.contacts = {}
     // Contacts API
-    config.contacts.apiImage = "ghcr.io/openline-ai/openline-contacts/contacts-api:latest"
+    config.contacts.apiImage = "ghcr.io/openline-ai/openline-contacts/contacts-api:"
     config.contacts.apiDeployment = "https://raw.githubusercontent.com/openline-ai/openline-contacts/47ff14b93b988188b1382b6d1cb23143d8106740/deployment/k8s/local-minikube/contacts-api-deployment.yaml"
     config.contacts.apiService = "https://raw.githubusercontent.com/openline-ai/openline-contacts/47ff14b93b988188b1382b6d1cb23143d8106740/deployment/k8s/local-minikube/contacts-api-service.yaml"
     // Contacts GUI
@@ -24,14 +24,14 @@ export function getConfig() :any {
     config.customerOs = {}
     config.customerOs.namespace = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/openline-namespace.json"
     // customerOS analytics API
-    config.customerOs.analyticsApiImage = "ghcr.io/openline-ai/openline-customer-os/analytics-api:latest"
+    config.customerOs.analyticsApiImage = "ghcr.io/openline-ai/openline-customer-os/analytics-api:"
     // customerOS API
-    config.customerOs.apiImage = "ghcr.io/openline-ai/openline-customer-os/customer-os-api:latest"
+    config.customerOs.apiImage = "ghcr.io/openline-ai/openline-customer-os/customer-os-api:"
     config.customerOs.apiDeployment = "https://github.com/openline-ai/openline-customer-os/blob/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/customer-os-api.yaml"
     config.customerOs.apiService = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/customer-os-api-k8s-service.yaml"
     config.customerOs.apiLoadbalancer = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/customer-os-api-k8s-loadbalancer-service.yaml"
     // customerOS message store API
-    config.customerOs.messageStoreImage = "ghcr.io/openline-ai/openline-customer-os/message-store:latest"
+    config.customerOs.messageStoreImage = "ghcr.io/openline-ai/openline-customer-os/message-store:"
     config.customerOs.messageStoreDeployment = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/message-store.yaml"
     config.customerOs.messageStoreService = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/d8884701fbfd4429b0b71047bbd97f144555d07b/deployment/infra/k8s/message-store-k8s-service.yaml"
     // customerOS postgreSQL DB
@@ -49,17 +49,17 @@ export function getConfig() :any {
     // Oasis App config
     config.oasis = {}
     // Oasis Channels API
-    config.oasis.channelsApiImage = "ghcr.io/openline-ai/openline-oasis/channels-api:latest"
+    config.oasis.channelsApiImage = "ghcr.io/openline-ai/openline-oasis/channels-api:"
     config.oasis.channelsApiDeployment = "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/channels-api.yaml"
     config.oasis.channelsApiService = "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/channels-api-k8s-service.yaml"
     config.oasis.channelsApiLoadbalancer = "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/channels-api-k8s-loadbalancer-service.yaml"
     // Oasis API
-    config.oasis.apiImage = "ghcr.io/openline-ai/openline-oasis/oasis-api:latest"
+    config.oasis.apiImage = "ghcr.io/openline-ai/openline-oasis/oasis-api:"
     config.oasis.apiDeployment = "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/channels-api.yaml"
     config.oasis.apiService = "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/channels-api-k8s-service.yaml"
     config.oasis.apiLoadbalancer = "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/channels-api-k8s-loadbalancer-service.yaml"
     // Oasis GUI
-    config.oasis.guiImage = "ghcr.io/openline-ai/openline-oasis/oasis-frontend-dev:latest"
+    config.oasis.guiImage = "ghcr.io/openline-ai/openline-oasis/oasis-frontend-dev:"
     config.oasis.guiDeployment = "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/oasis-frontend.yaml"
     config.oasis.guiService = "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/oasis-frontend-k8s-service.yaml"
     config.oasis.guiLoadbalancer = "https://raw.githubusercontent.com/openline-ai/openline-oasis/a53dfe25326597e5082bffec429413f5cba4b603/deployment/k8s/local-minikube/apps-config/oasis-frontend-k8s-loadbalancer-service.yaml"
