@@ -3,7 +3,7 @@ import * as error from '../../errors'
 import * as checks from '../checks/openline'
 import {getConfig} from '../../config/dev'
 
-export function installCustomerOs(verbose :boolean) :boolean {
+export function installCustomerOs(verbose :boolean, imageVersion: string = 'latest') :boolean {
     let result = false
     let isInstalled = checks.installCheck(verbose)
 
@@ -149,7 +149,7 @@ function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :b
         return false
     }
 
-    // install customerOS API container image
+    // deploy customerOS API container image
     let cosApiImage = config.customerOs.apiImage.concat(imageVersion.toLowerCase())
     let cosPull = shell.exec(`docker pull ${cosApiImage}`, {silent: !verbose})
     if (cosPull.code !=0) {
@@ -157,16 +157,52 @@ function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :b
         return false
     }
 
-    let cosDeploy = shell.exec(`kubectl apply -f openline-setup/customer-os-api.yaml --namespace ${namespace}`, {silent: !verbose})
+    let cosDeploy = shell.exec(`kubectl apply -f ./openline-setup/customer-os-api.yaml --namespace ${namespace}`, {silent: !verbose})
     if (cosDeploy.code != 0) {
         error.logError(cosDeploy.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
         return false
     }
 
+    let cosService = shell.exec(`kubectl apply -f ./openline-setup/customer-os-api-k8s-service.yaml --namespace ${namespace}`, {silent: !verbose})
+    if (cosService.code != 0) {
+        error.logError(cosService.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
+        return false
+    }
 
+    let cosLoad = shell.exec(`kubectl apply -f ./openline-setup/customer-os-api-k8s-loadbalancer-service.yaml --namespace ${namespace}`, {silent: !verbose})
+    if (cosLoad.code != 0) {
+        error.logError(cosLoad.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
+        return false
+    }
 
+    // deploy message store API container image
+
+    let msApiImage = config.customerOs.messageStoreImage.concat(imageVersion.toLowerCase())
+    let msPull = shell.exec(`docker pull ${msApiImage}`, {silent: !verbose})
+    if (msPull.code != 0) {
+        error.logError(msPull.stderr, `Unable to pull image ${msApiImage}`, `Report this issue => ${reportIssue}`)
+        return false
+    }
+
+    let msDeploy = shell.exec(`kubectl apply -f ./openline-setup/message-store.yaml --namespace ${namespace}`, {silent: !verbose})
+    if (msDeploy.code != 0) {
+        error.logError(msDeploy.stderr, 'Unable to deploy message store API', `Report this issue => ${reportIssue}`)
+        return false
+    }
+
+    let msService = shell.exec(`kubectl apply -f ./openline-setup/message-store-k8s-service.yaml --namespace ${namespace}`, {silent: !verbose})
+    if (msService.code != 0) {
+        error.logError(msService.stderr, 'Unable to deploy message store API', `Report this issue => ${reportIssue}`)
+        return false
+    }
+
+    // install fusion auth
+
+    let fa = shell.exec(`helm install fusionauth-customer-os fusionauth/fusionauth -f ./openline-setup/fusionauth-values.yaml --namespace ${namespace}`, {silent: !verbose})
+    if (fa.code != 0) {
+        error.logError(fa.stderr, 'Unable to complete helm install of fusion auth', `Report this issue => ${reportIssue}`)
+        return false
+    }
 
     return result
 }
-
-customerOsInstall(false)
