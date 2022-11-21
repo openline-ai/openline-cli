@@ -1,5 +1,5 @@
 import * as shell from 'shelljs'
-import * as config from 'config'
+import {getConfig} from '../../config/dev'
 
 export function xcodeCheck() :boolean {
     let result = shell.exec('which xcode-select', {silent: true})
@@ -12,8 +12,8 @@ export function xcodeCheck() :boolean {
 }
 
 export function installXcode() :boolean {
-    let install: string = config.get('dependencies.xcode.mac')
-    let result = shell.exec(install)
+    let config = getConfig()
+    let result = shell.exec(config.dependencies.xcode)
     if (result.code == 0) {
         return true
     } else {

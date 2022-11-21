@@ -1,7 +1,6 @@
 import {Command, Flags} from '@oclif/core'
 import * as error from '../../errors'
 import * as shell from 'shelljs'
-import * as config from 'config'
 
 export default class DevStop extends Command {
   static description = 'Stop and tear down the Openline development server'
@@ -29,9 +28,6 @@ export default class DevStop extends Command {
     const {args, flags} = await this.parse(DevStop)
 
     let verbose = flags.verbose
-    if (config.has('verbose')) {
-      verbose = config.get('verbose')
-    }
 
     if (flags.all) {
       this.log('🦦 Stopping all Openline services...')

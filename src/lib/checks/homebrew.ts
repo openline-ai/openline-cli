@@ -1,5 +1,5 @@
 import * as shell from 'shelljs'
-import * as config from 'config'
+import {getConfig} from '../../config/dev'
 
 export function brewCheck() :boolean {
     let result = shell.exec('which brew', {silent: true})
@@ -12,8 +12,8 @@ export function brewCheck() :boolean {
 }
 
 export function installBrew() :boolean {
-    let install: string = config.get('dependencies.homebrew.mac')
-    let result = shell.exec(install)
+    let config = getConfig()
+    let result = shell.exec(config.dependencies.homebrew)
     if (result.code == 0) {
         return true
     } else {

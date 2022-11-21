@@ -1,5 +1,5 @@
 import * as shell from 'shelljs'
-import * as config from 'config'
+import {getConfig} from '../../config/dev'
 
 export function kubeCheck() :boolean {
     let result = shell.exec('which kubectl', {silent: true})
@@ -12,8 +12,8 @@ export function kubeCheck() :boolean {
 }
 
 export function installKube() :boolean {
-    let install: string = config.get('dependencies.kubectl.mac')
-    let result = shell.exec(install)
+    let config = getConfig()
+    let result = shell.exec(config.dependencies.kubectlMac)
     if (result.code == 0) {
         return true
     } else {
