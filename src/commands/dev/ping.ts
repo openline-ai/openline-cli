@@ -25,13 +25,13 @@ export default class DevPing extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(DevPing)
 
-    let health = shell.exec('curl localhost:10010/health', {silent: true})
+    let health = shell.exec('curl localhost:10000/health', {silent: true})
     if (health.code == 0) {
       if (flags.verbose) {
         console.log(health.stdout)
       }
       console.log('✅ customerOS API is up and reachable')
-      console.log('🦦 go to http://localhost:10010 in your browser to play around with the graph API explorer')
+      console.log('🦦 go to http://localhost:10000 in your browser to play around with the graph API explorer')
     }
     else {
       console.log('❌ customerOS API is not reachable')

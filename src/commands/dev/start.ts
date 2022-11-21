@@ -47,8 +47,8 @@ export default class DevStart extends Command {
         this.log('')
         this.log('✅ customerOS started successfully!')
         this.log('🦦 To validate the service is reachable run the command =>  openline dev ping customer-os')
-        this.log('🦦 Visit http://localhost:10010 in your browser to play around with the graph API explorer')
-        shell.exec('open http://localhost:10010')
+        this.log('🦦 Visit http://localhost:10000 in your browser to play around with the graph API explorer')
+        shell.exec('open http://localhost:10000')
       }
     }
   }
