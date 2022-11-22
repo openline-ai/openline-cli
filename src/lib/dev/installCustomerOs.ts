@@ -1,4 +1,5 @@
 import * as shell from 'shelljs'
+import * as replace from 'replace-in-file'
 import * as error from '../../errors'
 import * as checks from '../checks/openline'
 import {getConfig} from '../../config/dev'
@@ -9,7 +10,7 @@ export function installCustomerOs(verbose :boolean, imageVersion: string = 'late
 
     if (isInstalled) {return true}
     else {
-        let setup = getSetupFiles(verbose)
+        let setup = getSetupFiles(verbose, imageVersion)
         if (!setup) {return false}
         
         let baseInstall = customerOsInstall(verbose, imageVersion)
@@ -28,7 +29,7 @@ export function installCustomerOs(verbose :boolean, imageVersion: string = 'late
     return result
   }
 
-function getSetupFiles(verbose :boolean) :boolean {
+export function getSetupFiles(verbose :boolean, imageVersion: string = 'latest') :boolean {
     let result = true
     let config = getConfig()
 
@@ -100,6 +101,23 @@ function getSetupFiles(verbose :boolean) :boolean {
         return false
      }
 
+    if (imageVersion != 'latest') {
+        const options = {
+            files: [
+                './openline-setup/customer-os-api.yaml',
+                './openline-setup/message-store.yaml'
+            ],
+            from: 'latest',
+            to: imageVersion
+        }
+        try {
+            const textReplace = replace.sync(options);
+            if (verbose) {console.log('Replacement results:', textReplace)}
+          }
+          catch (error: any) {
+            error.logError(error, 'Unable to modify config files to use specified image version')
+          }
+    }
 
     return result
 }
@@ -150,7 +168,7 @@ function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :b
     }
 
     // deploy customerOS API container image
-    let cosApiImage = config.customerOs.apiImage.concat(imageVersion.toLowerCase())
+    let cosApiImage = config.customerOs.apiImage.concat(imageVersion)
     let cosPull = shell.exec(`docker pull ${cosApiImage}`, {silent: !verbose})
     if (cosPull.code !=0) {
         error.logError(cosPull.stderr, `Unable to pull image ${cosApiImage}`, `Report this issue => ${reportIssue}`)
@@ -177,7 +195,7 @@ function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :b
 
     // deploy message store API container image
 
-    let msApiImage = config.customerOs.messageStoreImage.concat(imageVersion.toLowerCase())
+    let msApiImage = config.customerOs.messageStoreImage.concat(imageVersion)
     let msPull = shell.exec(`docker pull ${msApiImage}`, {silent: !verbose})
     if (msPull.code != 0) {
         error.logError(msPull.stderr, `Unable to pull image ${msApiImage}`, `Report this issue => ${reportIssue}`)
