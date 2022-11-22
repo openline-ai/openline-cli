@@ -20,7 +20,7 @@ export default class DevStatus extends Command {
 
     let verbose = flags.verbose
 
-    let isInstalled = checks.installCheck(verbose)
+    let isInstalled = checks.installCheck()
     if (isInstalled) {
       this.log('🦦 k8s cluster')
       shell.exec('kubectl get services')

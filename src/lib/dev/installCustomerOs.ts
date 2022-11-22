@@ -6,7 +6,7 @@ import {getConfig} from '../../config/dev'
 
 export function installCustomerOs(verbose :boolean, imageVersion: string = 'latest') :boolean {
     let result = false
-    let isInstalled = checks.installCheck(verbose)
+    let isInstalled = checks.installCheck()
 
     if (isInstalled) {return true}
     else {
@@ -18,14 +18,14 @@ export function installCustomerOs(verbose :boolean, imageVersion: string = 'late
         let baseInstall = customerOsInstall(verbose, imageVersion)
         if (!baseInstall) {return false}
 
-        let deploy = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/3-db-setup.sh'
-        let deployed = shell.exec(`curl -sL ${deploy} | bash`, {silent: !verbose})
-        if (deployed.code != 0) {
-            error.logError(deployed.stderr, '🫣 Looks like our repo references moved.  Update and try again.', 'https://github.com/openline-ai/openline-customer-os/tree/otter/deployment/scripts')
-            return result
-        }
+        console.log('⏳ provisioning customerOS database...')
+        let neo = provisionNeo4j(verbose)
+        if (!neo) {return false}
+
+        let psql = provisionPostgresql(verbose)
+        if (!psql) {return false}
         
-        if (setup == true && baseInstall == true && deployed.code == 0) { result = true }
+        if (setup == true && baseInstall == true) { result = true }
     }
 
     return result
@@ -100,6 +100,11 @@ function getSetupFiles(verbose :boolean, imageVersion: string = 'latest') :boole
     let f13 = shell.exec(`curl -sS ${config.customerOs.fusionauthHelmValues} -o openline-setup/fusionauth-values.yaml`, {silent: !verbose})
     if (f13.code != 0) {
         error.logError(f13.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
+        return false
+     }
+     let f14 = shell.exec(`curl -sS ${config.customerOs.neo4jProvisioning} -o openline-setup/provision-neo4j.sh`, {silent: !verbose})
+     if (f14.code != 0){
+        error.logError(f14.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
         return false
      }
 
@@ -225,4 +230,65 @@ function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :b
     }
 
     return result
+}
+
+function provisionNeo4j(verbose :boolean) :boolean {
+    let result = true
+    let neo = ''
+    while (neo == '') {
+        if (verbose) {console.log('⏳ Neo4j starting up, please wait...')}
+        shell.exec('sleep 2')
+        neo = shell.exec("kubectl get pods -n openline|grep neo4j-customer-os|grep Running|cut -f1 -d ' '", {silent: !verbose}).stdout
+    }
+
+    let started = ''
+    while (!started.includes('password')) {
+        if (verbose) {console.log('⏳ Neo4j initalizing, please wait...')}
+        shell.exec('sleep 2')
+        started = shell.exec(`kubectl logs -n openline ${neo}`, {silent: !verbose}).stdout
+    }
+
+    if (verbose) {console.log('⏳ provisioning Neo4j, please wait...')}
+    shell.exec('chmod u+x ./openline-setup/provision-neo4j.sh')
+    let provisionNeo = shell.exec('./openline-setup/provision-neo4j.sh')
+    if (provisionNeo.code != 0){
+        error.logError(provisionNeo.stderr, 'Neo4j provisioning failed.', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
+        return false
+    }
+
+    return result
+}
+
+export function provisionPostgresql(verbose :boolean) :boolean {
+    let result = true
+    let sqlUser = 'openline'
+    let sqlDb = 'openline'
+    let sqlPw = 'password'
+
+    let ms = ''
+    while (ms == '') {
+        if (verbose) {console.log('⏳ message store service starting up, please wait...')}
+        shell.exec('sleep 2')
+        ms = shell.exec("kubectl get pods -n openline|grep message-store|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
+    }
+
+    let cosDb = ''
+    while (cosDb == '') {
+        if (verbose) {console.log('⏳ message store DB starting up, please wait...')}
+        shell.exec('sleep 2')
+        cosDb = shell.exec("kubectl get pods -n openline|grep postgresql-customer-os-dev|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
+    }
+    cosDb = cosDb.slice(0, -1)
+
+    if (verbose) {console.log(`⏳ connecting to ${cosDb} pod`)}
+    let provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`)
+    while (provision.stderr != '') {
+        shell.exec('sleep 5')
+        let provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`)
+    }
+
+    shell.exec('rm -r openline-setup')
+
+    return result
+
 }
