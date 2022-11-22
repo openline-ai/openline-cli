@@ -1,3 +1,4 @@
-import { installCustomerOs } from "./lib/dev/installCustomerOs"
+import { installCustomerOs, getSetupFiles } from "./lib/dev/installCustomerOs"
 
-installCustomerOs(true, "otter")
+installCustomerOs(true)
+//getSetupFiles(true, 'otter')

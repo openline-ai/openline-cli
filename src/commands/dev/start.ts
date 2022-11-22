@@ -14,9 +14,10 @@ export default class DevStart extends Command {
 
   static flags = {
     all: Flags.boolean({char: 'a'}),
-    tag: Flags.boolean({
+    tag: Flags.string({
         char: 't', 
-        description: 'version tag of the image you would like to deploy', 
+        description: 'version tag of the image you would like to deploy',
+        default: 'latest'
     }),
     verbose: Flags.boolean({char: 'v'}),
 
@@ -47,7 +48,7 @@ export default class DevStart extends Command {
     let start = dev.startColima(verbose)
     if (start) {
       this.log('🦦 installing customerOS...this may take a few mins')
-      let customerOs = install.installCustomerOs(verbose, 'latest')
+      let customerOs = install.installCustomerOs(verbose, flags.tag)
       if (customerOs) {
         this.log('')
         this.log('✅ customerOS started successfully!')

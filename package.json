@@ -26,6 +26,7 @@
     "figlet": "^1.5.2",
     "octokit": "^2.0.10",
     "openline": "^0.3.7",
+    "replace-in-file": "^6.3.5",
     "shelljs": "^0.8.5",
     "ttab": "^0.7.3",
     "yarn": "^1.22.19"
