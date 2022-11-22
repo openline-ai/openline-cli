@@ -236,12 +236,12 @@ function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :b
 function provisionNeo4j(verbose :boolean) :boolean {
     let result = true
     let neo = ''
-    let retry = 0
+    let retry = 1
     let maxAttempts = 50
 
     while (neo == '') {
         if (retry < maxAttempts) {
-            if (verbose) {console.log('⏳ Neo4j starting up, please wait...')}
+            if (verbose) {console.log(`⏳ Neo4j starting up, please wait... ${retry}/${maxAttempts}`)}
             shell.exec('sleep 2')
             neo = shell.exec("kubectl get pods -n openline|grep neo4j-customer-os|grep Running|cut -f1 -d ' '", {silent: !verbose}).stdout
             retry++
@@ -256,7 +256,7 @@ function provisionNeo4j(verbose :boolean) :boolean {
     let started = ''
     while (!started.includes('password')) {
         if (retry < maxAttempts) {
-            if (verbose) {console.log('⏳ Neo4j initalizing, please wait...')}
+            if (verbose) {console.log(`⏳ Neo4j initalizing, please wait... ${retry}/${maxAttempts}`)}
             shell.exec('sleep 2')
             started = shell.exec(`kubectl logs -n openline ${neo}`, {silent: !verbose}).stdout
             retry++
@@ -284,13 +284,13 @@ export function provisionPostgresql(verbose :boolean) :boolean {
     let sqlDb = 'openline'
     let sqlPw = 'password'
 
-    let retry = 0
+    let retry = 1
     let maxAttempts = 30
 
     let ms = ''
     while (ms == '') {
         if (retry < maxAttempts) {
-            if (verbose) {console.log('⏳ message store service starting up, please wait...')}
+            if (verbose) {console.log(`⏳ message store service starting up, please wait... ${retry}/${maxAttempts}`)}
             shell.exec('sleep 2')
             ms = shell.exec("kubectl get pods -n openline|grep message-store|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
             retry++
@@ -304,7 +304,7 @@ export function provisionPostgresql(verbose :boolean) :boolean {
     let cosDb = ''
     while (cosDb == '') {
         if (retry < maxAttempts) {
-            if (verbose) {console.log('⏳ message store service starting up, please wait...')}
+            if (verbose) {console.log(`⏳ message store service starting up, please wait... ${retry}/${maxAttempts}`)}
             shell.exec('sleep 2')
             ms = shell.exec("kubectl get pods -n openline|grep message-store|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
             retry++
@@ -320,12 +320,13 @@ export function provisionPostgresql(verbose :boolean) :boolean {
     let provision = ''
     while (provision == '') {
         if (retry < maxAttempts) {
+            if (verbose) {console.log(`⏳ attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)}
             shell.exec('sleep 2')
             provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`).stdout
             retry++
         }
         else {
-            error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start')
+            error.logError('Provisioning message store DB timed out', 'To retry, re-run => openline dev start')
             return false
         }
     }
