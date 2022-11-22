@@ -15,7 +15,7 @@ export function installCustomerOs(verbose :boolean, imageVersion: string = 'late
         let setup = getSetupFiles(verbose, imageVersion)
         if (!setup) {return false}
         
-        console.log('⏳ installing', imageVersion, 'of customerOS...')
+        console.log(`⏳ installing customerOS version <${imageVersion}>...`)
         let baseInstall = customerOsInstall(verbose, imageVersion)
         if (!baseInstall) {return false}
 
@@ -331,7 +331,7 @@ export function provisionPostgresql(verbose :boolean) :boolean {
         }
     }
 
-    shell.exec('rm -r openline-setup')
+    shell.exec('rm -r openline-setup', {silent: true})
 
     return result
 
