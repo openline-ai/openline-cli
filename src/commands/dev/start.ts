@@ -14,7 +14,12 @@ export default class DevStart extends Command {
 
   static flags = {
     all: Flags.boolean({char: 'a'}),
+    tag: Flags.boolean({
+        char: 't', 
+        description: 'version tag of the image you would like to deploy', 
+    }),
     verbose: Flags.boolean({char: 'v'}),
+
   }
 
   static args = [
