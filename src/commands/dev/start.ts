@@ -35,19 +35,17 @@ export default class DevStart extends Command {
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(DevStart)
-
-    let verbose = flags.verbose
     
     // Base dependency check
-    let depend = mac.dependencies(verbose)
+    let depend = mac.dependencies(flags.verbose)
     if (!depend) {this.exit(1)}
 
     this.log('🦦 initiating Openline dev server...')
-    let start = dev.startColima(verbose)
+    let start = dev.startColima(flags.verbose)
     if (!start) {this.exit(1)}
     if (start) {
       this.log('🦦 installing customerOS...this may take a few mins')
-      let customerOs = install.installCustomerOs(verbose, flags.tag)
+      let customerOs = install.installCustomerOs(flags.verbose, flags.tag)
       if (customerOs) {
         this.log('')
         this.log('✅ customerOS started successfully!')
