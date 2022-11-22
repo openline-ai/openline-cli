@@ -14,7 +14,7 @@ export function startColima(verbose :boolean) :boolean {
       let disk: string = config.server.disk
       let start = shell.exec(`colima start --with-kubernetes --cpu ${cpu} --memory ${memory} --disk ${disk}`, {silent: !verbose})
       if (start.code != 0) {
-        error.logError(start.stderr, 'Try reinstalling Colima', 'https://github.com/abiosoft/colima')
+        error.logError(start.stderr, 'Try running => openline dev stop')
       }
       else {
         result = true
