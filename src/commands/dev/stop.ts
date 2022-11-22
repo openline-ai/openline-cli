@@ -1,5 +1,5 @@
 import {Command, Flags} from '@oclif/core'
-import * as error from '../../errors'
+import * as error from '../../lib/dev/errors'
 import * as shell from 'shelljs'
 
 export default class DevStop extends Command {

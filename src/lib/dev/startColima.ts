@@ -1,5 +1,5 @@
 import * as shell from 'shelljs'
-import * as error from '../../errors'
+import * as error from './errors'
 import * as checks from '../checks/openline'
 import {getConfig} from '../../config/dev'
 
