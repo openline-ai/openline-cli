@@ -12,7 +12,7 @@ export function installCustomerOs(verbose :boolean, imageVersion: string = 'late
         let setup = getSetupFiles(verbose)
         if (!setup) {return false}
         
-        let baseInstall = customerOsInstall(verbose)
+        let baseInstall = customerOsInstall(verbose, imageVersion)
         if (!baseInstall) {return false}
 
         let deploy = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/3-db-setup.sh'
