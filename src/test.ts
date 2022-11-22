@@ -1,4 +1,6 @@
-import { installCustomerOs, getSetupFiles } from "./lib/dev/installCustomerOs"
+import { installCustomerOs, provisionPostgresql } from "./lib/dev/installCustomerOs"
+import * as shell from 'shelljs'
 
 installCustomerOs(true)
-//getSetupFiles(true, 'otter')
+
+//provisionPostgresql(true)

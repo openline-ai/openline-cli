@@ -6,7 +6,7 @@ import {getConfig} from '../../config/dev'
 export function startColima(verbose :boolean) :boolean {
     let config = getConfig()
     let result = false
-    let isRunning = checks.runningCheck(verbose)
+    let isRunning = checks.runningCheck()
   
     if (!isRunning) {
       let cpu: string = config.server.cpu

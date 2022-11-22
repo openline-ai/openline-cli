@@ -42,6 +42,7 @@ export function getConfig() :any {
     // customerOS Neo4j DB
     config.customerOs.neo4jHelmValues = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/helm/neo4j/neo4j-values.yaml"
     config.customerOs.neo4jCypher = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/packages/server/customer-os-api/customer-os.cypher"
+    config.customerOs.neo4jProvisioning = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/neo4j/provision-neo4j.sh"
     // customerOS FusionAuth
     config.customerOs.fusionauthHelmValues = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/helm/fusionauth/fusionauth-values.yaml"
     config.customerOs.repo = "https://github.com/openline-ai/openline-customer-os.git"

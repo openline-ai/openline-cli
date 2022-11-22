@@ -1,7 +1,7 @@
 import * as shell from 'shelljs'
 
-export function runningCheck(verbose: boolean) :boolean {
-    if (shell.exec('colima status', {silent: !verbose}).code == 0) {
+export function runningCheck() :boolean {
+    if (shell.exec('colima status', {silent: true}).code == 0) {
       return true
     }
     else {
@@ -9,8 +9,8 @@ export function runningCheck(verbose: boolean) :boolean {
     }
   }
   
-export function installCheck(verbose: boolean) :boolean {
-    if (shell.exec('kubectl get ns openline', {silent: !verbose}).code == 0) {
+export function installCheck() :boolean {
+    if (shell.exec('kubectl get ns openline', {silent: true}).code == 0) {
       return true
     }
     else {
