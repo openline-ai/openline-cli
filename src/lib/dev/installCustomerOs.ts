@@ -281,10 +281,10 @@ export function provisionPostgresql(verbose :boolean) :boolean {
     cosDb = cosDb.slice(0, -1)
 
     if (verbose) {console.log(`⏳ connecting to ${cosDb} pod`)}
-    let provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`).stdout.slice(0, -1)
-    while (!provision.includes('INSERT')) {
+    let provision = ''
+    while (provision == '') {
         shell.exec('sleep 5')
-        let provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`).stdout.slice(0, -1)
+        let provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`).stdout
         console.log(provision)
     }
 
