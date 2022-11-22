@@ -10,9 +10,11 @@ export function installCustomerOs(verbose :boolean, imageVersion: string = 'late
 
     if (isInstalled) {return true}
     else {
+        console.log('⏳ getting setup config...')
         let setup = getSetupFiles(verbose, imageVersion)
         if (!setup) {return false}
         
+        console.log('⏳ installing', imageVersion, 'of customerOS...')
         let baseInstall = customerOsInstall(verbose, imageVersion)
         if (!baseInstall) {return false}
 
@@ -29,7 +31,7 @@ export function installCustomerOs(verbose :boolean, imageVersion: string = 'late
     return result
   }
 
-export function getSetupFiles(verbose :boolean, imageVersion: string = 'latest') :boolean {
+function getSetupFiles(verbose :boolean, imageVersion: string = 'latest') :boolean {
     let result = true
     let config = getConfig()
 

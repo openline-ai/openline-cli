@@ -40,12 +40,11 @@ export default class DevStart extends Command {
     
     // Base dependency check
     let depend = mac.dependencies(verbose)
-    if (!depend) {
-      this.exit(1)
-    }
+    if (!depend) {this.exit(1)}
 
     this.log('🦦 initiating Openline dev server...')
     let start = dev.startColima(verbose)
+    if (!start) {this.exit(1)}
     if (start) {
       this.log('🦦 installing customerOS...this may take a few mins')
       let customerOs = install.installCustomerOs(verbose, flags.tag)
