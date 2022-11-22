@@ -1,8 +1,9 @@
 import * as shell from 'shelljs'
 import * as replace from 'replace-in-file'
-import * as error from '../../errors'
+import * as error from './errors'
 import * as checks from '../checks/openline'
 import {getConfig} from '../../config/dev'
+import { exit } from 'process'
 
 export function installCustomerOs(verbose :boolean, imageVersion: string = 'latest') :boolean {
     let result = false
@@ -235,17 +236,35 @@ function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :b
 function provisionNeo4j(verbose :boolean) :boolean {
     let result = true
     let neo = ''
+    let retry = 0
+    let maxAttempts = 50
+
     while (neo == '') {
-        if (verbose) {console.log('⏳ Neo4j starting up, please wait...')}
-        shell.exec('sleep 2')
-        neo = shell.exec("kubectl get pods -n openline|grep neo4j-customer-os|grep Running|cut -f1 -d ' '", {silent: !verbose}).stdout
+        if (retry < maxAttempts) {
+            if (verbose) {console.log('⏳ Neo4j starting up, please wait...')}
+            shell.exec('sleep 2')
+            neo = shell.exec("kubectl get pods -n openline|grep neo4j-customer-os|grep Running|cut -f1 -d ' '", {silent: !verbose}).stdout
+            retry++
+        }
+        else {
+            error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start')
+            return false          
+        }
+        
     }
 
     let started = ''
     while (!started.includes('password')) {
-        if (verbose) {console.log('⏳ Neo4j initalizing, please wait...')}
-        shell.exec('sleep 2')
-        started = shell.exec(`kubectl logs -n openline ${neo}`, {silent: !verbose}).stdout
+        if (retry < maxAttempts) {
+            if (verbose) {console.log('⏳ Neo4j initalizing, please wait...')}
+            shell.exec('sleep 2')
+            started = shell.exec(`kubectl logs -n openline ${neo}`, {silent: !verbose}).stdout
+            retry++
+        }
+        else {
+            error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start')
+            return false 
+        }
     }
 
     if (verbose) {console.log('⏳ provisioning Neo4j, please wait...')}
@@ -265,27 +284,50 @@ export function provisionPostgresql(verbose :boolean) :boolean {
     let sqlDb = 'openline'
     let sqlPw = 'password'
 
+    let retry = 0
+    let maxAttempts = 30
+
     let ms = ''
     while (ms == '') {
-        if (verbose) {console.log('⏳ message store service starting up, please wait...')}
-        shell.exec('sleep 2')
-        ms = shell.exec("kubectl get pods -n openline|grep message-store|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
+        if (retry < maxAttempts) {
+            if (verbose) {console.log('⏳ message store service starting up, please wait...')}
+            shell.exec('sleep 2')
+            ms = shell.exec("kubectl get pods -n openline|grep message-store|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
+            retry++
+        }
+        else {
+            error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start')
+            return false
+        }
     }
 
     let cosDb = ''
     while (cosDb == '') {
-        if (verbose) {console.log('⏳ message store DB starting up, please wait...')}
-        shell.exec('sleep 2')
-        cosDb = shell.exec("kubectl get pods -n openline|grep postgresql-customer-os-dev|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
+        if (retry < maxAttempts) {
+            if (verbose) {console.log('⏳ message store service starting up, please wait...')}
+            shell.exec('sleep 2')
+            ms = shell.exec("kubectl get pods -n openline|grep message-store|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
+            retry++
+        }
+        else {
+            error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start')
+            return false
+        }
     }
     cosDb = cosDb.slice(0, -1)
 
     if (verbose) {console.log(`⏳ connecting to ${cosDb} pod`)}
     let provision = ''
     while (provision == '') {
-        shell.exec('sleep 5')
-        let provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`).stdout
-        console.log(provision)
+        if (retry < maxAttempts) {
+            shell.exec('sleep 2')
+            provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`).stdout
+            retry++
+        }
+        else {
+            error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start')
+            return false
+        }
     }
 
     shell.exec('rm -r openline-setup')
