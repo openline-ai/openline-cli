@@ -304,9 +304,9 @@ export function provisionPostgresql(verbose :boolean) :boolean {
     let cosDb = ''
     while (cosDb == '') {
         if (retry < maxAttempts) {
-            if (verbose) {console.log(`⏳ message store service starting up, please wait... ${retry}/${maxAttempts}`)}
+            if (verbose) {console.log(`⏳ initalizing message store service, please wait... ${retry}/${maxAttempts}`)}
             shell.exec('sleep 2')
-            ms = shell.exec("kubectl get pods -n openline|grep message-store|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
+            cosDb = shell.exec("kubectl get pods -n openline|grep postgresql-customer-os-dev|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
             retry++
         }
         else {
@@ -322,7 +322,7 @@ export function provisionPostgresql(verbose :boolean) :boolean {
         if (retry < maxAttempts) {
             if (verbose) {console.log(`⏳ attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)}
             shell.exec('sleep 2')
-            provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`).stdout
+            provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`).stdout
             retry++
         }
         else {
