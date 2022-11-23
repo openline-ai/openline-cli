@@ -44,7 +44,7 @@ export default class DevStart extends Command {
     let start = dev.startColima(flags.verbose)
     if (!start) {this.exit(1)}
     if (start) {
-      this.log('🦦 installing customerOS...this may take a few mins')
+      this.log('🦦 installing customerOS...')
       let customerOs = install.installCustomerOs(flags.verbose, flags.tag)
       if (customerOs) {
         this.log('')

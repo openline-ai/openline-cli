@@ -19,7 +19,7 @@ export function installCustomerOs(verbose :boolean, imageVersion: string = 'late
         let baseInstall = customerOsInstall(verbose, imageVersion)
         if (!baseInstall) {return false}
 
-        console.log('⏳ provisioning customerOS database...')
+        console.log('⏳ provisioning customerOS database...this make take a few mins...')
         let neo = provisionNeo4j(verbose)
         if (!neo) {return false}
 
@@ -322,7 +322,7 @@ export function provisionPostgresql(verbose :boolean) :boolean {
         if (retry < maxAttempts) {
             if (verbose) {console.log(`⏳ attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)}
             shell.exec('sleep 2')
-            provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`).stdout
+            provision = shell.exec(`echo ./openline-setup/setup.sql|xargs cat|kubectl exec -n openline -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: !verbose}).stdout
             retry++
         }
         else {
