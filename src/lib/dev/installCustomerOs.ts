@@ -4,6 +4,7 @@ import * as error from './errors'
 import * as checks from '../checks/openline'
 import {getConfig} from '../../config/dev'
 import { deployImage } from './deploy'
+import { grabFile } from './setupFiles'
 
 export function installCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
   let result = false
@@ -49,94 +50,21 @@ function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
 
   const dir = shell.exec('mkdir openline-setup')
 
-  const f1 = shell.exec(`curl -sS ${config.customerOs.namespace} -o openline-setup/openline-namespace.json`, {silent: !verbose})
-  if (f1.code != 0) {
-    error.logError(f1.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f2 = shell.exec(`curl -sS ${config.customerOs.apiDeployment} -o openline-setup/customer-os-api.yaml`, {silent: !verbose})
-  if (f2.code != 0) {
-    error.logError(f2.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f3 = shell.exec(`curl -sS ${config.customerOs.apiService} -o openline-setup/customer-os-api-k8s-service.yaml`, {silent: !verbose})
-  if (f3.code != 0) {
-    error.logError(f3.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f4 = shell.exec(`curl -sS ${config.customerOs.apiLoadbalancer} -o openline-setup/customer-os-api-k8s-loadbalancer-service.yaml`, {silent: !verbose})
-  if (f4.code != 0) {
-    error.logError(f4.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f5 = shell.exec(`curl -sS ${config.customerOs.messageStoreDeployment} -o openline-setup/message-store.yaml`, {silent: !verbose})
-  if (f5.code != 0) {
-    error.logError(f5.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f6 = shell.exec(`curl -sS ${config.customerOs.messageStoreService} -o openline-setup/message-store-k8s-service.yaml`, {silent: !verbose})
-  if (f6.code != 0) {
-    error.logError(f6.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f7 = shell.exec(`curl -sS ${config.customerOs.postgresqlPersistentVolume} -o openline-setup/postgresql-persistent-volume.yaml`, {silent: !verbose})
-  if (f7.code != 0) {
-    error.logError(f7.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f8 = shell.exec(`curl -sS ${config.customerOs.postgresqlPersistentVolumeClaim} -o openline-setup/postgresql-persistent-volume-claim.yaml`, {silent: !verbose})
-  if (f8.code != 0) {
-    error.logError(f8.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f9 = shell.exec(`curl -sS ${config.customerOs.postgresqlHelmValues} -o openline-setup/postgresql-values.yaml`, {silent: !verbose})
-  if (f9.code != 0) {
-    error.logError(f9.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f10 = shell.exec(`curl -sS ${config.customerOs.postgresqlSetup} -o openline-setup/setup.sql`, {silent: !verbose})
-  if (f10.code != 0) {
-    error.logError(f10.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f11 = shell.exec(`curl -sS ${config.customerOs.neo4jHelmValues} -o openline-setup/neo4j-helm-values.yaml`, {silent: !verbose})
-  if (f11.code != 0) {
-    error.logError(f11.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f12 = shell.exec(`curl -sS ${config.customerOs.neo4jCypher} -o openline-setup/customer-os.cypher`, {silent: !verbose})
-  if (f12.code != 0) {
-    error.logError(f12.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f13 = shell.exec(`curl -sS ${config.customerOs.fusionauthHelmValues} -o openline-setup/fusionauth-values.yaml`, {silent: !verbose})
-  if (f13.code != 0) {
-    error.logError(f13.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f14 = shell.exec(`curl -sS ${config.customerOs.neo4jProvisioning} -o openline-setup/provision-neo4j.sh`, {silent: !verbose})
-  if (f14.code != 0) {
-    error.logError(f14.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-     let f15 = shell.exec(`curl -sS ${config.customerOs.messageStoreLoadbalancer} -o openline-setup/message-store-k8s-loadbalancer-service.yaml`, {silent: !verbose})
-     if (f15.code != 0){
-        error.logError(f15.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-        return false
-     }
+    let f1 = grabFile(config.customerOs.namespace, 'openline-setup/openline-namespace.json', verbose)
+    let f2 = grabFile(config.customerOs.apiDeployment,'openline-setup/customer-os-api.yaml', verbose)
+    let f3 = grabFile(config.customerOs.apiService, 'openline-setup/customer-os-api-k8s-service.yaml', verbose)
+    let f4 = grabFile(config.customerOs.apiLoadbalancer, 'openline-setup/customer-os-api-k8s-loadbalancer-service.yaml', verbose)
+    let f5 = grabFile(config.customerOs.messageStoreDeployment, 'openline-setup/message-store.yaml', verbose)
+    let f6 = grabFile(config.customerOs.messageStoreService, 'openline-setup/message-store-k8s-service.yaml', verbose)
+    let f7 = grabFile(config.customerOs.postgresqlPersistentVolume, 'openline-setup/postgresql-persistent-volume.yaml', verbose)
+    let f8 = grabFile(config.customerOs.postgresqlPersistentVolumeClaim, 'openline-setup/postgresql-persistent-volume-claim.yaml', verbose)
+    let f9 = grabFile(config.customerOs.postgresqlHelmValues, 'openline-setup/postgresql-values.yaml', verbose)
+    let f10 = grabFile(config.customerOs.postgresqlSetup, 'openline-setup/setup.sql', verbose)
+    let f11 = grabFile(config.customerOs.neo4jHelmValues, 'openline-setup/neo4j-helm-values.yaml', verbose)
+    let f12 = grabFile(config.customerOs.neo4jCypher, 'openline-setup/customer-os.cypher', verbose)
+    let f13 = grabFile(config.customerOs.fusionauthHelmValues, 'openline-setup/fusionauth-values.yaml', verbose)
+    let f14 = grabFile(config.customerOs.neo4jProvisioning, 'openline-setup/provision-neo4j.sh', verbose)
+    let f15 = grabFile(config.customerOs.messageStoreLoadbalancer, 'openline-setup/message-store-k8s-loadbalancer-service.yaml', verbose)
 
   if (imageVersion != 'latest') {
     const options = {

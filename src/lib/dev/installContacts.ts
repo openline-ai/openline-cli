@@ -3,6 +3,7 @@ import * as error from './errors'
 import {getConfig} from '../../config/dev'
 import * as replace from 'replace-in-file'
 import { deployImage } from './deploy'
+import { grabFile } from './setupFiles'
 
 export function installContacts(verbose :boolean, imageVersion: string = 'latest') :boolean {
 
@@ -15,36 +16,12 @@ function getSetupFiles(verbose :boolean, imageVersion: string = 'latest') :boole
 
     let dir = shell.exec('mkdir openline-setup')
 
-    let f1 = shell.exec(`curl -sS ${config.contacts.apiDeployment} -o openline-setup/contacts-api-deployment.yaml`, {silent: !verbose})
-    if (f1.code != 0) {
-       error.logError(f1.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-       return false
-    }
-    let f2 = shell.exec(`curl -sS ${config.contacts.apiService} -o openline-setup/contacts-api-service.yaml`, {silent: !verbose})
-    if (f2.code != 0) {
-       error.logError(f2.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-       return false
-    }
-    let f3 = shell.exec(`curl -sS ${config.contacts.apiLoadbalancer} -o openline-setup/contacts-api-loadbalancer.yaml`, {silent: !verbose})
-    if (f3.code != 0) {
-       error.logError(f3.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-       return false
-    }
-    let f4 = shell.exec(`curl -sS ${config.contacts.guiDeployment} -o openline-setup/contacts-gui-deployment.yaml`, {silent: !verbose})
-    if (f4.code != 0) {
-       error.logError(f4.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-       return false
-    }
-    let f5 = shell.exec(`curl -sS ${config.contacts.guiService} -o openline-setup/contacts-gui-service.yaml`, {silent: !verbose})
-    if (f5.code != 0) {
-       error.logError(f5.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-       return false
-    }
-    let f6 = shell.exec(`curl -sS ${config.contacts.guiLoadbalancer} -o openline-setup/contacts-gui-loadbalancer.yaml`, {silent: !verbose})
-    if (f6.code != 0) {
-       error.logError(f6.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-       return false
-    }
+    let f1 = grabFile(config.contacts.apiDeployment, 'openline-setup/contacts-api-deployment.yaml', verbose)
+    let f2 = grabFile(config.contacts.apiService, 'openline-setup/contacts-api-service.yaml', verbose)
+    let f3 = grabFile(config.contacts.apiLoadbalancer, 'openline-setup/contacts-api-loadbalancer.yaml', verbose)
+    let f4 = grabFile(config.contacts.guiDeployment, 'openline-setup/contacts-gui-deployment.yaml', verbose)
+    let f5 = grabFile(config.contacts.guiService, 'openline-setup/contacts-gui-service.yaml', verbose)
+    let f6 = grabFile(config.contacts.guiLoadbalancer, 'openline-setup/contacts-gui-loadbalancer.yaml', verbose)
 
     if (imageVersion != 'latest') {
         const options = {
