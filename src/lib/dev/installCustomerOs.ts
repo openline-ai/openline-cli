@@ -3,6 +3,7 @@ import * as replace from 'replace-in-file'
 import * as error from './errors'
 import * as checks from '../checks/openline'
 import {getConfig} from '../../config/dev'
+import { deployImage } from './deploy'
 
 export function installCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
   let result = false
@@ -159,17 +160,15 @@ function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
   return result
 }
 
-function customerOsInstall(verbose :boolean, imageVersion = 'latest') :boolean {
-  const result = true
-  const config = getConfig()
-  const namespace = 'openline'
-  const reportIssue = 'https://github.com/openline-ai/openline-cli/issues/new/choose'
+function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :boolean {
+    let result = true
+    let config = getConfig()
+    let namespace = 'openline'
 
   // create the namespace in kubernetes
   const ns = shell.exec('kubectl create -f ./openline-setup/openline-namespace.json', {silent: !verbose})
   if (ns.code != 0) {
-    error.logError(ns.stderr, 'Unable to create namespace from ./openline-setup/openline-namespace.json', `Report this issue => ${reportIssue}`)
-    return false
+    error.logError(ns.stderr, 'Unable to create namespace from ./openline-setup/openline-namespace.json')
   }
 
   // add helm repos
@@ -180,88 +179,56 @@ function customerOsInstall(verbose :boolean, imageVersion = 'latest') :boolean {
   // install neo4j
   const neoInstall = shell.exec(`helm install neo4j-customer-os neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ./openline-setup/neo4j-helm-values.yaml --namespace ${namespace}`, {silent: !verbose})
   if (neoInstall.code != 0) {
-    error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone', `Report this issue => ${reportIssue}`)
+    error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone')
     return false
   }
 
   // setup PostgreSQL persistent volume
   const pv = shell.exec(`kubectl apply -f ./openline-setup/postgresql-persistent-volume.yaml --namespace ${namespace}`, {silent: !verbose})
   if (pv.code != 0) {
-    error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume', `Report this issue => ${reportIssue}`)
+    error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume')
     return false
   }
 
   const pvc = shell.exec(`kubectl apply -f ./openline-setup/postgresql-persistent-volume-claim.yaml --namespace ${namespace}`, {silent: !verbose})
   if (pvc.code != 0) {
-    error.logError(pvc.stderr, 'Unable to setup postgreSQL persistent volume claim', `Report this issue => ${reportIssue}`)
+    error.logError(pvc.stderr, 'Unable to setup postgreSQL persistent volume claim')
     return false
   }
 
   // install PostgreSQL
   const postgresql = shell.exec(`helm install --values ./openline-setup/postgresql-values.yaml postgresql-customer-os-dev bitnami/postgresql --namespace ${namespace}`, {silent: !verbose})
   if (postgresql.code != 0) {
-    error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql', `Report this issue => ${reportIssue}`)
+    error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql')
     return false
   }
 
-  // deploy customerOS API container image
-  const cosApiImage = config.customerOs.apiImage.concat(imageVersion)
-  const cosPull = shell.exec(`docker pull ${cosApiImage}`, {silent: !verbose})
-  if (cosPull.code != 0) {
-    error.logError(cosPull.stderr, `Unable to pull image ${cosApiImage}`, `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  const cosDeploy = shell.exec(`kubectl apply -f ./openline-setup/customer-os-api.yaml --namespace ${namespace}`, {silent: !verbose})
-  if (cosDeploy.code != 0) {
-    error.logError(cosDeploy.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  const cosService = shell.exec(`kubectl apply -f ./openline-setup/customer-os-api-k8s-service.yaml --namespace ${namespace}`, {silent: !verbose})
-  if (cosService.code != 0) {
-    error.logError(cosService.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  const cosLoad = shell.exec(`kubectl apply -f ./openline-setup/customer-os-api-k8s-loadbalancer-service.yaml --namespace ${namespace}`, {silent: !verbose})
-  if (cosLoad.code != 0) {
-    error.logError(cosLoad.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  // deploy message store API container image
-
-  const msApiImage = config.customerOs.messageStoreImage.concat(imageVersion)
-  const msPull = shell.exec(`docker pull ${msApiImage}`, {silent: !verbose})
-  if (msPull.code != 0) {
-    error.logError(msPull.stderr, `Unable to pull image ${msApiImage}`, `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  const msDeploy = shell.exec(`kubectl apply -f ./openline-setup/message-store.yaml --namespace ${namespace}`, {silent: !verbose})
-  if (msDeploy.code != 0) {
-    error.logError(msDeploy.stderr, 'Unable to deploy message store API', `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  const msService = shell.exec(`kubectl apply -f ./openline-setup/message-store-k8s-service.yaml --namespace ${namespace}`, {silent: !verbose})
-  if (msService.code != 0) {
-    error.logError(msService.stderr, 'Unable to deploy message store API', `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-    let msLoad = shell.exec(`kubectl apply -f ./openline-setup/message-store-k8s-loadbalancer-service.yaml --namespace ${namespace}`, {silent: !verbose})
-    if (msLoad.code != 0) {
-        error.logError(msLoad.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
+    // deploy customerOS API container image
+    let cosApiImage = config.customerOs.apiImage.concat(imageVersion)
+    let cosDeployFile = './openline-setup/customer-os-api.yaml'
+    let cosServiceFile = './openline-setup/customer-os-api-k8s-service.yaml'
+    let cosLbFile = './openline-setup/customer-os-api-k8s-loadbalancer-service.yaml'
+    let cosDeploy = deployImage(cosApiImage, cosDeployFile, cosServiceFile, cosLbFile, verbose)
+    if (cosDeploy === false) {
+        error.logError('Error loading image', 'Unable to deploy customerOS API')
         return false
     }
 
-  // install fusion auth
+    // deploy message store API container image
+    let msApiImage = config.customerOs.messageStoreImage.concat(imageVersion)
+    let msDeployFile = './openline-setup/message-store.yaml'
+    let msServiceFile = './openline-setup/message-store-k8s-service.yaml'
+    let msLbFile = './openline-setup/message-store-k8s-loadbalancer-service.yaml'
+    let msDeploy = deployImage(msApiImage, msDeployFile, msServiceFile, msLbFile, verbose)
+    if (msDeploy === false) {
+        error.logError('Error loading image', 'Unable to deploy message store API')
+        return false
+    }
 
-  const fa = shell.exec(`helm install fusionauth-customer-os fusionauth/fusionauth -f ./openline-setup/fusionauth-values.yaml --namespace ${namespace}`, {silent: !verbose})
+    // install fusion auth
+    const fa = shell.exec(`helm install fusionauth-customer-os fusionauth/fusionauth -f ./openline-setup/fusionauth-values.yaml --namespace ${namespace}`, {silent: !verbose})
   if (fa.code != 0) {
-    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth', `Report this issue => ${reportIssue}`)
+    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth')
     return false
   }
 
@@ -323,7 +290,7 @@ function provisionNeo4j(verbose :boolean) :boolean {
   return result
 }
 
-export function provisionPostgresql(verbose :boolean) :boolean {
+function provisionPostgresql(verbose :boolean) :boolean {
   const result = true
   const sqlUser = 'openline'
   const sqlDb = 'openline'

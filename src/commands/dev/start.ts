@@ -3,6 +3,8 @@ import * as shell from 'shelljs'
 import * as dev from '../../lib/dev/startColima'
 import * as install from '../../lib/dev/installCustomerOs'
 import * as mac from '../../lib/checks/mac'
+import * as contacts from '../../lib/dev/installContacts'
+
 import {installLocalCustomerOs} from '../../lib/dev/install-local-customer-os'
 
 export default class DevStart extends Command {
@@ -34,7 +36,7 @@ export default class DevStart extends Command {
       required: false,
       description: 'the Openline application you would like to start',
       default: 'customer-os',
-      options: ['customer-os'],
+      options: ['customer-os', 'contacts'],
     },
   ]
 
@@ -56,13 +58,28 @@ export default class DevStart extends Command {
     if (start) {
       this.log('🦦 installing customerOS...')
       const customerOsInstalled = flags.location ? installLocalCustomerOs(flags.location, flags.verbose) : install.installCustomerOs(flags.verbose, flags.tag)
+
       if (customerOsInstalled) {
         this.log('')
         this.log('✅ customerOS started successfully!')
         this.log('🦦 To validate the service is reachable run the command =>  openline dev ping customer-os')
         this.log('🦦 Visit http://localhost:10000 in your browser to play around with the graph API explorer')
         shell.exec('open http://localhost:10000')
+
+        if (args.app.toLowerCase() === 'contacts') {
+          this.log('')
+          this.log('🦦 installing Contacts app...')
+          let contactsApp = contacts.installContacts(flags.verbose, flags.tag)
+
+          if (contactsApp) {
+            this.log('✅ Contacts app started successfully!')
+            this.log('🦦 To validate the service is reachable run the command =>  openline dev ping contacts')
+            this.log('🦦 Visit http://localhost:3000 in your browser to view the application')
+            shell.exec('open http://localhost:3000')
+          }
+        }
       }
+
     }
   }
 }
