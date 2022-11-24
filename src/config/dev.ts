@@ -7,7 +7,7 @@ export function getConfig() :any {
     config.server.cpu = 2
     config.server.disk = 30
     config.server.memory = 4
-    config.server.timeOuts = 180 //seconds
+    config.server.timeOuts = 600 //seconds
 
     // Contacts App config
     config.contacts = {}
@@ -35,6 +35,7 @@ export function getConfig() :any {
     config.customerOs.messageStoreImage = "ghcr.io/openline-ai/openline-customer-os/message-store:"
     config.customerOs.messageStoreDeployment = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/message-store.yaml"
     config.customerOs.messageStoreService = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/message-store-k8s-service.yaml"
+    config.customerOs.messageStoreLoadbalancer = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/message-store-k8s-loadbalancer-service.yaml"
     // customerOS postgreSQL DB
     config.customerOs.postgresqlPersistentVolume = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/postgresql-persistent-volume.yaml"
     config.customerOs.postgresqlPersistentVolumeClaim = "https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/postgresql-persistent-volume-claim.yaml"

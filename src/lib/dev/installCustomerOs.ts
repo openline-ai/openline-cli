@@ -107,6 +107,11 @@ function getSetupFiles(verbose :boolean, imageVersion: string = 'latest') :boole
         error.logError(f14.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
         return false
      }
+     let f15 = shell.exec(`curl -sS ${config.customerOs.messageStoreLoadbalancer} -o openline-setup/message-store-k8s-loadbalancer-service.yaml`, {silent: !verbose})
+     if (f15.code != 0){
+        error.logError(f15.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
+        return false
+     }
 
     if (imageVersion != 'latest') {
         const options = {
@@ -218,6 +223,12 @@ function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :b
     let msService = shell.exec(`kubectl apply -f ./openline-setup/message-store-k8s-service.yaml --namespace ${namespace}`, {silent: !verbose})
     if (msService.code != 0) {
         error.logError(msService.stderr, 'Unable to deploy message store API', `Report this issue => ${reportIssue}`)
+        return false
+    }
+
+    let msLoad = shell.exec(`kubectl apply -f ./openline-setup/message-store-k8s-loadbalancer-service.yaml --namespace ${namespace}`, {silent: !verbose})
+    if (msLoad.code != 0) {
+        error.logError(msLoad.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
         return false
     }
 

@@ -40,24 +40,57 @@
 
 ## 👋 Overview
 
-TBD
+This guide will get you up and running with Openline in less than 5 minutes.
+
+The Openline CLI is a NodeJS app that makes it easy to setup and manage Openline apps directly from the terminal. It's an essential part of using Openline.  To use the Openline CLI, you'll need [Node.js version 16.14][node] or above installed on your machine.
 
 ## 🚀 Installation
 
 Download the Openline CLI using the following command
 
+via npm
+
 ```sh-session
 npm i openline -g
 ```
 
+via yarn
+
+```terminal
+yarn add openline
+```
+
+You can check that the Openline CLI is properly installed by running
+
+```terminal
+openline --version
+```
+
+If everything has been setup correctly, you'll see an output that looks like `openline/x.y.z`.
+
 ## 🙌 Features
 
-TBD
+
+```terminal
+USAGE:
+    openline [COMMAND]
+    openline [TOPIC] [COMMAND]
+
+TOPICS:
+    dev         Starts and stops local Openline development server
+
+COMMANDS:
+    help        Display help for the Openline CLI
+    issues      View or Create issues against the Openline project
+```
+
+- **COMMANDS** execute a routine
+- **TOPICS** are commands that contain sub commands.  For example `openline dev start`
 
 ## 🤝 Resources
 
+- Full reference docs for the CLI can be found via our [CLI guide][guide]
 - For help, feature requests, or chat with fellow Openline enthusiasts, check out our [slack community][slack]!
-- Our [docs site][docs] has references for developer functionality, including the Graph API
 
 ## 💪 Contributions
 
@@ -86,10 +119,11 @@ A massive thank you goes out to all these wonderful people ([emoji key][emoji]):
 
 [apache2]: https://www.apache.org/licenses/LICENSE-2.0
 [call]: https://meetings-eu1.hubspot.com/matt2/customer-demos
-[cli-repo]: https://github.com/openline-ai/openline-customer-os/
-[contributions]: https://github.com/openline-ai/community/blob/main/README.md
-[docs]: https://openline.ai
+[cli-repo]: https://github.com/openline-ai/openline-cli/
+[contributions]: https://www.openline.ai/docs/contribute
+[guide]: https://www.openline.ai/docs/
 [emoji]: https://allcontributors.org/docs/en/emoji-key
+[node]: https://nodejs.org/en/download/
 [pricing]: https://openline.ai/pricing
 [slack]: https://join.slack.com/t/openline-ai/shared_invite/zt-1i6umaw6c-aaap4VwvGHeoJ1zz~ngCKQ
 [twitter]: https://twitter.com/OpenlineAI

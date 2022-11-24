@@ -25,18 +25,24 @@ export default class DevPing extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(DevPing)
 
-    let health = shell.exec('curl localhost:10000/health', {silent: true})
-    if (health.code == 0) {
-      if (flags.verbose) {
-        console.log(health.stdout)
-      }
-      console.log('✅ customerOS API is up and reachable')
+    let cosHealth = shell.exec('curl localhost:10000/health', {silent: true})
+    let msHealth = shell.exec('nc -zv -w5 localhost 9009', {silent: true})
+
+    if (msHealth.code === 0) {
+      console.log('✅ message store gRPC API is up and reachable on port 9009')
+    }
+    else {
+      console.log('❌ message store gRPC API is not reachable')
+      console.log('🦦 try running => openline dev start customer-os')
+    }
+    
+    if (cosHealth.code === 0) {
+      console.log('✅ customerOS GraphQL API is up and reachable on port 10000')
       console.log('🦦 go to http://localhost:10000 in your browser to play around with the graph API explorer')
     }
     else {
-      console.log('❌ customerOS API is not reachable')
+      console.log('❌ customerOS GraphQL API is not reachable')
       console.log('🦦 try running => openline dev start customer-os')
     }
-
   }
 }
