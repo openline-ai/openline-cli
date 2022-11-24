@@ -7,6 +7,7 @@ export function getConfig() :any {
     config.server.cpu = 2
     config.server.disk = 30
     config.server.memory = 4
+    config.server.timeOuts = 180 //seconds
 
     // Contacts App config
     config.contacts = {}

@@ -3,7 +3,6 @@ import * as replace from 'replace-in-file'
 import * as error from './errors'
 import * as checks from '../checks/openline'
 import {getConfig} from '../../config/dev'
-import { exit } from 'process'
 
 export function installCustomerOs(verbose :boolean, imageVersion: string = 'latest') :boolean {
     let result = false
@@ -236,8 +235,9 @@ function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :b
 function provisionNeo4j(verbose :boolean) :boolean {
     let result = true
     let neo = ''
+    let config = getConfig()
     let retry = 1
-    let maxAttempts = 50
+    let maxAttempts = config.server.timeOuts / 2
 
     while (neo == '') {
         if (retry < maxAttempts) {
@@ -284,8 +284,9 @@ export function provisionPostgresql(verbose :boolean) :boolean {
     let sqlDb = 'openline'
     let sqlPw = 'password'
 
+    let config = getConfig()
     let retry = 1
-    let maxAttempts = 30
+    let maxAttempts = config.server.timeOuts / 2
 
     let ms = ''
     while (ms == '') {
