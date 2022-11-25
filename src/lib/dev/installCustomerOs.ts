@@ -3,6 +3,8 @@ import * as replace from 'replace-in-file'
 import * as error from './errors'
 import * as checks from '../checks/openline'
 import {getConfig} from '../../config/dev'
+import { deployImage } from './deploy'
+import { grabFile } from './setupFiles'
 
 export function installCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
   let result = false
@@ -48,94 +50,21 @@ function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
 
   const dir = shell.exec('mkdir openline-setup')
 
-  const f1 = shell.exec(`curl -sS ${config.customerOs.namespace} -o openline-setup/openline-namespace.json`, {silent: !verbose})
-  if (f1.code != 0) {
-    error.logError(f1.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f2 = shell.exec(`curl -sS ${config.customerOs.apiDeployment} -o openline-setup/customer-os-api.yaml`, {silent: !verbose})
-  if (f2.code != 0) {
-    error.logError(f2.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f3 = shell.exec(`curl -sS ${config.customerOs.apiService} -o openline-setup/customer-os-api-k8s-service.yaml`, {silent: !verbose})
-  if (f3.code != 0) {
-    error.logError(f3.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f4 = shell.exec(`curl -sS ${config.customerOs.apiLoadbalancer} -o openline-setup/customer-os-api-k8s-loadbalancer-service.yaml`, {silent: !verbose})
-  if (f4.code != 0) {
-    error.logError(f4.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f5 = shell.exec(`curl -sS ${config.customerOs.messageStoreDeployment} -o openline-setup/message-store.yaml`, {silent: !verbose})
-  if (f5.code != 0) {
-    error.logError(f5.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f6 = shell.exec(`curl -sS ${config.customerOs.messageStoreService} -o openline-setup/message-store-k8s-service.yaml`, {silent: !verbose})
-  if (f6.code != 0) {
-    error.logError(f6.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f7 = shell.exec(`curl -sS ${config.customerOs.postgresqlPersistentVolume} -o openline-setup/postgresql-persistent-volume.yaml`, {silent: !verbose})
-  if (f7.code != 0) {
-    error.logError(f7.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f8 = shell.exec(`curl -sS ${config.customerOs.postgresqlPersistentVolumeClaim} -o openline-setup/postgresql-persistent-volume-claim.yaml`, {silent: !verbose})
-  if (f8.code != 0) {
-    error.logError(f8.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f9 = shell.exec(`curl -sS ${config.customerOs.postgresqlHelmValues} -o openline-setup/postgresql-values.yaml`, {silent: !verbose})
-  if (f9.code != 0) {
-    error.logError(f9.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f10 = shell.exec(`curl -sS ${config.customerOs.postgresqlSetup} -o openline-setup/setup.sql`, {silent: !verbose})
-  if (f10.code != 0) {
-    error.logError(f10.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f11 = shell.exec(`curl -sS ${config.customerOs.neo4jHelmValues} -o openline-setup/neo4j-helm-values.yaml`, {silent: !verbose})
-  if (f11.code != 0) {
-    error.logError(f11.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f12 = shell.exec(`curl -sS ${config.customerOs.neo4jCypher} -o openline-setup/customer-os.cypher`, {silent: !verbose})
-  if (f12.code != 0) {
-    error.logError(f12.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f13 = shell.exec(`curl -sS ${config.customerOs.fusionauthHelmValues} -o openline-setup/fusionauth-values.yaml`, {silent: !verbose})
-  if (f13.code != 0) {
-    error.logError(f13.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-
-  const f14 = shell.exec(`curl -sS ${config.customerOs.neo4jProvisioning} -o openline-setup/provision-neo4j.sh`, {silent: !verbose})
-  if (f14.code != 0) {
-    error.logError(f14.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-    return false
-  }
-     let f15 = shell.exec(`curl -sS ${config.customerOs.messageStoreLoadbalancer} -o openline-setup/message-store-k8s-loadbalancer-service.yaml`, {silent: !verbose})
-     if (f15.code != 0){
-        error.logError(f15.stderr, 'The file location must have moved.  Please update config/dev.ts with new location', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
-        return false
-     }
+    let f1 = grabFile(config.customerOs.namespace, 'openline-setup/openline-namespace.json', verbose)
+    let f2 = grabFile(config.customerOs.apiDeployment,'openline-setup/customer-os-api.yaml', verbose)
+    let f3 = grabFile(config.customerOs.apiService, 'openline-setup/customer-os-api-k8s-service.yaml', verbose)
+    let f4 = grabFile(config.customerOs.apiLoadbalancer, 'openline-setup/customer-os-api-k8s-loadbalancer-service.yaml', verbose)
+    let f5 = grabFile(config.customerOs.messageStoreDeployment, 'openline-setup/message-store.yaml', verbose)
+    let f6 = grabFile(config.customerOs.messageStoreService, 'openline-setup/message-store-k8s-service.yaml', verbose)
+    let f7 = grabFile(config.customerOs.postgresqlPersistentVolume, 'openline-setup/postgresql-persistent-volume.yaml', verbose)
+    let f8 = grabFile(config.customerOs.postgresqlPersistentVolumeClaim, 'openline-setup/postgresql-persistent-volume-claim.yaml', verbose)
+    let f9 = grabFile(config.customerOs.postgresqlHelmValues, 'openline-setup/postgresql-values.yaml', verbose)
+    let f10 = grabFile(config.customerOs.postgresqlSetup, 'openline-setup/setup.sql', verbose)
+    let f11 = grabFile(config.customerOs.neo4jHelmValues, 'openline-setup/neo4j-helm-values.yaml', verbose)
+    let f12 = grabFile(config.customerOs.neo4jCypher, 'openline-setup/customer-os.cypher', verbose)
+    let f13 = grabFile(config.customerOs.fusionauthHelmValues, 'openline-setup/fusionauth-values.yaml', verbose)
+    let f14 = grabFile(config.customerOs.neo4jProvisioning, 'openline-setup/provision-neo4j.sh', verbose)
+    let f15 = grabFile(config.customerOs.messageStoreLoadbalancer, 'openline-setup/message-store-k8s-loadbalancer-service.yaml', verbose)
 
   if (imageVersion != 'latest') {
     const options = {
@@ -159,17 +88,15 @@ function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
   return result
 }
 
-function customerOsInstall(verbose :boolean, imageVersion = 'latest') :boolean {
-  const result = true
-  const config = getConfig()
-  const namespace = 'openline'
-  const reportIssue = 'https://github.com/openline-ai/openline-cli/issues/new/choose'
+function customerOsInstall(verbose :boolean, imageVersion: string = 'latest') :boolean {
+    let result = true
+    let config = getConfig()
+    let namespace = 'openline'
 
   // create the namespace in kubernetes
   const ns = shell.exec('kubectl create -f ./openline-setup/openline-namespace.json', {silent: !verbose})
   if (ns.code != 0) {
-    error.logError(ns.stderr, 'Unable to create namespace from ./openline-setup/openline-namespace.json', `Report this issue => ${reportIssue}`)
-    return false
+    error.logError(ns.stderr, 'Unable to create namespace from ./openline-setup/openline-namespace.json')
   }
 
   // add helm repos
@@ -180,88 +107,56 @@ function customerOsInstall(verbose :boolean, imageVersion = 'latest') :boolean {
   // install neo4j
   const neoInstall = shell.exec(`helm install neo4j-customer-os neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ./openline-setup/neo4j-helm-values.yaml --namespace ${namespace}`, {silent: !verbose})
   if (neoInstall.code != 0) {
-    error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone', `Report this issue => ${reportIssue}`)
+    error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone')
     return false
   }
 
   // setup PostgreSQL persistent volume
   const pv = shell.exec(`kubectl apply -f ./openline-setup/postgresql-persistent-volume.yaml --namespace ${namespace}`, {silent: !verbose})
   if (pv.code != 0) {
-    error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume', `Report this issue => ${reportIssue}`)
+    error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume')
     return false
   }
 
   const pvc = shell.exec(`kubectl apply -f ./openline-setup/postgresql-persistent-volume-claim.yaml --namespace ${namespace}`, {silent: !verbose})
   if (pvc.code != 0) {
-    error.logError(pvc.stderr, 'Unable to setup postgreSQL persistent volume claim', `Report this issue => ${reportIssue}`)
+    error.logError(pvc.stderr, 'Unable to setup postgreSQL persistent volume claim')
     return false
   }
 
   // install PostgreSQL
   const postgresql = shell.exec(`helm install --values ./openline-setup/postgresql-values.yaml postgresql-customer-os-dev bitnami/postgresql --namespace ${namespace}`, {silent: !verbose})
   if (postgresql.code != 0) {
-    error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql', `Report this issue => ${reportIssue}`)
+    error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql')
     return false
   }
 
-  // deploy customerOS API container image
-  const cosApiImage = config.customerOs.apiImage.concat(imageVersion)
-  const cosPull = shell.exec(`docker pull ${cosApiImage}`, {silent: !verbose})
-  if (cosPull.code != 0) {
-    error.logError(cosPull.stderr, `Unable to pull image ${cosApiImage}`, `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  const cosDeploy = shell.exec(`kubectl apply -f ./openline-setup/customer-os-api.yaml --namespace ${namespace}`, {silent: !verbose})
-  if (cosDeploy.code != 0) {
-    error.logError(cosDeploy.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  const cosService = shell.exec(`kubectl apply -f ./openline-setup/customer-os-api-k8s-service.yaml --namespace ${namespace}`, {silent: !verbose})
-  if (cosService.code != 0) {
-    error.logError(cosService.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  const cosLoad = shell.exec(`kubectl apply -f ./openline-setup/customer-os-api-k8s-loadbalancer-service.yaml --namespace ${namespace}`, {silent: !verbose})
-  if (cosLoad.code != 0) {
-    error.logError(cosLoad.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  // deploy message store API container image
-
-  const msApiImage = config.customerOs.messageStoreImage.concat(imageVersion)
-  const msPull = shell.exec(`docker pull ${msApiImage}`, {silent: !verbose})
-  if (msPull.code != 0) {
-    error.logError(msPull.stderr, `Unable to pull image ${msApiImage}`, `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  const msDeploy = shell.exec(`kubectl apply -f ./openline-setup/message-store.yaml --namespace ${namespace}`, {silent: !verbose})
-  if (msDeploy.code != 0) {
-    error.logError(msDeploy.stderr, 'Unable to deploy message store API', `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-  const msService = shell.exec(`kubectl apply -f ./openline-setup/message-store-k8s-service.yaml --namespace ${namespace}`, {silent: !verbose})
-  if (msService.code != 0) {
-    error.logError(msService.stderr, 'Unable to deploy message store API', `Report this issue => ${reportIssue}`)
-    return false
-  }
-
-    let msLoad = shell.exec(`kubectl apply -f ./openline-setup/message-store-k8s-loadbalancer-service.yaml --namespace ${namespace}`, {silent: !verbose})
-    if (msLoad.code != 0) {
-        error.logError(msLoad.stderr, 'Unable to deploy customerOS API', `Report this issue => ${reportIssue}`)
+    // deploy customerOS API container image
+    let cosApiImage = config.customerOs.apiImage.concat(imageVersion)
+    let cosDeployFile = './openline-setup/customer-os-api.yaml'
+    let cosServiceFile = './openline-setup/customer-os-api-k8s-service.yaml'
+    let cosLbFile = './openline-setup/customer-os-api-k8s-loadbalancer-service.yaml'
+    let cosDeploy = deployImage(cosApiImage, cosDeployFile, cosServiceFile, cosLbFile, verbose)
+    if (cosDeploy === false) {
+        error.logError('Error loading image', 'Unable to deploy customerOS API')
         return false
     }
 
-  // install fusion auth
+    // deploy message store API container image
+    let msApiImage = config.customerOs.messageStoreImage.concat(imageVersion)
+    let msDeployFile = './openline-setup/message-store.yaml'
+    let msServiceFile = './openline-setup/message-store-k8s-service.yaml'
+    let msLbFile = './openline-setup/message-store-k8s-loadbalancer-service.yaml'
+    let msDeploy = deployImage(msApiImage, msDeployFile, msServiceFile, msLbFile, verbose)
+    if (msDeploy === false) {
+        error.logError('Error loading image', 'Unable to deploy message store API')
+        return false
+    }
 
-  const fa = shell.exec(`helm install fusionauth-customer-os fusionauth/fusionauth -f ./openline-setup/fusionauth-values.yaml --namespace ${namespace}`, {silent: !verbose})
+    // install fusion auth
+    const fa = shell.exec(`helm install fusionauth-customer-os fusionauth/fusionauth -f ./openline-setup/fusionauth-values.yaml --namespace ${namespace}`, {silent: !verbose})
   if (fa.code != 0) {
-    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth', `Report this issue => ${reportIssue}`)
+    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth')
     return false
   }
 
@@ -323,7 +218,7 @@ function provisionNeo4j(verbose :boolean) :boolean {
   return result
 }
 
-export function provisionPostgresql(verbose :boolean) :boolean {
+function provisionPostgresql(verbose :boolean) :boolean {
   const result = true
   const sqlUser = 'openline'
   const sqlDb = 'openline'
