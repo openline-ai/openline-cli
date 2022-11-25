@@ -18,12 +18,12 @@ export default class DevPing extends Command {
       required: false,
       description: 'the Openline application you would like to ping',
       default: 'customer-os',
-      options: ['customer-os'] 
-    }
+      options: ['customer-os'],
+    },
   ]
 
   public async run(): Promise<void> {
-    const {args, flags} = await this.parse(DevPing)
+    const {flags} = await this.parse(DevPing)
 
     let cosHealth = shell.exec('curl localhost:10000/health', {silent: true})
     let msHealth = shell.exec('nc -zv -w5 localhost 9009', {silent: true})
@@ -35,12 +35,11 @@ export default class DevPing extends Command {
       console.log('❌ message store gRPC API is not reachable')
       console.log('🦦 try running => openline dev start customer-os')
     }
-    
+
     if (cosHealth.code === 0) {
       console.log('✅ customerOS GraphQL API is up and reachable on port 10000')
       console.log('🦦 go to http://localhost:10000 in your browser to play around with the graph API explorer')
-    }
-    else {
+    } else {
       console.log('❌ customerOS GraphQL API is not reachable')
       console.log('🦦 try running => openline dev start customer-os')
     }

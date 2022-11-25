@@ -8,6 +8,5 @@
 /node_modules
 oclif.manifest.json
 .env
-yarn.lock
 .yarn/install-state.gz
 .yarn/cache/*
