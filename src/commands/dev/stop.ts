@@ -20,7 +20,7 @@ export default class DevStop extends Command {
       required: false,
       description: 'the Openline application you would like to stop',
       default: 'customer-os',
-      options: ['customer-os'] 
+      options: ['customer-os']
     }
   ]
 
