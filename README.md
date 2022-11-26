@@ -19,10 +19,10 @@
   </p>
   <p>
 
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen?logo=github)][cli-repo] 
-[![license](https://img.shields.io/badge/license-Apache%202-blue)][apache2] 
-[![stars](https://img.shields.io/github/stars/openline-ai/openline-customer-os?style=social)][cli-repo] 
-[![twitter](https://img.shields.io/twitter/follow/openlineAI?style=social)][twitter] 
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen?logo=github)][cli-repo]
+[![license](https://img.shields.io/badge/license-Apache%202-blue)][apache2]
+[![stars](https://img.shields.io/github/stars/openline-ai/openline-customer-os?style=social)][cli-repo]
+[![twitter](https://img.shields.io/twitter/follow/openlineAI?style=social)][twitter]
 [![slack](https://img.shields.io/badge/slack-community-blueviolet.svg?logo=slack)][slack]
 
   </p>
@@ -36,7 +36,6 @@
     </sub>
   </p>
 </div>
-
 
 ## 👋 Overview
 
@@ -56,20 +55,19 @@ npm i openline -g
 
 via yarn
 
-```terminal
+```sh-session
 yarn add openline
 ```
 
 You can check that the Openline CLI is properly installed by running
 
-```terminal
+```sh-session
 openline --version
 ```
 
 If everything has been setup correctly, you'll see an output that looks like `openline/x.y.z`.
 
 ## 🙌 Features
-
 
 ```terminal
 USAGE:
@@ -115,7 +113,6 @@ A massive thank you goes out to all these wonderful people ([emoji key][emoji]):
 
 - This repo is licensed under [Apache 2.0][apache2], with the exception of the ee directory (if applicable).
 - Premium features (contained in the ee directory) require an Openline Enterprise license.  See our [pricing page][pricing] for more details.
-
 
 [apache2]: https://www.apache.org/licenses/LICENSE-2.0
 [call]: https://meetings-eu1.hubspot.com/matt2/customer-demos
