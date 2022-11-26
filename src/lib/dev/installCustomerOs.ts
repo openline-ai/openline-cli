@@ -1,7 +1,7 @@
 import * as shell from 'shelljs'
 import * as replace from 'replace-in-file'
 import * as error from './errors'
-import * as checks from '../checks/openline'
+import * as checks from './dev-server-checks'
 import {getConfig} from '../../config/dev'
 import { deployImage } from './deploy'
 import { grabFile } from './setupFiles'

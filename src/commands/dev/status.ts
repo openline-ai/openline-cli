@@ -1,5 +1,5 @@
 import {Command, Flags} from '@oclif/core'
-import * as checks from '../../lib/checks/openline'
+import * as checks from '../../lib/dev/dev-server-checks'
 import * as shell from 'shelljs'
 
 export default class DevStatus extends Command {
@@ -16,11 +16,11 @@ export default class DevStatus extends Command {
   static args = []
 
   public async run(): Promise<void> {
-    const {args, flags} = await this.parse(DevStatus)
+    // const {flags} = await this.parse(DevStatus)
 
-    let verbose = flags.verbose
+    // let verbose = flags.verbose
 
-    let isInstalled = checks.installCheck()
+    const isInstalled = checks.installCheck()
     if (isInstalled) {
       this.log('🦦 k8s cluster')
       shell.exec('kubectl get services')
@@ -32,8 +32,7 @@ export default class DevStatus extends Command {
       this.log('')
       this.log('🦦 k8s persistent volumes')
       shell.exec('kubectl get pv')
-    }
-    else {
+    } else {
       console.log('❌ Openline services are not running')
       console.log('🦦 Try running => openline dev start customer-os')
     }
