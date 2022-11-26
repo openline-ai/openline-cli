@@ -23,15 +23,14 @@ export default class DevPing extends Command {
   ]
 
   public async run(): Promise<void> {
-    const {flags} = await this.parse(DevPing)
+    // const {flags} = await this.parse(DevPing)
 
-    let cosHealth = shell.exec('curl localhost:10000/health', {silent: true})
-    let msHealth = shell.exec('nc -zv -w5 localhost 9009', {silent: true})
+    const cosHealth = shell.exec('curl localhost:10000/health', {silent: true})
+    const msHealth = shell.exec('nc -zv -w5 localhost 9009', {silent: true})
 
     if (msHealth.code === 0) {
       console.log('✅ message store gRPC API is up and reachable on port 9009')
-    }
-    else {
+    } else {
       console.log('❌ message store gRPC API is not reachable')
       console.log('🦦 try running => openline dev start customer-os')
     }

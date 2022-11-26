@@ -1,10 +1,9 @@
-import {Command, Flags, CliUx} from '@oclif/core'
+import {Command, Flags} from '@oclif/core'
 import * as shell from 'shelljs'
 import * as dev from '../../lib/dev/startColima'
 import * as install from '../../lib/dev/installCustomerOs'
-import * as mac from '../../lib/checks/mac'
+import * as mac from '../../lib/mac-dependency-check'
 import * as contacts from '../../lib/dev/installContacts'
-
 import {installLocalCustomerOs} from '../../lib/dev/install-local-customer-os'
 
 export default class DevStart extends Command {
@@ -27,7 +26,6 @@ export default class DevStart extends Command {
       default: 'latest',
     }),
     verbose: Flags.boolean({char: 'v'}),
-
   }
 
   static args = [
@@ -41,10 +39,10 @@ export default class DevStart extends Command {
   ]
 
   public async run(): Promise<void> {
-    const {flags} = await this.parse(DevStart)
+    const {flags, args} = await this.parse(DevStart)
 
     // Base dependency check
-    const depend = mac.dependencies(flags.verbose)
+    const depend = mac.installDependencies(flags.verbose)
     if (!depend) {
       this.exit(1)
     }
@@ -69,7 +67,7 @@ export default class DevStart extends Command {
         if (args.app.toLowerCase() === 'contacts') {
           this.log('')
           this.log('🦦 installing Contacts app...')
-          let contactsApp = contacts.installContacts(flags.verbose, flags.tag)
+          const contactsApp = contacts.installContacts(flags.verbose, flags.tag)
 
           if (contactsApp) {
             this.log('✅ Contacts app started successfully!')
@@ -79,7 +77,6 @@ export default class DevStart extends Command {
           }
         }
       }
-
     }
   }
 }

@@ -1,6 +1,6 @@
 import * as shell from 'shelljs'
 import * as error from './errors'
-import * as checks from '../checks/openline'
+import * as checks from './dev-server-checks'
 import {getConfig} from '../../config/dev'
 
 export function startColima(verbose :boolean) :boolean {
