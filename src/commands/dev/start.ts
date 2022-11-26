@@ -23,7 +23,6 @@ export default class DevStart extends Command {
     location: Flags.string({
       char: 'l',
       description: 'location for the source code to be used in the installation',
-      default: 'latest',
     }),
     verbose: Flags.boolean({char: 'v'}),
   }
@@ -55,7 +54,7 @@ export default class DevStart extends Command {
 
     if (start) {
       this.log('🦦 installing customerOS...')
-      const customerOsInstalled = flags.location ? installLocalCustomerOs(flags.location, flags.verbose) : install.installCustomerOs(flags.verbose, flags.tag)
+      const customerOsInstalled = flags.location ? installLocalCustomerOs(flags.location, flags.verbose) : install.installTaggedCustomerOs(flags.verbose, flags.tag)
 
       if (customerOsInstalled) {
         this.log('')
