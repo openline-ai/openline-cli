@@ -1,5 +1,5 @@
 import * as shell from 'shelljs'
-import * as error from '../../errors'
+import * as error from './errors'
 
 const K8S_NAMESPACE_NAME = 'openline'
 const REPORT_ISSUE_LINK = 'https://github.com/openline-ai/openline-cli/issues/new/choose'
