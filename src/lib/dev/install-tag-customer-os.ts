@@ -8,7 +8,7 @@ import {deployImage, grabFile, Yaml} from './deploy'
 const config = getConfig()
 const NAMESPACE = 'openline'
 
-export function installCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
+export function installTaggedCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
   const isInstalled = checks.installCheck()
   if (isInstalled) {
     return true
