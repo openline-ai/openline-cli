@@ -1,6 +1,6 @@
 import {Command, Flags} from '@oclif/core'
 import * as shell from 'shelljs'
-import * as dev from '../../lib/dev/startColima'
+import * as dev from '../../lib/dev/start-colima'
 import * as install from '../../lib/dev/install-tag-customer-os'
 import * as mac from '../../lib/mac-dependency-check'
 import * as contacts from '../../lib/dev/install-tag-contacts'

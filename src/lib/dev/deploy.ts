@@ -8,18 +8,16 @@ export interface Yaml {
 }
 
 export function grabFile(fileLocation: string, setupPath: string, verbose :boolean) :boolean {
-  const result = true
   const file = shell.exec(`curl -sS ${fileLocation} -o ${setupPath}`, {silent: !verbose})
   if (file.code !== 0) {
     error.logError(file.stderr, `Could not download setup file from ${fileLocation}`)
     return false
   }
 
-  return result
+  return true
 }
 
 export function deployImage(imageUrl :string, deployConfig :Yaml, verbose = false) :boolean {
-  const result = true
   const NAMESPACE = 'openline'
 
   const pull = shell.exec(`docker pull ${imageUrl}`, {silent: !verbose})
@@ -45,5 +43,5 @@ export function deployImage(imageUrl :string, deployConfig :Yaml, verbose = fals
     }
   }
 
-  return result
+  return true
 }
