@@ -33,6 +33,7 @@ export function installLocalCustomerOs(location: string, verbose :boolean) :bool
   if (!installK8SNamespace(verbose, location)) return false
   if (!installNeo4j(verbose, location)) return false
   if (!installPostgres(verbose, location)) return false
+  if (!installFusionAuth(verbose, location)) return false
   if (!installCustomerOsAPIApp(verbose, location)) return false
 
   shell.exec('cat ' + location + FUSION_AUTH_VALUES)
@@ -44,7 +45,7 @@ function installCustomerOsAPIApp(verbose: boolean, location:string) {
 
   const CUSTOMER_OS_API_APP_LOCATION = location + CUSTOMER_OS_API_INTERNAL_PATH
   shell.exec(`echo ${CUSTOMER_OS_API_APP_LOCATION}  docker build -t customer-os-api .`, {silent: !verbose})
-  const customerOsBuildExecution = shell.exec(`cd ${CUSTOMER_OS_API_APP_LOCATION} | docker build -t customer-os-api .`, {silent: !verbose})
+  const customerOsBuildExecution = shell.exec(`cd  | docker build -t customer-os-api -f ${CUSTOMER_OS_API_APP_LOCATION}/Dockerfile ${CUSTOMER_OS_API_APP_LOCATION}`, {silent: !verbose})
 
   if (customerOsBuildExecution.code !== 0) {
     error.logError(customerOsBuildExecution.stderr, `Unable to build image in ${CUSTOMER_OS_API_APP_LOCATION}`, `Report this issue => ${REPORT_ISSUE_LINK}`)
@@ -76,10 +77,6 @@ function installCustomerOsAPIApp(verbose: boolean, location:string) {
 }
 
 function installPostgres(verbose: boolean, location:string) {
-  if (shell.exec('kubectl get services --namespace openline | grep postgresql-customer-os') !== '') {
-    return true
-  }
-
   const POSTGRES_PERSISTENT_VOLUME_LOCATION = location + POSTGRES_PERSISTENT_VOLUME
   const persistentVolumeInstallation = shell.exec(
     `kubectl apply -f ${POSTGRES_PERSISTENT_VOLUME_LOCATION} --namespace ${K8S_NAMESPACE_NAME}`,
@@ -115,10 +112,6 @@ function installPostgres(verbose: boolean, location:string) {
 }
 
 function installNeo4j(verbose: boolean, location:string) {
-  if (shell.exec('kubectl get services --namespace openline | grep neo4j-customer-os') !== '') {
-    return true
-  }
-
   const NEO4J_SETTINGS_PATH = location + NEO4J_VALUES
   const neo4jInstallation = shell.exec(
     `helm install neo4j-customer-os neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ${NEO4J_SETTINGS_PATH} --namespace ${K8S_NAMESPACE_NAME}`,
@@ -147,3 +140,14 @@ function installK8SNamespace(verbose:boolean, location:string) :boolean {
   return true
 }
 
+function installFusionAuth(verbose :boolean, location:string) :boolean {
+  const FUSION_AUTH_VALUES_LOCATION = location + FUSION_AUTH_VALUES
+  shell.exec('helm repo add fusionauth https://fusionauth.github.io/charts', {silent: !verbose})
+  const fa = shell.exec(`helm install fusionauth-customer-os fusionauth/fusionauth -f ${FUSION_AUTH_VALUES_LOCATION} --namespace ${K8S_NAMESPACE_NAME}`, {silent: !verbose})
+  if (fa.code !== 0) {
+    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth')
+    return false
+  }
+
+  return true
+}
