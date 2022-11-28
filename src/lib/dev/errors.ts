@@ -1,3 +1,4 @@
+import {exit} from 'node:process'
 import * as shell from 'shelljs'
 
 export function logError(desc: string, suggestion: string, ref?: string) :void {
@@ -13,4 +14,5 @@ export function logError(desc: string, suggestion: string, ref?: string) :void {
   console.log('')
   console.log('🦦 shutting down dev server...')
   shell.exec('colima delete -f', {silent: true})
+  exit(1)
 }
