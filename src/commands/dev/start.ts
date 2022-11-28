@@ -86,6 +86,7 @@ export default class DevStart extends Command {
         this.log('✅ Oasis app started successfully!')
         this.log('🦦 To validate the service is reachable run the command =>  openline dev ping oasis')
         this.log('🦦 Visit http://localhost:3006 in your browser to view the application')
+        shell.exec('sleep 5')
         shell.exec('open http://localhost:3006')
       }
     }
