@@ -60,27 +60,27 @@ export function installTaggedCustomerOs(verbose :boolean, imageVersion = 'latest
     return false
   }
 
-  shell.exec('rm -r openline-setup', {silent: true})
+  shell.exec(`rm -r ${SETUP_PATH}`, {silent: true})
 
   return true
 }
 
 function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
-  grabFile(config.customerOs.namespace, `${NAMESPACE_CONFIG}`, verbose)
-  grabFile(config.customerOs.apiDeployment, `${API_DEPLOYMENT}`, verbose)
-  grabFile(config.customerOs.apiService, `${API_SERVICE}`, verbose)
-  grabFile(config.customerOs.apiLoadbalancer, `${API_LOADBALANCER}`, verbose)
-  grabFile(config.customerOs.messageStoreDeployment, `${MESSAGE_STORE_DEPLOYMENT}`, verbose)
-  grabFile(config.customerOs.messageStoreService, `${MESSAGE_STORE_SERVICE}`, verbose)
-  grabFile(config.customerOs.messageStoreLoadbalancer, `${MESSAGE_STORE_LOADBALANCER}`, verbose)
-  grabFile(config.customerOs.postgresqlPersistentVolume, `${POSTGRESQL_PV}`, verbose)
-  grabFile(config.customerOs.postgresqlPersistentVolumeClaim, `${POSTGRESQL_PVC}`, verbose)
-  grabFile(config.customerOs.postgresqlHelmValues, `${POSTGRESQL_HELM_VALUES}`, verbose)
-  grabFile(config.customerOs.postgresqlSetup, `${POSTGRESQL_DB_SETUP}`, verbose)
-  grabFile(config.customerOs.neo4jHelmValues, `${NEO4J_HELM_VALUES}`, verbose)
-  grabFile(config.customerOs.neo4jCypher, `${NEO4J_CYPHER}`, verbose)
-  grabFile(config.customerOs.neo4jProvisioning, `${NEO4J_DB_SETUP}`, verbose)
-  grabFile(config.customerOs.fusionauthHelmValues, `${FUSIONAUTH_HELM_VALUES}`, verbose)
+  grabFile(config.customerOs.namespace, NAMESPACE_CONFIG, verbose)
+  grabFile(config.customerOs.apiDeployment, API_DEPLOYMENT, verbose)
+  grabFile(config.customerOs.apiService, API_SERVICE, verbose)
+  grabFile(config.customerOs.apiLoadbalancer, API_LOADBALANCER, verbose)
+  grabFile(config.customerOs.messageStoreDeployment, MESSAGE_STORE_DEPLOYMENT, verbose)
+  grabFile(config.customerOs.messageStoreService, MESSAGE_STORE_SERVICE, verbose)
+  grabFile(config.customerOs.messageStoreLoadbalancer, MESSAGE_STORE_LOADBALANCER, verbose)
+  grabFile(config.customerOs.postgresqlPersistentVolume, POSTGRESQL_PV, verbose)
+  grabFile(config.customerOs.postgresqlPersistentVolumeClaim, POSTGRESQL_PVC, verbose)
+  grabFile(config.customerOs.postgresqlHelmValues, POSTGRESQL_HELM_VALUES, verbose)
+  grabFile(config.customerOs.postgresqlSetup, POSTGRESQL_DB_SETUP, verbose)
+  grabFile(config.customerOs.neo4jHelmValues, NEO4J_HELM_VALUES, verbose)
+  grabFile(config.customerOs.neo4jCypher, NEO4J_CYPHER, verbose)
+  grabFile(config.customerOs.neo4jProvisioning, NEO4J_DB_SETUP, verbose)
+  grabFile(config.customerOs.fusionauthHelmValues, FUSIONAUTH_HELM_VALUES, verbose)
 
   if (imageVersion !== 'latest') {
     const options = {

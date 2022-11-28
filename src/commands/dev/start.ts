@@ -15,7 +15,7 @@ export default class DevStart extends Command {
   ]
 
   static flags = {
-    all: Flags.boolean({char: 'a'}),
+    all: Flags.boolean({char: 'a', description: 'start all Openline apps & services'}),
     tag: Flags.string({
       char: 't',
       description: 'version tag of the image you would like to deploy',
@@ -62,34 +62,52 @@ export default class DevStart extends Command {
       this.log('🦦 To validate the service is reachable run the command =>  openline dev ping customer-os')
       this.log('🦦 Visit http://localhost:10000 in your browser to play around with the graph API explorer')
       shell.exec('open http://localhost:10000')
+    } else {
+      this.exit(1)
+    }
+
+    if (flags.all) {
+      startContacts(flags.verbose, flags.tag)
+      startOasis(flags.verbose, flags.tag)
     }
 
     if (args.app.toLowerCase() === 'contacts') {
-      this.log('')
-      this.log('🦦 installing Contacts app...')
-      const contactsApp = contacts.installContacts(flags.verbose, flags.tag)
-
-      if (contactsApp) {
-        this.log('✅ Contacts app started successfully!')
-        this.log('🦦 To validate the service is reachable run the command =>  openline dev ping contacts')
-        this.log('🦦 Visit http://localhost:3000 in your browser to view the application')
-        shell.exec('open http://localhost:3000')
-      }
+      startContacts(flags.verbose, flags.tag)
     }
 
     if (args.app.toLowerCase() === 'oasis') {
-      this.log('')
-      this.log('🦦 installing Oasis app...')
-      const oasisApp = installOasis(flags.verbose, flags.tag)
-
-      if (oasisApp) {
-        this.log('✅ Oasis app started successfully!')
-        this.log('🦦 To validate the service is reachable run the command =>  openline dev ping oasis')
-        this.log('🦦 Visit http://localhost:3006 in your browser to view the application')
-        shell.exec('sleep 5')
-        shell.exec('open http://localhost:3006')
-      }
+      startOasis(flags.verbose, flags.tag)
     }
   }
 }
 
+function startContacts(verbose :boolean, tag :string) :boolean {
+  console.log('')
+  console.log('🦦 installing Contacts app...')
+  const result = contacts.installContacts(verbose, tag)
+
+  if (result) {
+    console.log('✅ Contacts app started successfully!')
+    console.log('🦦 To validate the service is reachable run the command =>  openline dev ping contacts')
+    console.log('🦦 Visit http://localhost:3000 in your browser to view the application')
+    shell.exec('open http://localhost:3000')
+  }
+
+  return result
+}
+
+function startOasis(verbose :boolean, tag :string) :boolean {
+  console.log('')
+  console.log('🦦 installing Oasis app...')
+  const result = installOasis(verbose, tag)
+
+  if (result) {
+    console.log('✅ Oasis app started successfully!')
+    console.log('🦦 To validate the service is reachable run the command =>  openline dev ping oasis')
+    console.log('🦦 Visit http://localhost:3006 in your browser to view the application')
+    shell.exec('sleep 5')
+    shell.exec('open http://localhost:3006')
+  }
+
+  return result
+}

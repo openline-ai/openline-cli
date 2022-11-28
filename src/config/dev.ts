@@ -13,8 +13,9 @@ export function getConfig() :any {
   config.contacts = {}
   // Contacts GUI
   config.contacts.guiImage = 'ghcr.io/openline-ai/openline-contacts/contacts-api:'
-  config.contacts.guiDeployment = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/47ff14b93b988188b1382b6d1cb23143d8106740/deployment/k8s/contacts-gui-deployment.yaml'
-  config.contacts.guiService = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/47ff14b93b988188b1382b6d1cb23143d8106740/deployment/k8s/contacts-gui-service.yaml'
+  config.contacts.guiDeployment = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter/deployment/infra/k8s/contacts-gui-deployment.yaml'
+  config.contacts.guiService = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter/deployment/infra/k8s/contacts-gui-service.yaml'
+  config.contacts.guiLoadbalancer = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter/deployment/infra/k8s/contacts-gui-loadbalancer.yaml'
   config.contacts.repo = 'https://github.com/openline-ai/openline-contacts.git'
 
   // customerOS config
