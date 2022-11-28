@@ -7,16 +7,11 @@ import {deployImage, grabFile} from './deploy'
 const config = getConfig()
 
 export function installContacts(verbose :boolean, imageVersion = 'latest') :boolean {
+  const dir = shell.exec('mkdir openline-setup')
   return false
 }
 
 function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
-  const dir = shell.exec('mkdir openline-setup')
-  if (dir.code !== 0) {
-    error.logError(dir.stderr, 'Could not make setup directory')
-    return false
-  }
-
   grabFile(config.contacts.guiDeployment, 'openline-setup/contacts-gui-deployment.yaml', verbose)
   grabFile(config.contacts.guiService, 'openline-setup/contacts-gui-service.yaml', verbose)
 
