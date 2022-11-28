@@ -144,6 +144,7 @@ function installFusionAuth(verbose :boolean) :boolean {
 }
 
 function deployCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
+  // eslint-disable-next-line unicorn/prefer-spread
   const apiImage = config.customerOs.apiImage.concat(imageVersion)
   const installConfig: Yaml = {
     deployYaml: './openline-setup/customer-os-api.yaml',
@@ -160,6 +161,7 @@ function deployCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
 }
 
 function deployMessageStore(verbose :boolean, imageVersion = 'latest') :boolean {
+  // eslint-disable-next-line unicorn/prefer-spread
   const apiImage = config.customerOs.messageStoreImage.concat(imageVersion)
   const installConfig: Yaml = {
     deployYaml: './openline-setup/message-store.yaml',
