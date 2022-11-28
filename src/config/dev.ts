@@ -12,7 +12,7 @@ export function getConfig() :any {
   // Contacts App config
   config.contacts = {}
   // Contacts GUI
-  config.contacts.guiImage = 'ghcr.io/openline-ai/openline-contacts/contacts-api:'
+  config.contacts.guiImage = 'ghcr.io/openline-ai/openline-contacts:'
   config.contacts.guiDeployment = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter/deployment/infra/k8s/contacts-gui-deployment.yaml'
   config.contacts.guiService = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter/deployment/infra/k8s/contacts-gui-service.yaml'
   config.contacts.guiLoadbalancer = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter/deployment/infra/k8s/contacts-gui-loadbalancer.yaml'
