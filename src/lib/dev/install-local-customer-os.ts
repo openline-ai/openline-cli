@@ -19,6 +19,7 @@ const POSTGRES_PERSISTENT_VOLUME_CLAIM = K8S_CONFIGS_PATH + 'postgresql-persiste
 const K8S_COSTUMER_OS_API_APP_SETTINGS = K8S_CONFIGS_PATH + 'customer-os-api.yaml'
 const K8S_COSTUMER_OS_API_SERVICE_SETTINGS = K8S_CONFIGS_PATH + 'customer-os-api-k8s-service.yaml'
 const K8S_COSTUMER_OS_API_LOAD_BALANCER = K8S_CONFIGS_PATH + 'customer-os-api-k8s-loadbalancer-service.yaml'
+const K8S_FUSION_AUTH_API_LOAD_BALANCER = K8S_CONFIGS_PATH + 'fusion-auth-load-balancer.yaml'
 
 /* Apps Locations */
 const CUSTOMER_OS_API_INTERNAL_PATH = '/packages/server/customer-os-api'
@@ -35,7 +36,6 @@ export function installLocalCustomerOs(location: string, verbose :boolean) :bool
   if (!installFusionAuth(verbose, location)) return false
   if (!installCustomerOsAPIApp(verbose, location)) return false
 
-  shell.exec('cat ' + location + FUSION_AUTH_VALUES)
   return true
 }
 
@@ -145,6 +145,13 @@ function installFusionAuth(verbose :boolean, location:string) :boolean {
   const fa = shell.exec(`helm install fusionauth-customer-os fusionauth/fusionauth -f ${FUSION_AUTH_VALUES_LOCATION} --namespace ${K8S_NAMESPACE_NAME}`, {silent: !verbose})
   if (fa.code !== 0) {
     error.logError(fa.stderr, 'Unable to complete helm install of fusion auth', true)
+    return false
+  }
+
+  const FUSION_AUTH_LOAD_BALANCER_K8S_SETTINGS = location + K8S_FUSION_AUTH_API_LOAD_BALANCER
+  const fusionAuthLB = shell.exec(`kubectl apply -f ${FUSION_AUTH_LOAD_BALANCER_K8S_SETTINGS} --namespace ${K8S_NAMESPACE_NAME}`, {silent: !verbose})
+  if (fusionAuthLB.code !== 0) {
+    error.logError(fusionAuthLB.stderr, 'Unable to deploy Fusion AUTH load balancer', `Report this issue => ${REPORT_ISSUE_LINK}`)
     return false
   }
 
