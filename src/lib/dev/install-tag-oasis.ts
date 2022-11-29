@@ -26,14 +26,10 @@ export function installOasis(verbose :boolean, imageVersion = 'latest') :boolean
   shell.exec(`mkdir ${SETUP_PATH}`)
 
   const setup = getSetupFiles(verbose, imageVersion)
-  if (!setup) {
-    return false
-  }
+  if (!setup) return false
 
   const deploy = deployOasis(verbose, imageVersion)
-  if (!deploy) {
-    return false
-  }
+  if (!deploy) return false
 
   shell.exec(`rm -r ${SETUP_PATH}`)
 

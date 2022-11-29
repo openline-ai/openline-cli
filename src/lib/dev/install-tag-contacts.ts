@@ -15,14 +15,10 @@ export function installContacts(verbose :boolean, imageVersion = 'latest') :bool
   shell.exec(`mkdir ${SETUP_PATH}`)
 
   const setup = getSetupFiles(verbose, imageVersion)
-  if (!setup) {
-    return false
-  }
+  if (!setup) return false
 
   const install = contactsInstall(verbose, imageVersion)
-  if (!install) {
-    return false
-  }
+  if (!install) return false
 
   shell.exec(`rm -r ${SETUP_PATH}`)
   return true

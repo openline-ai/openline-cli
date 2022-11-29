@@ -32,33 +32,23 @@ const FUSIONAUTH_HELM_VALUES = SETUP_PATH + '/fusionauth-values.yaml'
 
 export function installTaggedCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
   const isInstalled = checks.installCheck()
-  if (isInstalled) {
-    return true
-  }
+  if (isInstalled) return true
 
   shell.exec(`mkdir ${SETUP_PATH}`)
   console.log('⏳ getting setup config...')
   const setup = getSetupFiles(verbose, imageVersion)
-  if (!setup) {
-    return false
-  }
+  if (!setup) return false
 
   console.log(`⏳ installing customerOS version <${imageVersion}>...`)
   const baseInstall = customerOsInstall(verbose, imageVersion)
-  if (!baseInstall) {
-    return false
-  }
+  if (!baseInstall) return false
 
   console.log('⏳ provisioning customerOS database...this make take a few mins...')
   const neo = provisionNeo4j(verbose)
-  if (!neo) {
-    return false
-  }
+  if (!neo) return false
 
   const psql = provisionPostgresql(verbose)
-  if (!psql) {
-    return false
-  }
+  if (!psql) return false
 
   shell.exec(`rm -r ${SETUP_PATH}`, {silent: true})
 
@@ -198,34 +188,22 @@ function deployMessageStore(verbose :boolean, imageVersion = 'latest') :boolean 
 
 function customerOsInstall(verbose :boolean, imageVersion = 'latest') :boolean {
   const ns = createNamespace(verbose)
-  if (!ns) {
-    return false
-  }
+  if (!ns) return false
 
   const neo = installNeo4j(verbose)
-  if (!neo) {
-    return false
-  }
+  if (!neo) return false
 
   const sql = installPostgresql(verbose)
-  if (!sql) {
-    return false
-  }
+  if (!sql) return false
 
   const auth = installFusionAuth(verbose)
-  if (!auth) {
-    return false
-  }
+  if (!auth) return false
 
   const cos = deployCustomerOs(verbose, imageVersion)
-  if (!cos) {
-    return false
-  }
+  if (!cos) return false
 
   const ms = deployMessageStore(verbose, imageVersion)
-  if (!ms) {
-    return false
-  }
+  if (!ms) return false
 
   return true
 }
