@@ -10,7 +10,7 @@ export interface Yaml {
 export function grabFile(fileLocation: string, setupPath: string, verbose :boolean) :boolean {
   const file = shell.exec(`curl -sS ${fileLocation} -o ${setupPath}`, {silent: !verbose})
   if (file.code !== 0) {
-    error.logError(file.stderr, `Could not download setup file from ${fileLocation}`)
+    error.logError(file.stderr, `Could not download setup file from ${fileLocation}`, true)
     return false
   }
 

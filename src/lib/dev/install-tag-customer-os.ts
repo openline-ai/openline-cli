@@ -97,7 +97,7 @@ function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
         console.log('Replacement results:', textReplace)
       }
     } catch (error: any) {
-      error.logError(error, 'Unable to modify config files to use specified image version')
+      error.logError(error, 'Unable to modify config files to use specified image version', true)
     }
   }
 
@@ -107,7 +107,7 @@ function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
 function createNamespace(verbose :boolean) :boolean {
   const ns = shell.exec(`kubectl create -f ./${NAMESPACE_CONFIG}`, {silent: !verbose})
   if (ns.code !== 0) {
-    error.logError(ns.stderr, `Unable to create namespace from ./${NAMESPACE_CONFIG}`)
+    error.logError(ns.stderr, `Unable to create namespace from ./${NAMESPACE_CONFIG}`, true)
     return false
   }
 
@@ -118,7 +118,7 @@ function installNeo4j(verbose :boolean) :boolean {
   shell.exec('helm repo add neo4j https://helm.neo4j.com/neo4j', {silent: !verbose})
   const neoInstall = shell.exec(`helm install neo4j-customer-os neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ./openline-setup/neo4j-helm-values.yaml --namespace ${NAMESPACE}`, {silent: !verbose})
   if (neoInstall.code !== 0) {
-    error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone')
+    error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone', true)
     return false
   }
 
@@ -131,20 +131,20 @@ function installPostgresql(verbose :boolean) :boolean {
   // setup PostgreSQL persistent volume
   const pv = shell.exec(`kubectl apply -f ./${SETUP_PATH}/postgresql-persistent-volume.yaml --namespace ${NAMESPACE}`, {silent: !verbose})
   if (pv.code !== 0) {
-    error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume')
+    error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume', true)
     return false
   }
 
   const pvc = shell.exec(`kubectl apply -f ./${SETUP_PATH}/postgresql-persistent-volume-claim.yaml --namespace ${NAMESPACE}`, {silent: !verbose})
   if (pvc.code !== 0) {
-    error.logError(pvc.stderr, 'Unable to setup postgreSQL persistent volume claim')
+    error.logError(pvc.stderr, 'Unable to setup postgreSQL persistent volume claim', true)
     return false
   }
 
   // install PostgreSQL
   const postgresql = shell.exec(`helm install --values ./${SETUP_PATH}/postgresql-values.yaml postgresql-customer-os-dev bitnami/postgresql --namespace ${NAMESPACE}`, {silent: !verbose})
   if (postgresql.code !== 0) {
-    error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql')
+    error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql', true)
     return false
   }
 
@@ -155,7 +155,7 @@ function installFusionAuth(verbose :boolean) :boolean {
   shell.exec('helm repo add fusionauth https://fusionauth.github.io/charts', {silent: !verbose})
   const fa = shell.exec(`helm install fusionauth-customer-os fusionauth/fusionauth -f ./openline-setup/fusionauth-values.yaml --namespace ${NAMESPACE}`, {silent: !verbose})
   if (fa.code !== 0) {
-    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth')
+    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth', true)
     return false
   }
 
@@ -172,7 +172,7 @@ function deployCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
   }
   const deploy = deployImage(apiImage, installConfig, verbose)
   if (deploy === false) {
-    error.logError('Error loading image', 'Unable to deploy customerOS API')
+    error.logError('Error loading image', 'Unable to deploy customerOS API', true)
     return false
   }
 
@@ -189,7 +189,7 @@ function deployMessageStore(verbose :boolean, imageVersion = 'latest') :boolean 
   }
   const deploy = deployImage(apiImage, installConfig, verbose)
   if (deploy === false) {
-    error.logError('Error loading image', 'Unable to deploy message store API')
+    error.logError('Error loading image', 'Unable to deploy message store API', true)
     return false
   }
 
@@ -246,7 +246,7 @@ function provisionNeo4j(verbose :boolean) :boolean {
       neo = shell.exec("kubectl get pods -n openline|grep neo4j-customer-os|grep Running|cut -f1 -d ' '", {silent: !verbose}).stdout
       retry++
     } else {
-      error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start')
+      error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start', true)
       return false
     }
   }
@@ -262,7 +262,7 @@ function provisionNeo4j(verbose :boolean) :boolean {
       started = shell.exec(`kubectl logs -n openline ${neo}`, {silent: !verbose}).stdout
       retry++
     } else {
-      error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start')
+      error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start', true)
       return false
     }
   }
@@ -274,7 +274,7 @@ function provisionNeo4j(verbose :boolean) :boolean {
   shell.exec(`chmod u+x ./${NEO4J_DB_SETUP}`)
   const provisionNeo = shell.exec(`./${NEO4J_DB_SETUP}`)
   if (provisionNeo.code !== 0) {
-    error.logError(provisionNeo.stderr, 'Neo4j provisioning failed.', 'Report this issue => https://github.com/openline-ai/openline-cli/issues/new/choose')
+    error.logError(provisionNeo.stderr, 'Neo4j provisioning failed.', true)
     return false
   }
 
@@ -289,7 +289,7 @@ function provisionPostgresql(verbose :boolean) :boolean {
 
   let ms = ''
   let retry = 1
-  const maxAttempts = config.server.timeOuts / 2
+  const maxAttempts = config.server.timeOuts / 10
   while (ms === '') {
     if (retry < maxAttempts) {
       if (verbose) {
@@ -300,7 +300,7 @@ function provisionPostgresql(verbose :boolean) :boolean {
       ms = shell.exec("kubectl get pods -n openline|grep message-store|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
       retry++
     } else {
-      error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start')
+      error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start', true)
       return false
     }
   }
@@ -316,7 +316,7 @@ function provisionPostgresql(verbose :boolean) :boolean {
       cosDb = shell.exec("kubectl get pods -n openline|grep postgresql-customer-os-dev|grep Running| cut -f1 -d ' '", {silent: !verbose}).stdout
       retry++
     } else {
-      error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start')
+      error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start', true)
       return false
     }
   }
@@ -338,7 +338,7 @@ function provisionPostgresql(verbose :boolean) :boolean {
       provision = shell.exec(`echo ./${POSTGRESQL_DB_SETUP}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: !verbose}).stdout
       retry++
     } else {
-      error.logError('Provisioning message store DB timed out', 'To retry, re-run => openline dev start')
+      error.logError('Provisioning message store DB timed out', 'To retry, re-run => openline dev start', true)
       return false
     }
   }
