@@ -65,7 +65,7 @@ export default class DevStart extends Command {
       if (customerOsInstalled) {
         this.log('')
         this.log('✅ customerOS started successfully!')
-        this.log('🦦 To validate the service is reachable run the command =>  openline dev ping customer-os')
+        this.log('🦦 To validate the service is reachable run the command =>  openline dev ping')
         this.log('🦦 Visit http://localhost:10000 in your browser to play around with the graph API explorer')
         shell.exec('open http://localhost:10000')
       } else {
@@ -95,7 +95,6 @@ function startContacts(verbose :boolean, tag :string) :boolean {
 
   if (result) {
     console.log('✅ Contacts app started successfully!')
-    console.log('🦦 To validate the service is reachable run the command =>  openline dev ping contacts')
     console.log('🦦 Visit http://localhost:3000 in your browser to view the application')
     shell.exec('sleep 5')
     shell.exec('open http://localhost:3000')
@@ -111,7 +110,7 @@ function startOasis(verbose :boolean, tag :string) :boolean {
 
   if (result) {
     console.log('✅ Oasis app started successfully!')
-    console.log('🦦 To validate the service is reachable run the command =>  openline dev ping oasis')
+    console.log('🦦 To validate the service is reachable run the command =>  openline dev ping')
     console.log('🦦 Visit http://localhost:3006 in your browser to view the application')
     shell.exec('sleep 5')
     shell.exec('open http://localhost:3006')
