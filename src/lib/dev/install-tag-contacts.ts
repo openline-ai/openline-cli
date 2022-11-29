@@ -2,23 +2,37 @@ import * as shell from 'shelljs'
 import * as error from './errors'
 import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
-import {deployImage, grabFile} from './deploy'
+import {deployImage, grabFile, Yaml} from './deploy'
 
 const config = getConfig()
+const SETUP_PATH = 'openline-setup'
+// Contacts GUI config
+const GUI_DEPLOYMENT = SETUP_PATH + '/contacts-gui-deployment.yaml'
+const GUI_SERVICE = SETUP_PATH + '/contacts-gui-service.yaml'
+const GUI_LOADBALANCER = SETUP_PATH + '/contacts-gui-loadbalancer.yaml'
 
 export function installContacts(verbose :boolean, imageVersion = 'latest') :boolean {
-  const dir = shell.exec('mkdir openline-setup')
-  return false
+  shell.exec(`mkdir ${SETUP_PATH}`)
+
+  const setup = getSetupFiles(verbose, imageVersion)
+  if (!setup) return false
+
+  const install = contactsInstall(verbose, imageVersion)
+  if (!install) return false
+
+  shell.exec(`rm -r ${SETUP_PATH}`)
+  return true
 }
 
 function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
-  grabFile(config.contacts.guiDeployment, 'openline-setup/contacts-gui-deployment.yaml', verbose)
-  grabFile(config.contacts.guiService, 'openline-setup/contacts-gui-service.yaml', verbose)
+  grabFile(config.contacts.guiDeployment, GUI_DEPLOYMENT, verbose)
+  grabFile(config.contacts.guiService, GUI_SERVICE, verbose)
+  grabFile(config.contacts.guiLoadbalancer, GUI_LOADBALANCER, verbose)
 
   if (imageVersion !== 'latest') {
     const options = {
       files: [
-        './openline-setup/contacts-gui-deployment.yaml',
+        `./${GUI_DEPLOYMENT}`,
       ],
       from: 'latest',
       to: imageVersion,
@@ -38,10 +52,12 @@ function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
 
 function contactsInstall(verbose :boolean, imageVersion = 'latest') :boolean {
   // deploy Contacts GUI container image
+  // eslint-disable-next-line unicorn/prefer-spread
   const guiImage = (config.contacts.guiImage.concat(imageVersion))
-  const gui = {
-    deployYaml: './openline-setup/contacts-gui-deployment.yaml',
-    serviceYaml: './openline-setup/contacts-gui-service.yaml',
+  const gui: Yaml = {
+    deployYaml: `./${GUI_DEPLOYMENT}`,
+    serviceYaml: `./${GUI_SERVICE}`,
+    loadbalancerYaml: `./${GUI_LOADBALANCER}`,
   }
   const guiDeploy = deployImage(guiImage, gui, verbose)
   if (!guiDeploy) {

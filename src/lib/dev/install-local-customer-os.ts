@@ -2,7 +2,6 @@ import * as shell from 'shelljs'
 import * as error from './errors'
 
 const K8S_NAMESPACE_NAME = 'openline'
-const REPORT_ISSUE_LINK = 'https://github.com/openline-ai/openline-cli/issues/new/choose'
 
 /* HELM config files */
 const HELM_CONFIGS_PATH = '/deployment/infra/helm/'
@@ -48,28 +47,28 @@ function installCustomerOsAPIApp(verbose: boolean, location:string) {
   const customerOsBuildExecution = shell.exec(`cd  | docker build -t customer-os-api -f ${CUSTOMER_OS_API_APP_LOCATION}/Dockerfile ${CUSTOMER_OS_API_APP_LOCATION}`, {silent: !verbose})
 
   if (customerOsBuildExecution.code !== 0) {
-    error.logError(customerOsBuildExecution.stderr, `Unable to build image in ${CUSTOMER_OS_API_APP_LOCATION}`, `Report this issue => ${REPORT_ISSUE_LINK}`)
+    error.logError(customerOsBuildExecution.stderr, `Unable to build image in ${CUSTOMER_OS_API_APP_LOCATION}`, true)
     return false
   }
 
   const CUSTOMER_OS_K8S_SETTINGS = location + K8S_COSTUMER_OS_API_APP_SETTINGS
   const cosDeploy = shell.exec(`kubectl apply -f ${CUSTOMER_OS_K8S_SETTINGS} --namespace ${K8S_NAMESPACE_NAME}`, {silent: !verbose})
   if (cosDeploy.code !== 0) {
-    error.logError(cosDeploy.stderr, 'Unable to deploy customerOS API', `Report this issue => ${REPORT_ISSUE_LINK}`)
+    error.logError(cosDeploy.stderr, 'Unable to deploy customerOS API', true)
     return false
   }
 
   const CUSTOMER_OS_SERVICE_K8S_SETTINGS = location + K8S_COSTUMER_OS_API_SERVICE_SETTINGS
   const cosService = shell.exec(`kubectl apply -f ${CUSTOMER_OS_SERVICE_K8S_SETTINGS} --namespace ${K8S_NAMESPACE_NAME}`, {silent: !verbose})
   if (cosService.code !== 0) {
-    error.logError(cosService.stderr, 'Unable to deploy customerOS API', `Report this issue => ${REPORT_ISSUE_LINK}`)
+    error.logError(cosService.stderr, 'Unable to deploy customerOS API', true)
     return false
   }
 
   const CUSTOMER_OS_LOAD_BALANCER_K8S_SETTINGS = location + K8S_COSTUMER_OS_API_LOAD_BALANCER
   const cosLoad = shell.exec(`kubectl apply -f ${CUSTOMER_OS_LOAD_BALANCER_K8S_SETTINGS} --namespace ${K8S_NAMESPACE_NAME}`, {silent: !verbose})
   if (cosLoad.code !== 0) {
-    error.logError(cosLoad.stderr, 'Unable to deploy customerOS API', `Report this issue => ${REPORT_ISSUE_LINK}`)
+    error.logError(cosLoad.stderr, 'Unable to deploy customerOS API', true)
     return false
   }
 
@@ -84,7 +83,7 @@ function installPostgres(verbose: boolean, location:string) {
   )
 
   if (persistentVolumeInstallation.code !== 0) {
-    error.logError(persistentVolumeInstallation.stderr, 'Unable to setup postgreSQL persistent volume', `Report this issue => ${REPORT_ISSUE_LINK}`)
+    error.logError(persistentVolumeInstallation.stderr, 'Unable to setup postgreSQL persistent volume', true)
     return false
   }
 
@@ -94,7 +93,7 @@ function installPostgres(verbose: boolean, location:string) {
     {silent: !verbose},
   )
   if (persistentVolumeClaimInstallation.code !== 0) {
-    error.logError(persistentVolumeClaimInstallation.stderr, 'Unable to setup postgreSQL persistent volume claim', `Report this issue => ${REPORT_ISSUE_LINK}`)
+    error.logError(persistentVolumeClaimInstallation.stderr, 'Unable to setup postgreSQL persistent volume claim', true)
     return false
   }
 
@@ -104,7 +103,7 @@ function installPostgres(verbose: boolean, location:string) {
     {silent: !verbose},
   )
   if (postgresqlInstallation.code !== 0) {
-    error.logError(postgresqlInstallation.stderr, 'Unable to complete helm install of postgresql', `Report this issue => ${REPORT_ISSUE_LINK}`)
+    error.logError(postgresqlInstallation.stderr, 'Unable to complete helm install of postgresql', true)
     return false
   }
 
@@ -118,7 +117,7 @@ function installNeo4j(verbose: boolean, location:string) {
     {silent: !verbose},
   )
   if (neo4jInstallation.code !== 0) {
-    error.logError(neo4jInstallation.stderr, 'Unable to complete helm install of neo4j-standalone', `Report this issue => ${REPORT_ISSUE_LINK}`)
+    error.logError(neo4jInstallation.stderr, 'Unable to complete helm install of neo4j-standalone', true)
     return false
   }
 
@@ -133,7 +132,7 @@ function installK8SNamespace(verbose:boolean, location:string) :boolean {
   const NAMESPACE_PATH = location + K8S_NAMESPACE_SETTINGS
   const namespaceInstallation = shell.exec('kubectl create -f ' + NAMESPACE_PATH, {silent: !verbose})
   if (namespaceInstallation.code !== 0) {
-    error.logError(namespaceInstallation.stderr, 'Unable to create namespace from' + NAMESPACE_PATH, `Report this issue => ${REPORT_ISSUE_LINK}`)
+    error.logError(namespaceInstallation.stderr, 'Unable to create namespace from' + NAMESPACE_PATH, true)
     return false
   }
 
@@ -145,7 +144,7 @@ function installFusionAuth(verbose :boolean, location:string) :boolean {
   shell.exec('helm repo add fusionauth https://fusionauth.github.io/charts', {silent: !verbose})
   const fa = shell.exec(`helm install fusionauth-customer-os fusionauth/fusionauth -f ${FUSION_AUTH_VALUES_LOCATION} --namespace ${K8S_NAMESPACE_NAME}`, {silent: !verbose})
   if (fa.code !== 0) {
-    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth')
+    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth', true)
     return false
   }
 
