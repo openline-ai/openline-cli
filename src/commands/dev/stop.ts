@@ -19,7 +19,6 @@ export default class DevStop extends Command {
       name: 'app',
       required: false,
       description: 'the Openline application you would like to stop',
-      default: 'customer-os',
       options: ['customer-os'],
     },
   ]
@@ -29,15 +28,16 @@ export default class DevStop extends Command {
 
     if (flags.all) {
       this.log('🦦 Stopping all Openline services...')
-    } else if (args.app === 'customer-os') {
-      this.log('🦦 Stopping customerOS...')
+      const reset = shell.exec('colima stop', {silent: !flags.verbose})
+      if (reset.code === 0) {
+        '✅ all Openline services successfully stopped'
+      } else {
+        error.logError(reset.stderr, 'Run this command to nuke your instance and start over => openline dev delete')
+      }
     }
 
-    const reset = shell.exec('colima delete -f', {silent: !flags.verbose})
-    if (reset.code === 0) {
-      '✅ all Openline services successfully stopped'
-    } else {
-      error.logError(reset.stderr, 'Run this command to nuke your instance and start over => colima delete')
+    if (args.app === 'customer-os') {
+      this.log('🦦 Stopping customerOS...')
     }
   }
 }
