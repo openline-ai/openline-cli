@@ -9,6 +9,7 @@ import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {installCustomerOsApi, installMessageStoreApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
+import * as oasis from '../../lib/dev/oasis'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -81,7 +82,22 @@ export default class DevStart extends Command {
     }
 
     if (args.app === 'oasis') {
+      console.log(`🦦 starting Oasis app version <${flags.tag}>...`)
+      let oasisCleanup = false
+      if (!flags.location) {
+        // Clone customer-os repo
+        shell.exec(`git clone ${config.oasis.repo} ${config.setupDir}`)
+        flags.location = config.setupDir
+        oasisCleanup = true
+      }
 
+      startChannelsApi(flags.verbose, flags.location, flags.tag)
+      startOasisApi(flags.verbose, flags.location, flags.tag)
+      startOasisGui(flags.verbose, flags.location, flags.tag)
+
+      if (oasisCleanup) {
+        shell.exec(`rm -r ${config.setupDir}`)
+      }
     }
 
     this.log('🦦 Congrats!')
@@ -174,3 +190,25 @@ function startContacts(verbose: boolean, location: string | undefined, imageVers
 
   return true
 }
+
+function startChannelsApi(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
+  if (verbose) console.log('⏳ installing channels API')
+  const api = oasis.installChannelsApi(verbose, location, imageVersion)
+  if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+  return true
+}
+
+function startOasisApi(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
+  if (verbose) console.log('⏳ installing Oasis API')
+  const api = oasis.installOasisApi(verbose, location, imageVersion)
+  if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+  return true
+}
+
+function startOasisGui(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
+  if (verbose) console.log('⏳ installing Oasis GUI')
+  const api = oasis.installOasisGui(verbose, location, imageVersion)
+  if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+  return true
+}
+
