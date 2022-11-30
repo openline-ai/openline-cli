@@ -78,14 +78,26 @@ export default class DevStart extends Command {
 
     if (args.app === 'contacts' || args.app === 'contacts-gui') {
       console.log(`🦦 starting Contacts app version <${flags.tag}>...`)
+      let contactsCleanup = false
+      if (!flags.location) {
+        // Clone contacts repo
+        shell.exec(`git clone ${config.contacts.repo} ${config.setupDir}`)
+        location = config.setupDir
+        contactsCleanup = true
+      }
+
       startContacts(flags.verbose, flags.location, flags.tag)
+
+      if (contactsCleanup) {
+        shell.exec(`rm -r ${config.setupDir}`)
+      }
     }
 
     if (args.app === 'oasis') {
       console.log(`🦦 starting Oasis app version <${flags.tag}>...`)
       let oasisCleanup = false
       if (!flags.location) {
-        // Clone customer-os repo
+        // Clone oasis repo
         shell.exec(`git clone ${config.oasis.repo} ${config.setupDir}`)
         flags.location = config.setupDir
         oasisCleanup = true
@@ -171,23 +183,9 @@ function startCustomerOs(verbose: boolean, location: string | undefined, imageVe
 }
 
 function startContacts(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
-  const config = getConfig()
-  let cleanup = false
-  if (location === null) {
-    // Clone contacts repo
-    shell.exec(`git clone ${config.contacts.repo} ${config.setupDir}`)
-    location = config.setupDir
-    cleanup = true
-  }
-
   if (verbose) console.log('⏳ installing Contacts GUI')
   const gui = installContactsGui(verbose, location, imageVersion)
   if (!gui) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-  if (cleanup) {
-    shell.exec(`rm -r ${config.setupDir}`)
-  }
-
   return true
 }
 
