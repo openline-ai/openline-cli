@@ -75,7 +75,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
 
   let ms = ''
   let retry = 1
-  const maxAttempts = config.server.timeOuts / 10
+  const maxAttempts = config.server.timeOuts / 5
   while (ms === '') {
     if (retry < maxAttempts) {
       if (verbose) {
@@ -95,7 +95,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   while (cosDb === '') {
     if (retry < maxAttempts) {
       if (verbose) {
-        console.log(`⏳ initalizing message store service, please wait... ${retry}/${maxAttempts}`)
+        console.log(`⏳ postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
       }
 
       shell.exec('sleep 2')

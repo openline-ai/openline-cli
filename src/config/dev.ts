@@ -57,19 +57,20 @@ export function getConfig() :any {
   config.oasis = {}
   // Oasis API
   config.oasis.apiImage = 'ghcr.io/openline-ai/openline-oasis/oasis-api:'
-  config.oasis.apiDeployment = 'https://raw.githubusercontent.com/openline-ai/openline-oasis/otter/deployment/k8s/local-minikube/apps-config/oasis-api.yaml'
-  config.oasis.apiService = 'https://raw.githubusercontent.com/openline-ai/openline-oasis/otter/deployment/k8s/local-minikube/apps-config/oasis-api-k8s-service.yaml'
-  config.oasis.apiLoadbalancer = 'https://raw.githubusercontent.com/openline-ai/openline-oasis/otter/deployment/k8s/local-minikube/apps-config/oasis-api-k8s-loadbalancer-service.yaml'
+  config.oasis.githubPath = 'https://raw.githubusercontent.com/openline-ai/openline-oasis/otter'
+  config.oasis.apiDeployment = '/deployment/k8s/local-minikube/apps-config/oasis-api.yaml'
+  config.oasis.apiService = '/deployment/k8s/local-minikube/apps-config/oasis-api-k8s-service.yaml'
+  config.oasis.apiLoadbalancer = '/deployment/k8s/local-minikube/apps-config/oasis-api-k8s-loadbalancer-service.yaml'
   // Oasis Channels API
   config.oasis.channelsApiImage = 'ghcr.io/openline-ai/openline-oasis/channels-api:'
-  config.oasis.channelsApiDeployment = 'https://raw.githubusercontent.com/openline-ai/openline-oasis/otter/deployment/k8s/local-minikube/apps-config/channels-api.yaml'
-  config.oasis.channelsApiService = 'https://raw.githubusercontent.com/openline-ai/openline-oasis/otter/deployment/k8s/local-minikube/apps-config/channels-api-k8s-service.yaml'
-  config.oasis.channelsApiLoadbalancer = 'https://raw.githubusercontent.com/openline-ai/openline-oasis/otter/deployment/k8s/local-minikube/apps-config/channels-api-k8s-loadbalancer-service.yaml'
+  config.oasis.channelsApiDeployment = '/deployment/k8s/local-minikube/apps-config/channels-api.yaml'
+  config.oasis.channelsApiService = '/deployment/k8s/local-minikube/apps-config/channels-api-k8s-service.yaml'
+  config.oasis.channelsApiLoadbalancer = '/deployment/k8s/local-minikube/apps-config/channels-api-k8s-loadbalancer-service.yaml'
   // Oasis GUI
   config.oasis.guiImage = 'ghcr.io/openline-ai/openline-oasis/oasis-frontend-dev:'
-  config.oasis.guiDeployment = 'https://raw.githubusercontent.com/openline-ai/openline-oasis/otter/deployment/k8s/local-minikube/apps-config/oasis-frontend.yaml'
-  config.oasis.guiService = 'https://raw.githubusercontent.com/openline-ai/openline-oasis/otter/deployment/k8s/local-minikube/apps-config/oasis-frontend-k8s-service.yaml'
-  config.oasis.guiLoadbalancer = 'https://raw.githubusercontent.com/openline-ai/openline-oasis/otter/deployment/k8s/local-minikube/apps-config/oasis-frontend-k8s-loadbalancer-service.yaml'
+  config.oasis.guiDeployment = '/deployment/k8s/local-minikube/apps-config/oasis-frontend.yaml'
+  config.oasis.guiService = '/deployment/k8s/local-minikube/apps-config/oasis-frontend-k8s-service.yaml'
+  config.oasis.guiLoadbalancer = '/deployment/k8s/local-minikube/apps-config/oasis-frontend-k8s-loadbalancer-service.yaml'
   config.oasis.repo = 'https://github.com/openline-ai/openline-oasis.git'
 
   // Voice network
