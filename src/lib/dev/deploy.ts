@@ -8,13 +8,15 @@ export interface Yaml {
     loadbalancerYaml?: string
 }
 
-export function deployImage(imageUrl :string, deployConfig :Yaml, verbose = false) :boolean {
+export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose = false) :boolean {
   const NAMESPACE = 'openline'
 
-  const pull = shell.exec(`docker pull ${imageUrl}`, {silent: !verbose})
-  if (pull.code !== 0) {
-    error.logError(pull.stderr, `Unable to pull image ${imageUrl}`)
-    return false
+  if (imageUrl !== null) {
+    const pull = shell.exec(`docker pull ${imageUrl}`, {silent: !verbose})
+    if (pull.code !== 0) {
+      error.logError(pull.stderr, `Unable to pull image ${imageUrl}`)
+      return false
+    }
   }
 
   const deploy = shell.exec(`kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`, {silent: !verbose})

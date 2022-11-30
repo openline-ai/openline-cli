@@ -1,5 +1,6 @@
 import * as shell from 'shelljs'
 import * as error from './errors'
+import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
 
 const config = getConfig()
@@ -29,6 +30,7 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
   let retry = 1
   const maxAttempts = config.server.timeOuts / 2
   const NEO4J_DB_SETUP = location + config.customerOs.neo4jProvisioning
+  const CYPHER = location + config.customerOs.neo4jCypher
 
   while (neo === '') {
     if (retry < maxAttempts) {
@@ -65,10 +67,30 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
     console.log('⏳ provisioning Neo4j, please wait...')
   }
 
+  updateCypherLocation(NEO4J_DB_SETUP, CYPHER, verbose)
   shell.exec(`chmod u+x ${NEO4J_DB_SETUP}`)
   const provisionNeo = shell.exec(`${NEO4J_DB_SETUP}`)
   if (provisionNeo.code !== 0) {
     error.logError(provisionNeo.stderr, 'Neo4j provisioning failed.', true)
+    return false
+  }
+
+  return true
+}
+
+function updateCypherLocation(scriptLoc: string, cypherLoc: string, verbose: boolean) :boolean {
+  const options = {
+    files: scriptLoc,
+    from: './openline-setup/customer-os.cypher',
+    to: cypherLoc,
+  }
+  try {
+    const textReplace = replace.sync(options)
+    if (verbose) {
+      console.log('Replacement results:', textReplace)
+    }
+  } catch (error: any) {
+    error.logError(error, 'Unable to modify config files to use specified image version', true)
     return false
   }
 

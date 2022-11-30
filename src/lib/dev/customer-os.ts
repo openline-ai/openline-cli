@@ -2,6 +2,7 @@ import * as shell from 'shelljs'
 import * as error from './errors'
 import {getConfig} from '../../config/dev'
 import {deployImage, Yaml, updateImageTag} from './deploy'
+import {buildLocalImage} from './build-image'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -16,35 +17,26 @@ function messageStoreApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${MESSAGE_STORE_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
-function buildLocalImage(path: string, imageName: string, verbose: boolean) :boolean {
-  shell.exec(`echo ${path}  docker build -t ${imageName} .`, {silent: !verbose})
-  const buildExecution = shell.exec(`cd  | docker build -t ${imageName} -f ${path}/Dockerfile ${path}`, {silent: !verbose})
-  if (buildExecution.code !== 0) {
-    error.logError(buildExecution.stderr, `Unable to build image in ${path}`, true)
-    return false
-  }
-
-  return true
-}
-
 export function installCustomerOsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (customerOsApiCheck()) return true
   const DEPLOYMENT = location + config.customerOs.apiDeployment
   const SERVICE = location + config.customerOs.apiService
   const LOADBALANCER = location + config.customerOs.apiLoadbalancer
-  const CUSTOMER_OS_API_NAME = 'customer-os-api'
+  const CUSTOMER_OS_API_IMAGE_NAME = 'customer-os-api'
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion, verbose)
     if (!tag) return false
   }
 
+  let image: string | null = config.customerOs.apiImage + imageVersion
+
   if (location !== config.setupDir) {
     const buildPath = location + '/packages/server/customer-os-api'
-    buildLocalImage(buildPath, CUSTOMER_OS_API_NAME, verbose)
+    buildLocalImage(buildPath, CUSTOMER_OS_API_IMAGE_NAME, verbose)
+    image = null
   }
 
-  const image = config.customerOs.apiImage + imageVersion
   const installConfig: Yaml = {
     deployYaml: DEPLOYMENT,
     serviceYaml: SERVICE,
@@ -64,7 +56,7 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
   const DEPLOYMENT = location + config.customerOs.messageStoreDeployment
   const SERVICE = location + config.customerOs.messageStoreService
   const LOADBALANCER = location + config.customerOs.messageStoreLoadbalancer
-  const MESSAGE_STORE_API_NAME = 'message-store'
+  const MESSAGE_STORE_API_IMAGE_NAME = 'message-store'
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion, verbose)
@@ -73,7 +65,7 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
 
   if (location !== config.setupDir) {
     const buildPath = location + '/packages/server/message-store'
-    buildLocalImage(buildPath, MESSAGE_STORE_API_NAME, verbose)
+    buildLocalImage(buildPath, MESSAGE_STORE_API_IMAGE_NAME, verbose)
   }
 
   const image = config.customerOs.messageStoreImage + imageVersion
