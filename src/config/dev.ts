@@ -80,6 +80,7 @@ export function getConfig() :any {
   config.dependencies = {}
   config.dependencies.colimaMac = 'brew install colima'
   config.dependencies.dockerMac = 'brew install docker'
+  config.dependencies.gitMac = 'brew install git'
   config.dependencies.helmMac = 'brew install helm'
   config.dependencies.homebrew = '/bin/bash -c \'$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\''
   config.dependencies.kubectlMac = 'brew install kubectl'

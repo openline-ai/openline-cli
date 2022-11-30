@@ -9,8 +9,8 @@ export function logError(desc: string, suggestion: string, shutdown = false) :vo
   shell.exec('rm -r openline-setup', {silent: true})
   if (shutdown) {
     console.log('')
-    console.log('🦦 shutting down dev server...')
-    shell.exec('colima delete -f', {silent: true})
+    // console.log('🦦 shutting down dev server...')
+    // shell.exec('colima delete -f', {silent: true})
     exit(1)
   }
 }

@@ -1,15 +1,13 @@
 import {Command, Flags} from '@oclif/core'
-import * as shell from 'shelljs'
 import * as colima from '../../lib/dev/colima'
-import * as install from '../../lib/dev/install-tag-customer-os'
 import * as mac from '../../lib/mac-dependency-check'
-import * as contacts from '../../lib/dev/install-tag-contacts'
-import {installOasis} from '../../lib/dev/install-tag-oasis'
-import {installLocalCustomerOs} from '../../lib/dev/install-local-customer-os'
 import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
-import * as fusionauth form '../../lib/dev/auth'
+import * as fusionauth from '../../lib/dev/auth'
+import * as shell from 'shelljs'
+import {getConfig} from '../../config/dev'
+import {installCustomerOsApi, installMessageStoreApi} from '../../lib/dev/customer-os'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -38,108 +36,103 @@ export default class DevStart extends Command {
       required: false,
       description: 'the Openline application you would like to start',
       default: 'customer-os',
-      options: ['customer-os', 'contacts', 'oasis'],
+      options: [
+        'customer-os',
+        'contacts',
+        'oasis',
+        'core-services',
+        'customer-os-api',
+        'message-store-api',
+        'auth',
+        'oasis-api',
+        'channels-api',
+        'oasis-gui',
+        'contacts-gui',
+      ],
     },
   ]
 
   public async run(): Promise<void> {
     const {flags, args} = await this.parse(DevStart)
+    const config = getConfig()
 
-    // Base dependency check
-    const depend = mac.installDependencies(flags.verbose)
-    if (!depend) {
-      this.exit(1)
+    if (!flags.location) {
+      // Clone customer-os repo
+      shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
+      flags.location = config.setupDir
     }
 
-    // Start colima with Openline dev server config
-    const isRunning = colima.runningCheck()
-    if (!isRunning) {
-      this.log('🦦 initiating Openline dev server...')
-      const start = colima.startColima(flags.verbose)
-      if (!start) this.exit(1)
+    console.log('🦦 initiating Openline dev server...')
+    startup(flags.verbose, flags.location)
+    console.log('🦦 setting up core infrastructure...')
+    startCoreServices(flags.verbose, flags.location)
+
+    if (args.app === 'customer-os' || args.app === 'contacts' || args.app === 'oasis') {
+      console.log('🦦 starting customerOS...this can take a few mins...')
+      startCustomerOs(flags.verbose, flags.location, flags.tag)
     }
 
-    // Create namespace in k8s
-    if (flags.verbose) this.log('⏳ installing namespace')
-    const namespace = flags.location ? ns.installNamespace(flags.verbose, flags.location) : ns.installNamespace(flags.verbose)
-    if (!namespace) this.exit(1)
-
-    this.log('🦦 setting up core infrastructure...')
-    // Install databases
-    if (flags.verbose) this.log('⏳ starting Neo4j')
-    const neo4j = flags.location ? neo.installNeo4j(flags.verbose, flags.location) : neo.installNeo4j(flags.verbose)
-    if (!neo4j) this.exit(1)
-
-    if (flags.verbose) this.log('⏳ starting postgreSQL')
-    const postgresql = flags.location ? sql.installPostgresql(flags.verbose, flags.location) : sql.installPostgresql(flags.verbose)
-    if (!postgresql) this.exit(1)
-
-    // Install authentication
-    if (flags.verbose) this.log('⏳ installing fusionauth')
-    const auth = flags.location ? fusionauth.installFusionAuth(flags.verbose, flags.location) : fusionauth.installFusionAuth(flags.verbose)
-    if (!auth) this.exit(1)
-
-    this.log('🦦 installing customerOS...')
-
-    /*
-      if (!namespace) {
-      this.log('🦦 installing customerOS...')
-      customerOsInstalled = flags.location ? installLocalCustomerOs(flags.location, flags.verbose) : install.installTaggedCustomerOs(flags.verbose, flags.tag)
-
-      if (customerOsInstalled) {
-        this.log('')
-        this.log('✅ customerOS started successfully!')
-        this.log('🦦 To validate the service is reachable run the command =>  openline dev ping customer-os')
-        this.log('🦦 Visit http://localhost:10000 in your browser to play around with the graph API explorer')
-        shell.exec('open http://localhost:10000')
-      } else {
-        this.exit(1)
-      }
-    }
-
-    if (flags.all) {
-      startContacts(flags.verbose, flags.tag)
-      startOasis(flags.verbose, flags.tag)
-    }
-
-    if (args.app.toLowerCase() === 'contacts') {
-      startContacts(flags.verbose, flags.tag)
-    }
-
-    if (args.app.toLowerCase() === 'oasis') {
-      startOasis(flags.verbose, flags.tag)
-    }*/
+    this.log('🦦 Congrats!')
   }
 }
 
-function startContacts(verbose :boolean, tag :string) :boolean {
-  console.log('')
-  console.log('🦦 installing Contacts app...')
-  const result = contacts.installContacts(verbose, tag)
-
-  if (result) {
-    console.log('✅ Contacts app started successfully!')
-    console.log('🦦 To validate the service is reachable run the command =>  openline dev ping contacts')
-    console.log('🦦 Visit http://localhost:3000 in your browser to view the application')
-    shell.exec('sleep 5')
-    shell.exec('open http://localhost:3000')
+function startup(verbose: boolean, location: string | undefined) :boolean {
+  // Base dependency check
+  const depend = mac.installDependencies(verbose)
+  if (!depend) {
+    process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
   }
 
-  return result
+  // Start colima with Openline dev server config
+  const isRunning = colima.runningCheck()
+  if (!isRunning) {
+    const start = colima.startColima(verbose)
+    if (!start) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+  }
+
+  // Create namespace in k8s
+  if (verbose) console.log('⏳ installing namespace')
+  const namespace = ns.installNamespace(verbose, location)
+  if (!namespace) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+  return true
 }
 
-function startOasis(verbose :boolean, tag :string) :boolean {
-  console.log('')
-  console.log('🦦 installing Oasis app...')
-  const result = installOasis(verbose, tag)
+function startCoreServices(verbose: boolean, location: string | undefined) :boolean {
+  // Install databases
+  if (verbose) console.log('⏳ starting Neo4j')
+  const neo4j = neo.installNeo4j(verbose, location)
+  if (!neo4j) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
 
-  if (result) {
-    console.log('✅ Oasis app started successfully!')
-    console.log('🦦 To validate the service is reachable run the command =>  openline dev ping oasis')
-    console.log('🦦 Visit http://localhost:3006 in your browser to view the application')
-    shell.exec('sleep 5')
-    shell.exec('open http://localhost:3006')
-  }
+  if (verbose) console.log('⏳ starting postgreSQL')
+  const postgresql = sql.installPostgresql(verbose, location)
+  if (!postgresql) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
 
-  return result
+  // Install authentication
+  if (verbose) console.log('⏳ installing fusionauth')
+  const auth = fusionauth.installFusionAuth(verbose, location)
+  if (!auth) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+  return true
+}
+
+function startCustomerOs(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
+  if (verbose) console.log('⏳ installing customerOS API')
+  const api = installCustomerOsApi(verbose, location, imageVersion)
+  if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+  if (verbose) console.log('⏳ installing message store API')
+  const msapi = installMessageStoreApi(verbose, location, imageVersion)
+  if (!msapi) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+  // Provision databases
+  if (verbose) console.log('⏳ configuring postgreSQL')
+  const sqlConfig = sql.provisionPostgresql(verbose, location)
+  if (!sqlConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+  if (verbose) console.log('⏳ configuring Neo4j...this can take up to 10 mins')
+  const neoConfig = neo.provisionNeo4j(verbose, location)
+  if (!neoConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+  return true
 }

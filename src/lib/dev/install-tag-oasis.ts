@@ -2,7 +2,7 @@ import * as shell from 'shelljs'
 import * as error from './errors'
 import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
-import {deployImage, grabFile, Yaml} from './deploy'
+import {deployImage, Yaml} from './deploy'
 
 const config = getConfig()
 const SETUP_PATH = 'openline-setup'
@@ -37,16 +37,6 @@ export function installOasis(verbose :boolean, imageVersion = 'latest') :boolean
 }
 
 function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
-  grabFile(config.oasis.apiDeployment, API_DEPLOYMENT, verbose)
-  grabFile(config.oasis.apiService, API_SERVICE, verbose)
-  grabFile(config.oasis.apiLoadbalancer, API_LOADBALANCER, verbose)
-  grabFile(config.oasis.channelsApiDeployment, CHANNELS_DEPLOYMENT, verbose)
-  grabFile(config.oasis.channelsApiService, CHANNELS_SERVICE, verbose)
-  grabFile(config.oasis.channelsApiLoadbalancer, CHANNELS_LOADBALANCER, verbose)
-  grabFile(config.oasis.guiDeployment, GUI_DEPLOYMENT, verbose)
-  grabFile(config.oasis.guiService, GUI_SERVICE, verbose)
-  grabFile(config.oasis.guiLoadbalancer, GUI_LOADBALANCER, verbose)
-
   if (imageVersion !== 'latest') {
     const options = {
       files: [

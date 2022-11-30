@@ -1,8 +1,6 @@
 import * as shell from 'shelljs'
 import * as error from './errors'
-import * as fs from 'node:fs'
 import {getConfig} from '../../config/dev'
-import {grabFile} from './deploy'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -32,26 +30,11 @@ export function installPostgresql(verbose: boolean, location = config.setupDir) 
 function setupPersistentVolume(verbose: boolean, location = config.setupDir) : boolean {
   if (postgresqlPersistentVolumeCheck()) return true
   const PERSISTENT_VOLUME_PATH = location + config.customerOs.postgresqlPersistentVolume
-  let cleanup = false
-
-  if (!fs.existsSync(PERSISTENT_VOLUME_PATH)) {
-    const mkdir = shell.exec(`mkdir ${location}`, {silent: true})
-    if (mkdir.code !== 0) return false
-
-    const remoteFile = config.customerOs.githubPath + config.customerOs.postgresqlPersistentVolume
-    const file = grabFile(remoteFile, PERSISTENT_VOLUME_PATH, verbose)
-    cleanup = true
-    if (!file) return false
-  }
 
   const pv = shell.exec(`kubectl apply -f ${PERSISTENT_VOLUME_PATH} --namespace ${NAMESPACE}`, {silent: !verbose})
   if (pv.code !== 0) {
     error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume', true)
     return false
-  }
-
-  if (cleanup) {
-    shell.exec(`rm -r ${config.setupDir}`)
   }
 
   return true
@@ -60,17 +43,6 @@ function setupPersistentVolume(verbose: boolean, location = config.setupDir) : b
 function setupPersistentVolumeClaim(verbose: boolean, location = config.setupDir) :boolean {
   if (postgresqlPersistentVolumeClaimCheck()) return true
   const PERSISTENT_VOLUME_CLAIM_PATH = location + config.customerOs.postgresqlPersistentVolumeClaim
-  let cleanup = false
-
-  if (!fs.existsSync(PERSISTENT_VOLUME_CLAIM_PATH)) {
-    const mkdir = shell.exec(`mkdir ${location}`, {silent: true})
-    if (mkdir.code !== 0) return false
-
-    const remoteFile = config.customerOs.githubPath + config.customerOs.postgresqlPersistentVolumeClaim
-    const file = grabFile(remoteFile, PERSISTENT_VOLUME_CLAIM_PATH, verbose)
-    cleanup = true
-    if (!file) return false
-  }
 
   const pvc = shell.exec(`kubectl apply -f ${PERSISTENT_VOLUME_CLAIM_PATH} --namespace ${NAMESPACE}`, {silent: !verbose})
   if (pvc.code !== 0) {
@@ -78,37 +50,18 @@ function setupPersistentVolumeClaim(verbose: boolean, location = config.setupDir
     return false
   }
 
-  if (cleanup) {
-    shell.exec(`rm -r ${config.setupDir}`)
-  }
-
   return true
 }
 
 function deployPostgresql(verbose: boolean, location = config.setupDir) {
   if (postgresqlServiceCheck()) return true
-  let cleanup = false
   const HELM_VALUES_PATH = location + config.customerOs.postgresqlHelmValues
-
-  if (!fs.existsSync(HELM_VALUES_PATH)) {
-    const mkdir = shell.exec(`mkdir ${location}`, {silent: true})
-    if (mkdir.code !== 0) return false
-
-    const remoteFile = config.customerOs.githubPath + config.customerOs.postgresqlHelmValues
-    const file = grabFile(remoteFile, HELM_VALUES_PATH, verbose)
-    cleanup = true
-    if (!file) return false
-  }
 
   shell.exec('helm repo add bitnami https://charts.bitnami.com/bitnami', {silent: !verbose})
   const postgresql = shell.exec(`helm install --values ${HELM_VALUES_PATH} ${POSTGRESQL_SERVICE} bitnami/postgresql --namespace ${NAMESPACE}`, {silent: !verbose})
   if (postgresql.code !== 0) {
     error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql', true)
     return false
-  }
-
-  if (cleanup) {
-    shell.exec(`rm -r ${config.setupDir}`)
   }
 
   return true
@@ -126,7 +79,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   while (ms === '') {
     if (retry < maxAttempts) {
       if (verbose) {
-        console.log(`⏳ message store service starting up, please wait... ${retry}/${maxAttempts}`)
+        console.log(`⏳ postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
       }
 
       shell.exec('sleep 2')

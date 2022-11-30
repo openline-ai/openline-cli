@@ -2,7 +2,7 @@ import * as shell from 'shelljs'
 import * as error from './errors'
 import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
-import {deployImage, grabFile, Yaml} from './deploy'
+import {deployImage, Yaml} from './deploy'
 
 const config = getConfig()
 const SETUP_PATH = 'openline-setup'
@@ -25,10 +25,6 @@ export function installContacts(verbose :boolean, imageVersion = 'latest') :bool
 }
 
 function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
-  grabFile(config.contacts.guiDeployment, GUI_DEPLOYMENT, verbose)
-  grabFile(config.contacts.guiService, GUI_SERVICE, verbose)
-  grabFile(config.contacts.guiLoadbalancer, GUI_LOADBALANCER, verbose)
-
   if (imageVersion !== 'latest') {
     const options = {
       files: [
