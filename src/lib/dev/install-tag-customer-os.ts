@@ -56,7 +56,7 @@ export function installTaggedCustomerOs(verbose :boolean, imageVersion = 'latest
 }
 
 function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
-  grabFile(config.customerOs.namespace, NAMESPACE_CONFIG, verbose)
+  
   grabFile(config.customerOs.apiDeployment, API_DEPLOYMENT, verbose)
   grabFile(config.customerOs.apiService, API_SERVICE, verbose)
   grabFile(config.customerOs.apiLoadbalancer, API_LOADBALANCER, verbose)
@@ -94,26 +94,9 @@ function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
   return true
 }
 
-function createNamespace(verbose :boolean) :boolean {
-  const ns = shell.exec(`kubectl create -f ./${NAMESPACE_CONFIG}`, {silent: !verbose})
-  if (ns.code !== 0) {
-    error.logError(ns.stderr, `Unable to create namespace from ./${NAMESPACE_CONFIG}`, true)
-    return false
-  }
 
-  return true
-}
 
-function installNeo4j(verbose :boolean) :boolean {
-  shell.exec('helm repo add neo4j https://helm.neo4j.com/neo4j', {silent: !verbose})
-  const neoInstall = shell.exec(`helm install neo4j-customer-os neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ./openline-setup/neo4j-helm-values.yaml --namespace ${NAMESPACE}`, {silent: !verbose})
-  if (neoInstall.code !== 0) {
-    error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone', true)
-    return false
-  }
 
-  return true
-}
 
 function installPostgresql(verbose :boolean) :boolean {
   shell.exec('helm repo add bitnami https://charts.bitnami.com/bitnami', {silent: !verbose})
@@ -208,56 +191,7 @@ function customerOsInstall(verbose :boolean, imageVersion = 'latest') :boolean {
   return true
 }
 
-function provisionNeo4j(verbose :boolean) :boolean {
-  const result = true
-  let neo = ''
-  let retry = 1
-  const maxAttempts = config.server.timeOuts / 2
 
-  while (neo === '') {
-    if (retry < maxAttempts) {
-      if (verbose) {
-        console.log(`⏳ Neo4j starting up, please wait... ${retry}/${maxAttempts}`)
-      }
-
-      shell.exec('sleep 2')
-      neo = shell.exec("kubectl get pods -n openline|grep neo4j-customer-os|grep Running|cut -f1 -d ' '", {silent: !verbose}).stdout
-      retry++
-    } else {
-      error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start', true)
-      return false
-    }
-  }
-
-  let started = ''
-  while (!started.includes('password')) {
-    if (retry < maxAttempts) {
-      if (verbose) {
-        console.log(`⏳ Neo4j initalizing, please wait... ${retry}/${maxAttempts}`)
-      }
-
-      shell.exec('sleep 2')
-      started = shell.exec(`kubectl logs -n openline ${neo}`, {silent: !verbose}).stdout
-      retry++
-    } else {
-      error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start', true)
-      return false
-    }
-  }
-
-  if (verbose) {
-    console.log('⏳ provisioning Neo4j, please wait...')
-  }
-
-  shell.exec(`chmod u+x ./${NEO4J_DB_SETUP}`)
-  const provisionNeo = shell.exec(`./${NEO4J_DB_SETUP}`)
-  if (provisionNeo.code !== 0) {
-    error.logError(provisionNeo.stderr, 'Neo4j provisioning failed.', true)
-    return false
-  }
-
-  return result
-}
 
 function provisionPostgresql(verbose :boolean) :boolean {
   const result = true

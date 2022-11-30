@@ -1,12 +1,13 @@
 import {Command, Flags} from '@oclif/core'
 import * as shell from 'shelljs'
-import * as dev from '../../lib/dev/start-colima'
+import * as colima from '../../lib/dev/colima'
 import * as install from '../../lib/dev/install-tag-customer-os'
 import * as mac from '../../lib/mac-dependency-check'
 import * as contacts from '../../lib/dev/install-tag-contacts'
 import {installOasis} from '../../lib/dev/install-tag-oasis'
 import {installLocalCustomerOs} from '../../lib/dev/install-local-customer-os'
-import {installCheck, runningCheck} from '../../lib/dev/dev-server-checks'
+import * as ns from '../../lib/dev/namespace'
+import * as neo from '../../lib/dev/neo4j'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -48,17 +49,31 @@ export default class DevStart extends Command {
       this.exit(1)
     }
 
-    const isRunning = runningCheck()
+    // Start colima with Openline dev server config
+    const isRunning = colima.runningCheck()
     if (!isRunning) {
       this.log('🦦 initiating Openline dev server...')
-      const start = dev.startColima(flags.verbose)
-      if (!start) {
-        this.exit(1)
-      }
+      const start = colima.startColima(flags.verbose)
+      if (!start) this.exit(1)
     }
 
-    let customerOsInstalled = installCheck()
-    if (!customerOsInstalled) {
+    // Create namespace in k8s
+    if (flags.verbose) this.log('⏳ installing namespace')
+    const namespace = flags.location ? ns.installNamespace(flags.verbose, flags.location) : ns.installNamespace(flags.verbose)
+    if (!namespace) this.exit(1)
+
+    // Install & configure databases
+    this.log('🦦 installing customerOS...')
+    if (flags.verbose) this.log('⏳ starting Neo4j')
+    const neo4j = flags.location ? neo.installNeo4j(flags.verbose, flags.location) : neo.installNeo4j(flags.verbose)
+    if (!neo4j) this.exit(1)
+
+    if (flags.verbose) this.log('⏳ starting postgreSQL')
+    
+    // Install & configure authentication
+
+    /*
+      if (!namespace) {
       this.log('🦦 installing customerOS...')
       customerOsInstalled = flags.location ? installLocalCustomerOs(flags.location, flags.verbose) : install.installTaggedCustomerOs(flags.verbose, flags.tag)
 
@@ -84,7 +99,7 @@ export default class DevStart extends Command {
 
     if (args.app.toLowerCase() === 'oasis') {
       startOasis(flags.verbose, flags.tag)
-    }
+    }*/
   }
 }
 
