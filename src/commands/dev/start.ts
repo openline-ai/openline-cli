@@ -8,6 +8,7 @@ import * as fusionauth from '../../lib/dev/auth'
 import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {installCustomerOsApi, installMessageStoreApi} from '../../lib/dev/customer-os'
+import {installContactsGui} from '../../lib/dev/contacts'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -40,10 +41,9 @@ export default class DevStart extends Command {
         'customer-os',
         'contacts',
         'oasis',
-        'core-services',
+        'auth',
         'customer-os-api',
         'message-store-api',
-        'auth',
         'oasis-api',
         'channels-api',
         'oasis-gui',
@@ -55,11 +55,13 @@ export default class DevStart extends Command {
   public async run(): Promise<void> {
     const {flags, args} = await this.parse(DevStart)
     const config = getConfig()
+    let cleanup = false
 
     if (!flags.location) {
       // Clone customer-os repo
       shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
       flags.location = config.setupDir
+      cleanup = true
     }
 
     console.log('🦦 initiating Openline dev server...')
@@ -68,8 +70,18 @@ export default class DevStart extends Command {
     startCoreServices(flags.verbose, flags.location)
 
     if (args.app === 'customer-os' || args.app === 'contacts' || args.app === 'oasis') {
-      console.log('🦦 starting customerOS...this can take a few mins...')
-      startCustomerOs(flags.verbose, flags.location, flags.tag)
+      console.log(`🦦 starting customerOS version <${flags.tag}>...`)
+      console.log('this can take a few mins...')
+      startCustomerOs(flags.verbose, flags.location, flags.tag, cleanup)
+    }
+
+    if (args.app === 'contacts' || args.app === 'contacts-gui') {
+      console.log(`🦦 starting Contacts app version <${flags.tag}>...`)
+      startContacts(flags.verbose, flags.location, flags.tag)
+    }
+
+    if (args.app === 'oasis') {
+
     }
 
     this.log('🦦 Congrats!')
@@ -116,7 +128,8 @@ function startCoreServices(verbose: boolean, location: string | undefined) :bool
   return true
 }
 
-function startCustomerOs(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
+function startCustomerOs(verbose: boolean, location: string | undefined, imageVersion: string, cleanup: boolean) :boolean {
+  const config = getConfig()
   if (verbose) console.log('⏳ installing customerOS API')
   const api = installCustomerOsApi(verbose, location, imageVersion)
   if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
@@ -133,6 +146,31 @@ function startCustomerOs(verbose: boolean, location: string | undefined, imageVe
   if (verbose) console.log('⏳ configuring Neo4j...this can take up to 10 mins')
   const neoConfig = neo.provisionNeo4j(verbose, location)
   if (!neoConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+  if (cleanup) {
+    shell.exec(`rm -r ${config.setupDir}`)
+  }
+
+  return true
+}
+
+function startContacts(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
+  const config = getConfig()
+  let cleanup = false
+  if (location === null) {
+    // Clone contacts repo
+    shell.exec(`git clone ${config.contacts.repo} ${config.setupDir}`)
+    location = config.setupDir
+    cleanup = true
+  }
+
+  if (verbose) console.log('⏳ installing Contacts GUI')
+  const gui = installContactsGui(verbose, location, imageVersion)
+  if (!gui) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+  if (cleanup) {
+    shell.exec(`rm -r ${config.setupDir}`)
+  }
 
   return true
 }
