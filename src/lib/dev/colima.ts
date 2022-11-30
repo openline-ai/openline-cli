@@ -1,11 +1,14 @@
 import * as shell from 'shelljs'
 import * as error from './errors'
-import * as checks from './dev-server-checks'
 import {getConfig} from '../../config/dev'
+
+export function runningCheck() :boolean {
+  return (shell.exec('colima status', {silent: true}).code === 0)
+}
 
 export function startColima(verbose :boolean) :boolean {
   const config = getConfig()
-  const isRunning = checks.runningCheck()
+  const isRunning = runningCheck()
   if (isRunning) {
     return true
   }

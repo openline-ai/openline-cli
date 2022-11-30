@@ -9,41 +9,48 @@ export function getConfig() :any {
   config.server.memory = 4
   config.server.timeOuts = 600 // seconds
 
+  config.setupDir = './openline-setup'
+
+  config.namespace = {}
+  config.namespace.name = 'openline'
+  config.namespace.file = '/deployment/infra/k8s/openline-namespace.json'
+
   // Contacts App config
   config.contacts = {}
   // Contacts GUI
   config.contacts.guiImage = 'ghcr.io/openline-ai/openline-contacts:'
-  config.contacts.guiDeployment = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter/deployment/infra/k8s/contacts-gui-deployment.yaml'
-  config.contacts.guiService = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter/deployment/infra/k8s/contacts-gui-service.yaml'
-  config.contacts.guiLoadbalancer = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter/deployment/infra/k8s/contacts-gui-loadbalancer.yaml'
+  config.contacts.githubPath = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter'
+  config.contacts.guiDeployment = '/deployment/infra/k8s/contacts-gui-deployment.yaml'
+  config.contacts.guiService = '/deployment/infra/k8s/contacts-gui-service.yaml'
+  config.contacts.guiLoadbalancer = '/deployment/infra/k8s/contacts-gui-loadbalancer.yaml'
   config.contacts.repo = 'https://github.com/openline-ai/openline-contacts.git'
 
   // customerOS config
   config.customerOs = {}
-  config.customerOs.namespace = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/openline-namespace.json'
+  config.customerOs.githubPath = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter'
   // customerOS analytics API
   config.customerOs.analyticsApiImage = 'ghcr.io/openline-ai/openline-customer-os/analytics-api:'
   // customerOS API
   config.customerOs.apiImage = 'ghcr.io/openline-ai/openline-customer-os/customer-os-api:'
-  config.customerOs.apiDeployment = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/customer-os-api.yaml'
-  config.customerOs.apiService = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/customer-os-api-k8s-service.yaml'
-  config.customerOs.apiLoadbalancer = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/customer-os-api-k8s-loadbalancer-service.yaml'
+  config.customerOs.apiDeployment = '/deployment/infra/k8s/customer-os-api.yaml'
+  config.customerOs.apiService = '/deployment/infra/k8s/customer-os-api-k8s-service.yaml'
+  config.customerOs.apiLoadbalancer = '/deployment/infra/k8s/customer-os-api-k8s-loadbalancer-service.yaml'
   // customerOS message store API
   config.customerOs.messageStoreImage = 'ghcr.io/openline-ai/openline-customer-os/message-store:'
-  config.customerOs.messageStoreDeployment = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/message-store.yaml'
-  config.customerOs.messageStoreService = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/message-store-k8s-service.yaml'
-  config.customerOs.messageStoreLoadbalancer = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/message-store-k8s-loadbalancer-service.yaml'
+  config.customerOs.messageStoreDeployment = '/deployment/infra/k8s/message-store.yaml'
+  config.customerOs.messageStoreService = '/deployment/infra/k8s/message-store-k8s-service.yaml'
+  config.customerOs.messageStoreLoadbalancer = '/deployment/infra/k8s/message-store-k8s-loadbalancer-service.yaml'
   // customerOS postgreSQL DB
-  config.customerOs.postgresqlPersistentVolume = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/postgresql-persistent-volume.yaml'
-  config.customerOs.postgresqlPersistentVolumeClaim = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/k8s/postgresql-persistent-volume-claim.yaml'
-  config.customerOs.postgresqlHelmValues = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/helm/postgresql/postgresql-values.yaml'
-  config.customerOs.postgresqlSetup = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/postgresql/setup.sql'
+  config.customerOs.postgresqlPersistentVolume = '/deployment/infra/k8s/postgresql-persistent-volume.yaml'
+  config.customerOs.postgresqlPersistentVolumeClaim = '/deployment/infra/k8s/postgresql-persistent-volume-claim.yaml'
+  config.customerOs.postgresqlHelmValues = '/deployment/infra/helm/postgresql/postgresql-values.yaml'
+  config.customerOs.postgresqlSetup = '/deployment/scripts/postgresql/setup.sql'
   // customerOS Neo4j DB
-  config.customerOs.neo4jHelmValues = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/helm/neo4j/neo4j-values.yaml'
-  config.customerOs.neo4jCypher = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/packages/server/customer-os-api/customer-os.cypher'
-  config.customerOs.neo4jProvisioning = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/scripts/neo4j/provision-neo4j.sh'
+  config.customerOs.neo4jHelmValues = '/deployment/infra/helm/neo4j/neo4j-values.yaml'
+  config.customerOs.neo4jCypher = '/packages/server/customer-os-api/customer-os.cypher'
+  config.customerOs.neo4jProvisioning = '/deployment/scripts/neo4j/provision-neo4j.sh'
   // customerOS FusionAuth
-  config.customerOs.fusionauthHelmValues = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter/deployment/infra/helm/fusionauth/fusionauth-values.yaml'
+  config.customerOs.fusionauthHelmValues = '/deployment/infra/helm/fusionauth/fusionauth-values.yaml'
   config.customerOs.repo = 'https://github.com/openline-ai/openline-customer-os.git'
 
   // Oasis App config

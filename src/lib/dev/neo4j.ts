@@ -1,0 +1,108 @@
+import * as shell from 'shelljs'
+import * as error from './errors'
+import * as fs from 'node:fs'
+import {getConfig} from '../../config/dev'
+import {grabFile} from './deploy'
+
+const config = getConfig()
+const NAMESPACE = config.namespace.name
+const NEO4J_SERVICE = 'neo4j-customer-os'
+
+function neo4jCheck() :boolean {
+  return (shell.exec(`kubectl get service ${NEO4J_SERVICE} -n ${NAMESPACE}`, {silent: true}).code === 0)
+}
+
+export function installNeo4j(verbose :boolean, location = config.setupDir) :boolean {
+  if (neo4jCheck()) return true
+  let cleanup = false
+  const HELM_VALUES_PATH = location + config.customerOs.neo4jHelmValues
+
+  if (!fs.existsSync(HELM_VALUES_PATH)) {
+    const mkdir = shell.exec(`mkdir ${location}`, {silent: true})
+    if (mkdir.code !== 0) return false
+
+    const remoteFile = config.customerOs.githubPath + config.customerOs.neo4jHelmValues
+    const file = grabFile(remoteFile, HELM_VALUES_PATH, verbose)
+    cleanup = true
+    if (!file) return false
+  }
+
+  shell.exec('helm repo add neo4j https://helm.neo4j.com/neo4j', {silent: !verbose})
+  const neoInstall = shell.exec(`helm install ${NEO4J_SERVICE} neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ${HELM_VALUES_PATH} --namespace ${NAMESPACE}`, {silent: !verbose})
+  if (neoInstall.code !== 0) {
+    error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone', true)
+    return false
+  }
+
+  if (cleanup) {
+    shell.exec(`rm -r ${config.setupDir}`)
+  }
+
+  return true
+}
+
+export function provisionNeo4j(verbose :boolean, location = config.setupDir) :boolean {
+  let neo = ''
+  let cleanup = false
+  let retry = 1
+  const maxAttempts = config.server.timeOuts / 2
+  const NEO4J_DB_SETUP = location + config.customerOs.neo4jProvisioning
+
+  if (!fs.existsSync(NEO4J_DB_SETUP)) {
+    const mkdir = shell.exec(`mkdir ${location}`, {silent: true})
+    if (mkdir.code !== 0) return false
+
+    const remoteFile = config.customerOs.githubPath + config.customerOs.neo4jProvisioning
+    const file = grabFile(remoteFile, NEO4J_DB_SETUP, verbose)
+    cleanup = true
+    if (!file) return false
+  }
+
+  while (neo === '') {
+    if (retry < maxAttempts) {
+      if (verbose) {
+        console.log(`⏳ Neo4j starting up, please wait... ${retry}/${maxAttempts}`)
+      }
+
+      shell.exec('sleep 2')
+      neo = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${NEO4J_SERVICE}|grep Running|cut -f1 -d ' '`, {silent: !verbose}).stdout
+      retry++
+    } else {
+      error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start', true)
+      return false
+    }
+  }
+
+  let started = ''
+  while (!started.includes('password')) {
+    if (retry < maxAttempts) {
+      if (verbose) {
+        console.log(`⏳ Neo4j initalizing, please wait... ${retry}/${maxAttempts}`)
+      }
+
+      shell.exec('sleep 2')
+      started = shell.exec(`kubectl logs -n ${NAMESPACE} ${neo}`, {silent: !verbose}).stdout
+      retry++
+    } else {
+      error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start', true)
+      return false
+    }
+  }
+
+  if (verbose) {
+    console.log('⏳ provisioning Neo4j, please wait...')
+  }
+
+  shell.exec(`chmod u+x ${NEO4J_DB_SETUP}`)
+  const provisionNeo = shell.exec(`${NEO4J_DB_SETUP}`)
+  if (provisionNeo.code !== 0) {
+    error.logError(provisionNeo.stderr, 'Neo4j provisioning failed.', true)
+    return false
+  }
+
+  if (cleanup) {
+    shell.exec(`rm -r ${config.setupDir}`)
+  }
+
+  return true
+}
