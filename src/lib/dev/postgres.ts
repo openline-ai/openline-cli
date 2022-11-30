@@ -113,3 +113,68 @@ function deployPostgresql(verbose: boolean, location = config.setupDir) {
 
   return true
 }
+
+export function provisionPostgresql(verbose: boolean, location = config.setupDir) :boolean {
+  const sqlUser = 'openline'
+  const sqlDb = 'openline'
+  const sqlPw = 'password'
+  const POSTGRESQL_DB_SETUP = location + config.customerOs.postgresqlSetup
+
+  let ms = ''
+  let retry = 1
+  const maxAttempts = config.server.timeOuts / 10
+  while (ms === '') {
+    if (retry < maxAttempts) {
+      if (verbose) {
+        console.log(`⏳ message store service starting up, please wait... ${retry}/${maxAttempts}`)
+      }
+
+      shell.exec('sleep 2')
+      ms = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep message-store|grep Running| cut -f1 -d ' '`, {silent: !verbose}).stdout
+      retry++
+    } else {
+      error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start', true)
+      return false
+    }
+  }
+
+  let cosDb = ''
+  while (cosDb === '') {
+    if (retry < maxAttempts) {
+      if (verbose) {
+        console.log(`⏳ initalizing message store service, please wait... ${retry}/${maxAttempts}`)
+      }
+
+      shell.exec('sleep 2')
+      cosDb = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${POSTGRESQL_SERVICE}|grep Running| cut -f1 -d ' '`, {silent: !verbose}).stdout
+      retry++
+    } else {
+      error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start', true)
+      return false
+    }
+  }
+
+  cosDb = cosDb.slice(0, -1)
+
+  if (verbose) {
+    console.log(`⏳ connecting to ${cosDb} pod`)
+  }
+
+  let provision = ''
+  while (provision === '') {
+    if (retry < maxAttempts) {
+      if (verbose) {
+        console.log(`⏳ attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)
+      }
+
+      shell.exec('sleep 2')
+      provision = shell.exec(`echo ${POSTGRESQL_DB_SETUP}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: !verbose}).stdout
+      retry++
+    } else {
+      error.logError('Provisioning message store DB timed out', 'To retry, re-run => openline dev start', true)
+      return false
+    }
+  }
+
+  return true
+}
