@@ -96,41 +96,6 @@ function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
 
 
 
-
-function deployCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
-  // eslint-disable-next-line unicorn/prefer-spread
-  const apiImage = config.customerOs.apiImage.concat(imageVersion)
-  const installConfig: Yaml = {
-    deployYaml: `./${API_DEPLOYMENT}`,
-    serviceYaml: `./${API_SERVICE}`,
-    loadbalancerYaml: `./${API_LOADBALANCER}`,
-  }
-  const deploy = deployImage(apiImage, installConfig, verbose)
-  if (deploy === false) {
-    error.logError('Error loading image', 'Unable to deploy customerOS API', true)
-    return false
-  }
-
-  return true
-}
-
-function deployMessageStore(verbose :boolean, imageVersion = 'latest') :boolean {
-  // eslint-disable-next-line unicorn/prefer-spread
-  const apiImage = config.customerOs.messageStoreImage.concat(imageVersion)
-  const installConfig: Yaml = {
-    deployYaml: `./${MESSAGE_STORE_DEPLOYMENT}`,
-    serviceYaml: `./${MESSAGE_STORE_SERVICE}`,
-    loadbalancerYaml: `./${MESSAGE_STORE_LOADBALANCER}`,
-  }
-  const deploy = deployImage(apiImage, installConfig, verbose)
-  if (deploy === false) {
-    error.logError('Error loading image', 'Unable to deploy message store API', true)
-    return false
-  }
-
-  return true
-}
-
 function customerOsInstall(verbose :boolean, imageVersion = 'latest') :boolean {
   const ns = createNamespace(verbose)
   if (!ns) return false
