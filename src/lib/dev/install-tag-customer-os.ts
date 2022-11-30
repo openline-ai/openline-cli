@@ -97,44 +97,6 @@ function getSetupFiles(verbose :boolean, imageVersion = 'latest') :boolean {
 
 
 
-
-function installPostgresql(verbose :boolean) :boolean {
-  shell.exec('helm repo add bitnami https://charts.bitnami.com/bitnami', {silent: !verbose})
-
-  // setup PostgreSQL persistent volume
-  const pv = shell.exec(`kubectl apply -f ./${SETUP_PATH}/postgresql-persistent-volume.yaml --namespace ${NAMESPACE}`, {silent: !verbose})
-  if (pv.code !== 0) {
-    error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume', true)
-    return false
-  }
-
-  const pvc = shell.exec(`kubectl apply -f ./${SETUP_PATH}/postgresql-persistent-volume-claim.yaml --namespace ${NAMESPACE}`, {silent: !verbose})
-  if (pvc.code !== 0) {
-    error.logError(pvc.stderr, 'Unable to setup postgreSQL persistent volume claim', true)
-    return false
-  }
-
-  // install PostgreSQL
-  const postgresql = shell.exec(`helm install --values ./${SETUP_PATH}/postgresql-values.yaml postgresql-customer-os-dev bitnami/postgresql --namespace ${NAMESPACE}`, {silent: !verbose})
-  if (postgresql.code !== 0) {
-    error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql', true)
-    return false
-  }
-
-  return true
-}
-
-function installFusionAuth(verbose :boolean) :boolean {
-  shell.exec('helm repo add fusionauth https://fusionauth.github.io/charts', {silent: !verbose})
-  const fa = shell.exec(`helm install fusionauth-customer-os fusionauth/fusionauth -f ./openline-setup/fusionauth-values.yaml --namespace ${NAMESPACE}`, {silent: !verbose})
-  if (fa.code !== 0) {
-    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth', true)
-    return false
-  }
-
-  return true
-}
-
 function deployCustomerOs(verbose :boolean, imageVersion = 'latest') :boolean {
   // eslint-disable-next-line unicorn/prefer-spread
   const apiImage = config.customerOs.apiImage.concat(imageVersion)

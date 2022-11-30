@@ -8,6 +8,8 @@ import {installOasis} from '../../lib/dev/install-tag-oasis'
 import {installLocalCustomerOs} from '../../lib/dev/install-local-customer-os'
 import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
+import * as sql from '../../lib/dev/postgres'
+import * as fusionauth form '../../lib/dev/auth'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -62,15 +64,22 @@ export default class DevStart extends Command {
     const namespace = flags.location ? ns.installNamespace(flags.verbose, flags.location) : ns.installNamespace(flags.verbose)
     if (!namespace) this.exit(1)
 
-    // Install & configure databases
-    this.log('🦦 installing customerOS...')
+    this.log('🦦 setting up core infrastructure...')
+    // Install databases
     if (flags.verbose) this.log('⏳ starting Neo4j')
     const neo4j = flags.location ? neo.installNeo4j(flags.verbose, flags.location) : neo.installNeo4j(flags.verbose)
     if (!neo4j) this.exit(1)
 
     if (flags.verbose) this.log('⏳ starting postgreSQL')
-    
-    // Install & configure authentication
+    const postgresql = flags.location ? sql.installPostgresql(flags.verbose, flags.location) : sql.installPostgresql(flags.verbose)
+    if (!postgresql) this.exit(1)
+
+    // Install authentication
+    if (flags.verbose) this.log('⏳ installing fusionauth')
+    const auth = flags.location ? fusionauth.installFusionAuth(flags.verbose, flags.location) : fusionauth.installFusionAuth(flags.verbose)
+    if (!auth) this.exit(1)
+
+    this.log('🦦 installing customerOS...')
 
     /*
       if (!namespace) {
