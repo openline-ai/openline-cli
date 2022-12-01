@@ -56,56 +56,58 @@ export default class DevStart extends Command {
   public async run(): Promise<void> {
     const {flags, args} = await this.parse(DevStart)
     const config = getConfig()
+    let location = flags.location
     let cleanup = false
 
-    if (!flags.location) {
-      // Clone customer-os repo
+    if (!location) {
       shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
-      flags.location = config.setupDir
+      location = config.setupDir
       cleanup = true
     }
 
+    // start core services
     console.log('🦦 initiating Openline dev server...')
-    startup(flags.verbose, flags.location)
+    startup(flags.verbose, location)
     console.log('🦦 setting up core infrastructure...')
-    startCoreServices(flags.verbose, flags.location)
+    startCoreServices(flags.verbose, location)
 
+    // start customerOS
     if (args.app === 'customer-os' || args.app === 'contacts' || args.app === 'oasis') {
       console.log(`🦦 starting customerOS version <${flags.tag}>...`)
       console.log('this can take a few mins...')
-      startCustomerOs(flags.verbose, flags.location, flags.tag, cleanup)
+      startCustomerOs(flags.verbose, location, flags.tag, cleanup)
     }
 
+    // start contacts app
     if (args.app === 'contacts' || args.app === 'contacts-gui') {
       console.log(`🦦 starting Contacts app version <${flags.tag}>...`)
       let contactsCleanup = false
       if (!flags.location) {
-        // Clone contacts repo
         shell.exec(`git clone ${config.contacts.repo} ${config.setupDir}`)
         location = config.setupDir
         contactsCleanup = true
       }
 
-      startContacts(flags.verbose, flags.location, flags.tag)
+      startContacts(flags.verbose, location, flags.tag)
 
       if (contactsCleanup) {
         shell.exec(`rm -r ${config.setupDir}`)
       }
     }
 
+    // start oasis app
     if (args.app === 'oasis') {
       console.log(`🦦 starting Oasis app version <${flags.tag}>...`)
       let oasisCleanup = false
       if (!flags.location) {
-        // Clone oasis repo
         shell.exec(`git clone ${config.oasis.repo} ${config.setupDir}`)
-        flags.location = config.setupDir
+        location = config.setupDir
         oasisCleanup = true
       }
 
-      startChannelsApi(flags.verbose, flags.location, flags.tag)
-      startOasisApi(flags.verbose, flags.location, flags.tag)
-      startOasisGui(flags.verbose, flags.location, flags.tag)
+      startChannelsApi(flags.verbose, location, flags.tag)
+      startOasisApi(flags.verbose, location, flags.tag)
+      startOasisGui(flags.verbose, location, flags.tag)
 
       if (oasisCleanup) {
         shell.exec(`rm -r ${config.setupDir}`)

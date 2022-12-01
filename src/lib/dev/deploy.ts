@@ -12,6 +12,10 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   const NAMESPACE = 'openline'
 
   if (imageUrl !== null) {
+    if (verbose) {
+      shell.exec(`echo docker pull ${imageUrl}`, {silent: true})
+    }
+
     const pull = shell.exec(`docker pull ${imageUrl}`, {silent: !verbose})
     if (pull.code !== 0) {
       error.logError(pull.stderr, `Unable to pull image ${imageUrl}`)
@@ -19,14 +23,26 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
     }
   }
 
+  if (verbose) {
+    shell.exec(`echo kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`, {silent: true})
+  }
+
   const deploy = shell.exec(`kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`, {silent: !verbose})
   if (deploy.code !== 0) {
     return false
   }
 
+  if (verbose) {
+    shell.exec(`echo kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`, {silent: true})
+  }
+
   const service = shell.exec(`kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`, {silent: !verbose})
   if (service.code !== 0) {
     return false
+  }
+
+  if (verbose) {
+    shell.exec(`echo kubectl apply -f ${deployConfig.loadbalancerYaml} --namespace ${NAMESPACE}`, {silent: true})
   }
 
   if (deployConfig.loadbalancerYaml !== null) {
