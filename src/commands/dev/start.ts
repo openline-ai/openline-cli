@@ -1,3 +1,4 @@
+/* eslint-disable  complexity */
 import {Command, Flags} from '@oclif/core'
 import * as colima from '../../lib/dev/colima'
 import * as mac from '../../lib/mac-dependency-check'
@@ -43,6 +44,7 @@ export default class DevStart extends Command {
         'contacts',
         'oasis',
         'auth',
+        'db',
         'customer-os-api',
         'message-store-api',
         'oasis-api',
@@ -132,6 +134,66 @@ export default class DevStart extends Command {
       if (!auth) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
 
       if (authCleanup) {
+        shell.exec(`rm -r ${config.setupDir}`)
+      }
+    }
+
+    // start db
+    if (args.app === 'db') {
+      console.log(`🦦 starting databases version <${version}>...`)
+      let dbCleanup = false
+      if (!flags.location) {
+        shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
+        location = config.setupDir
+        dbCleanup = true
+      }
+
+      // Provision databases
+      if (flags.verbose) console.log('⏳ configuring postgreSQL')
+      const sqlConfig = sql.provisionPostgresql(flags.verbose, location)
+      if (!sqlConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+      if (flags.verbose) console.log('⏳ configuring Neo4j...this can take up to 10 mins')
+      const neoConfig = neo.provisionNeo4j(flags.verbose, location)
+      if (!neoConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+      if (dbCleanup) {
+        shell.exec(`rm -r ${config.setupDir}`)
+      }
+    }
+
+    // start customer-os-api
+    if (args.app === 'customer-os-api') {
+      console.log(`🦦 starting customer-os-api version <${version}>...`)
+      let cosCleanup = false
+      if (!flags.location) {
+        shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
+        location = config.setupDir
+        cosCleanup = true
+      }
+
+      const api = installCustomerOsApi(flags.verbose, location, version)
+      if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+      if (cosCleanup) {
+        shell.exec(`rm -r ${config.setupDir}`)
+      }
+    }
+
+    // start message-store-api
+    if (args.app === 'message-store-api') {
+      console.log(`🦦 starting message-store-api version <${version}>...`)
+      let cosCleanup = false
+      if (!flags.location) {
+        shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
+        location = config.setupDir
+        cosCleanup = true
+      }
+
+      const msapi = installMessageStoreApi(flags.verbose, location, version)
+      if (!msapi) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+      if (cosCleanup) {
         shell.exec(`rm -r ${config.setupDir}`)
       }
     }

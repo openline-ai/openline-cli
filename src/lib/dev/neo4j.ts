@@ -96,3 +96,13 @@ function updateCypherLocation(scriptLoc: string, cypherLoc: string, verbose: boo
 
   return true
 }
+
+export function uninstallNeo4j(verbose:boolean) :boolean {
+  const result = shell.exec(`helm uninstall ${NEO4J_SERVICE} --namespace ${NAMESPACE}`, {silent: !verbose})
+  if (result.code !== 0) {
+    error.logError(result.stderr, 'Unable to helm uninstall Neo4j database')
+    return false
+  }
+
+  return true
+}

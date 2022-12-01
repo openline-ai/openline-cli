@@ -131,3 +131,13 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
 
   return true
 }
+
+export function uninstallPostgresql(verbose:boolean) :boolean {
+  const result = shell.exec(`helm uninstall ${POSTGRESQL_SERVICE} --namespace ${NAMESPACE}`, {silent: !verbose})
+  if (result.code !== 0) {
+    error.logError(result.stderr, 'Unable to helm uninstall Neo4j database')
+    return false
+  }
+
+  return true
+}

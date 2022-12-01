@@ -1,6 +1,8 @@
 import {Command, Flags} from '@oclif/core'
 import * as shell from 'shelljs'
 import {uninstallFusionAuth} from '../../lib/dev/auth'
+import {uninstallNeo4j} from '../../lib/dev/neo4j'
+import {uninstallPostgresql} from '../../lib/dev/postgres'
 import {deleteApp} from '../../lib/dev/delete'
 import {logError} from '../../lib/dev/errors'
 
@@ -26,6 +28,7 @@ export default class DevRm extends Command {
         'contacts',
         'oasis',
         'auth',
+        'db',
         'customer-os-api',
         'message-store-api',
         'oasis-api',
@@ -108,7 +111,24 @@ export default class DevRm extends Command {
         services = ['contacts-gui-service', 'contacts-gui-loadbalancer']
       }
 
-      const deleted = (args.service.toLowerCase() === 'auth') ? uninstallFusionAuth(flags.verbose) : deleteApp(deployments, services, flags.verbose)
+      const helm = ['auth', 'db']
+      let deleted = false
+
+      if (args.service.toLowerCase() === 'auth') {
+        deleted = uninstallFusionAuth(flags.verbose)
+      }
+
+      if (args.service.toLowerCase() === 'db') {
+        deleted = uninstallNeo4j(flags.verbose)
+        if (deleted) {
+          deleted = uninstallPostgresql(flags.verbose)
+        }
+      }
+
+      if (!helm.includes(args.service.toLowerCase())) {
+        deleted = deleteApp(deployments, services, flags.verbose)
+      }
+
       if (deleted) {
         console.log(`✅ ${args.service} deleted successfully`)
       }
