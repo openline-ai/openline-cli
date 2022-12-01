@@ -46,9 +46,9 @@ export default class DevRm extends Command {
 
     if (flags.all) {
       const reset = shell.exec('colima kubernetes reset', {silent: !flags.verbose})
-      const stop = shell.exec('colima stop')
-      if (reset.code === 0 && stop.code === 0) {
+      if (reset.code === 0) {
         console.log('✅ Openline dev server deleted')
+        console.log('💡 to stop the dev server, run => openline dev stop')
       } else {
         logError('Problem deleting Openline dev server', 'Let\'s nuke it from orbit...')
       }

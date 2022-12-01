@@ -62,30 +62,76 @@ export default class DevStart extends Command {
     let version = flags.tag
     let cleanup = false
 
-    if (location) {
-      version = 'local'
-      if (location[0] !== '/') location = '/' + location
-    } else {
-      shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
-      location = config.setupDir
-      cleanup = true
-    }
-
-    // start core services
     console.log('🦦 initiating Openline dev server...')
-    startup(flags.verbose, location)
-    console.log('🦦 setting up core infrastructure...')
-    startCoreServices(flags.verbose, location)
+    startup(flags.verbose)
 
-    // start customerOS
-    if (args.app === 'customer-os' || args.app === 'contacts' || args.app === 'oasis') {
-      console.log(`🦦 starting customerOS version <${version}>...`)
-      console.log('⏳ this can take a few mins...')
-      startCustomerOs(flags.verbose, location, version, cleanup)
+    // apps & services that require customer-os
+    const customerOs = ['customer-os', 'contacts', 'oasis', 'auth', 'db', 'customer-os-api', 'message-store-api']
+    if (customerOs.includes(args.app.toLowerCase())) {
+      if (location) {
+        version = 'local'
+        if (location[0] !== '/') location = '/' + location
+      } else {
+        shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
+        location = config.setupDir
+        cleanup = true
+      }
+
+      // apps & services that require all core services (databases & auth)
+      const coreServices = ['customer-os', 'contacts', 'oasis', 'auth', 'db']
+      if (coreServices.includes(args.app.toLowerCase())) {
+        // start core services
+        console.log('🦦 setting up core infrastructure...')
+        startCoreServices(flags.verbose, location)
+      }
+
+      // apps that require full customerOS install
+      const fullCustomerOs = ['customer-os', 'contacts', 'oasis']
+      if (fullCustomerOs.includes(args.app.toLowerCase())) {
+        console.log(`🦦 starting customerOS version <${version}>...`)
+        console.log('⏳ this can take a few mins...')
+        startCustomerOs(flags.verbose, location, version, cleanup)
+      }
+
+      // start db only
+      if (args.app.toLowerCase() === 'db') {
+        console.log(`🦦 starting databases version <${version}>...`)
+        // Provision databases
+        if (flags.verbose) console.log('⏳ configuring postgreSQL')
+        const sqlConfig = sql.provisionPostgresql(flags.verbose, location)
+        if (!sqlConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+        if (flags.verbose) console.log('⏳ configuring Neo4j...this can take up to 10 mins')
+        const neoConfig = neo.provisionNeo4j(flags.verbose, location)
+        if (!neoConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+      }
+
+      // start authentication only
+      if (args.app.toLowerCase() === 'auth') {
+        console.log(`🦦 starting authentication version <${version}>...`)
+        const auth = fusionauth.installFusionAuth(flags.verbose, location)
+        if (!auth) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+      }
+
+      // start customer-os-api only
+      if (args.app.toLowerCase() === 'customer-os-api') {
+        console.log(`🦦 starting customer-os-api version <${version}>...`)
+        const api = installCustomerOsApi(flags.verbose, location, version)
+        if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+      }
+
+      // start message-store api only
+      if (args.app.toLowerCase() === 'message-store-api') {
+        console.log(`🦦 starting message-store-api version <${version}>...`)
+        const msapi = installMessageStoreApi(flags.verbose, location, version)
+        if (!msapi) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+      }
+
+      if (cleanup) shell.exec(`rm -r ${config.setupDir}`)
     }
 
     // start contacts app
-    if (args.app === 'contacts' || args.app === 'contacts-gui') {
+    if (args.app.toLowerCase() === 'contacts' || args.app === 'contacts-gui') {
       console.log(`🦦 starting Contacts app version <${version}>...`)
       let contactsCleanup = false
       if (!flags.location) {
@@ -102,110 +148,20 @@ export default class DevStart extends Command {
     }
 
     // start oasis app
-    if (args.app === 'oasis') {
-      console.log(`🦦 starting Oasis app version <${version}>...`)
-      let oasisCleanup = false
-      if (!flags.location) {
-        shell.exec(`git clone ${config.oasis.repo} ${config.setupDir}`)
-        location = config.setupDir
-        oasisCleanup = true
-      }
-
-      startChannelsApi(flags.verbose, location, version)
-      startOasisApi(flags.verbose, location, version)
-      startOasisGui(flags.verbose, location, version)
-
-      if (oasisCleanup) {
-        shell.exec(`rm -r ${config.setupDir}`)
-      }
-    }
-
-    // start auth
-    if (args.app === 'auth') {
-      console.log(`🦦 starting authentication version <${version}>...`)
-      let authCleanup = false
-      if (!flags.location) {
-        shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
-        location = config.setupDir
-        authCleanup = true
-      }
-
-      const auth = fusionauth.installFusionAuth(flags.verbose, location)
-      if (!auth) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-      if (authCleanup) {
-        shell.exec(`rm -r ${config.setupDir}`)
-      }
-    }
-
-    // start db
-    if (args.app === 'db') {
-      console.log(`🦦 starting databases version <${version}>...`)
-      let dbCleanup = false
-      if (!flags.location) {
-        shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
-        location = config.setupDir
-        dbCleanup = true
-      }
-
-      // Provision databases
-      if (flags.verbose) console.log('⏳ configuring postgreSQL')
-      const sqlConfig = sql.provisionPostgresql(flags.verbose, location)
-      if (!sqlConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-      if (flags.verbose) console.log('⏳ configuring Neo4j...this can take up to 10 mins')
-      const neoConfig = neo.provisionNeo4j(flags.verbose, location)
-      if (!neoConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-      if (dbCleanup) {
-        shell.exec(`rm -r ${config.setupDir}`)
-      }
-    }
-
-    // start customer-os-api
-    if (args.app === 'customer-os-api') {
-      console.log(`🦦 starting customer-os-api version <${version}>...`)
-      let cosCleanup = false
-      if (!flags.location) {
-        shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
-        location = config.setupDir
-        cosCleanup = true
-      }
-
-      const api = installCustomerOsApi(flags.verbose, location, version)
-      if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-      if (cosCleanup) {
-        shell.exec(`rm -r ${config.setupDir}`)
-      }
-    }
-
-    // start message-store-api
-    if (args.app === 'message-store-api') {
-      console.log(`🦦 starting message-store-api version <${version}>...`)
-      let cosCleanup = false
-      if (!flags.location) {
-        shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
-        location = config.setupDir
-        cosCleanup = true
-      }
-
-      const msapi = installMessageStoreApi(flags.verbose, location, version)
-      if (!msapi) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-      if (cosCleanup) {
-        shell.exec(`rm -r ${config.setupDir}`)
-      }
-    }
-
-    // start oasis-api, oasis-gui, or contacts-api
-    const oasis = ['oasis-api', 'oasis-gui', 'contacts-api']
+    const oasis = ['oasis', 'oasis-api', 'oasis-gui', 'contacts-api']
     if (oasis.includes(args.app.toLowerCase())) {
       let oasisCleanup = false
       if (!flags.location) {
         shell.exec(`git clone ${config.oasis.repo} ${config.setupDir}`)
         location = config.setupDir
         oasisCleanup = true
+      }
+
+      if (args.app.toLowerCase() === 'oasis') {
+        console.log(`🦦 starting Oasis app version <${version}>...`)
+        startChannelsApi(flags.verbose, location, version)
+        startOasisApi(flags.verbose, location, version)
+        startOasisGui(flags.verbose, location, version)
       }
 
       if (args.app.toLowerCase() === 'oasis-api') {
@@ -232,7 +188,7 @@ export default class DevStart extends Command {
   }
 }
 
-function startup(verbose: boolean, location: string | undefined) :boolean {
+function startup(verbose: boolean) :boolean {
   // Base dependency check
   const depend = mac.installDependencies(verbose)
   if (!depend) {
@@ -246,15 +202,15 @@ function startup(verbose: boolean, location: string | undefined) :boolean {
     if (!start) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
   }
 
+  return true
+}
+
+function startCoreServices(verbose: boolean, location: string | undefined) :boolean {
   // Create namespace in k8s
   if (verbose) console.log('⏳ installing namespace')
   const namespace = ns.installNamespace(verbose, location)
   if (!namespace) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
 
-  return true
-}
-
-function startCoreServices(verbose: boolean, location: string | undefined) :boolean {
   // Install databases
   if (verbose) console.log('⏳ starting Neo4j')
   const neo4j = neo.installNeo4j(verbose, location)
