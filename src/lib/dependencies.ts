@@ -20,6 +20,15 @@ export function installDocker() :boolean {
   return (shell.exec(config.dependencies.dockerMac).code === 0)
 }
 
+// git
+export function gitCheck() :boolean {
+  return (shell.exec('which git', {silent: true}).code === 0)
+}
+
+export function installGit() :boolean {
+  return (shell.exec(config.dependencies.gitMac).code === 0)
+}
+
 // helm
 export function helmCheck() :boolean {
   return (shell.exec('which helm', {silent: true}).code === 0)

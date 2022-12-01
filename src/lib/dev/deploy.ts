@@ -1,5 +1,6 @@
 import * as shell from 'shelljs'
 import * as error from './errors'
+import * as replace from 'replace-in-file'
 
 export interface Yaml {
     deployYaml: string,
@@ -7,40 +8,64 @@ export interface Yaml {
     loadbalancerYaml?: string
 }
 
-export function grabFile(fileLocation: string, setupPath: string, verbose :boolean) :boolean {
-  const file = shell.exec(`curl -sS ${fileLocation} -o ${setupPath}`, {silent: !verbose})
-  if (file.code !== 0) {
-    error.logError(file.stderr, `Could not download setup file from ${fileLocation}`, true)
-    return false
-  }
-
-  return true
-}
-
-export function deployImage(imageUrl :string, deployConfig :Yaml, verbose = false) :boolean {
+export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose = false) :boolean {
   const NAMESPACE = 'openline'
 
-  const pull = shell.exec(`docker pull ${imageUrl}`, {silent: !verbose})
-  if (pull.code !== 0) {
-    error.logError(pull.stderr, `Unable to pull image ${imageUrl}`)
-    return false
+  if (verbose) {
+    console.log('Deploying image', imageUrl)
+    console.log(deployConfig)
   }
 
-  const deploy = shell.exec(`kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`, {silent: !verbose})
+  if (imageUrl !== null) {
+    const dockerPull = `docker pull ${imageUrl}`
+    if (verbose) console.log(`[EXEC] ${dockerPull}`)
+    const pull = shell.exec(dockerPull, {silent: !verbose})
+    if (pull.code !== 0) {
+      error.logError(pull.stderr, `Unable to pull image ${imageUrl}`)
+      return false
+    }
+  }
+
+  const kubeApplyDeployConfig = `kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${kubeApplyDeployConfig}`)
+  const deploy = shell.exec(kubeApplyDeployConfig, {silent: !verbose})
   if (deploy.code !== 0) {
     return false
   }
 
-  const service = shell.exec(`kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`, {silent: !verbose})
+  const kubeApplyServiceConfig = `kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${kubeApplyServiceConfig}`)
+  const service = shell.exec(kubeApplyServiceConfig, {silent: !verbose})
   if (service.code !== 0) {
     return false
   }
 
   if (deployConfig.loadbalancerYaml !== null) {
-    const lb = shell.exec(`kubectl apply -f ${deployConfig.loadbalancerYaml} --namespace ${NAMESPACE}`, {silent: !verbose})
+    const kubeApplyLoadbalancer = `kubectl apply -f ${deployConfig.loadbalancerYaml} --namespace ${NAMESPACE}`
+    if (verbose) console.log(`[EXEC] ${kubeApplyLoadbalancer}`)
+    const lb = shell.exec(kubeApplyLoadbalancer, {silent: !verbose})
     if (lb.code !== 0) {
       return false
     }
+  }
+
+  return true
+}
+
+export function updateImageTag(deployFiles: string[], imageVersion: string, verbose: boolean) :boolean {
+  const options = {
+    files: deployFiles,
+    from: 'latest',
+    to: imageVersion,
+  }
+  try {
+    const textReplace = replace.sync(options)
+    if (verbose) {
+      console.log('Replacement results:', textReplace)
+    }
+  } catch (error: any) {
+    error.logError(error, 'Unable to modify config files to use specified image version', true)
+    return false
   }
 
   return true

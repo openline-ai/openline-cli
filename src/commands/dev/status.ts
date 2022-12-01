@@ -1,5 +1,5 @@
 import {Command, Flags} from '@oclif/core'
-import * as checks from '../../lib/dev/dev-server-checks'
+import {namespaceCheck} from '../../lib/dev/namespace'
 import * as shell from 'shelljs'
 
 export default class DevStatus extends Command {
@@ -20,7 +20,7 @@ export default class DevStatus extends Command {
 
     // let verbose = flags.verbose
 
-    const isInstalled = checks.installCheck()
+    const isInstalled = namespaceCheck()
     if (isInstalled) {
       this.log('🦦 k8s cluster')
       shell.exec('kubectl get services')
