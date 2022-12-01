@@ -15,11 +15,11 @@ export function installFusionAuth(verbose :boolean, location = config.setupDir) 
   const HELM_VALUES_PATH = location + config.customerOs.fusionauthHelmValues
 
   const helmAdd = 'helm repo add fusionauth https://fusionauth.github.io/charts'
-  if (verbose) console.log(`[EXEC]: ${helmAdd}`)
+  if (verbose) console.log(`[EXEC] ${helmAdd}`)
   shell.exec(helmAdd, {silent: !verbose})
 
   const helmInstall = `helm install ${FUSIONAUTH_SERVICE} fusionauth/fusionauth -f ${HELM_VALUES_PATH} --namespace ${NAMESPACE}`
-  if (verbose) console.log(`[EXEC]: ${helmInstall}`)
+  if (verbose) console.log(`[EXEC] ${helmInstall}`)
   const fa = shell.exec(helmInstall, {silent: !verbose})
   if (fa.code !== 0) {
     error.logError(fa.stderr, 'Unable to complete helm install of fusion auth', true)
@@ -31,7 +31,7 @@ export function installFusionAuth(verbose :boolean, location = config.setupDir) 
 
 export function uninstallFusionAuth(verbose:boolean) :boolean {
   const helmUninstall = `helm uninstall ${FUSIONAUTH_SERVICE} --namespace ${NAMESPACE}`
-  if (verbose) console.log(`[EXEC]: ${helmUninstall}`)
+  if (verbose) console.log(`[EXEC] ${helmUninstall}`)
   const result = shell.exec(helmUninstall, {silent: !verbose})
   if (result.code !== 0) {
     error.logError(result.stderr, 'Unable to helm uninstall fusion auth')
