@@ -18,15 +18,13 @@ export default class DevStop extends Command {
   public async run(): Promise<void> {
     const {flags} = await this.parse(DevStop)
 
-    if (flags.all) {
-      this.log('🦦 Saving current configuration...')
-      this.log('🦦 Stopping Opeline dev server')
-      const reset = shell.exec('colima stop', {silent: !flags.verbose})
-      if (reset.code === 0) {
-        '✅ Openline dev server stopped'
-      } else {
-        error.logError(reset.stderr, 'Run this command to nuke your instance and start over => openline dev rm --all')
-      }
+    this.log('🦦 Saving current configuration...')
+    this.log('🦦 Stopping Opeline dev server')
+    const reset = shell.exec('colima stop', {silent: !flags.verbose})
+    if (reset.code === 0) {
+      '✅ Openline dev server stopped'
+    } else {
+      error.logError(reset.stderr, 'Run this command to nuke your instance and start over => openline dev rm --all')
     }
   }
 }

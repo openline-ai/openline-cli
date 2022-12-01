@@ -57,13 +57,18 @@ export default class DevStart extends Command {
     const {flags, args} = await this.parse(DevStart)
     const config = getConfig()
     let location = flags.location
+    let version = flags.tag
     let cleanup = false
 
     if (!location) {
       shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
       location = config.setupDir
       cleanup = true
+    } else if (location[0] !== '/') {
+      location = '/' + location
     }
+
+    if (location) version = 'local'
 
     // start core services
     console.log('🦦 initiating Openline dev server...')
@@ -73,14 +78,14 @@ export default class DevStart extends Command {
 
     // start customerOS
     if (args.app === 'customer-os' || args.app === 'contacts' || args.app === 'oasis') {
-      console.log(`🦦 starting customerOS version <${flags.tag}>...`)
-      console.log('this can take a few mins...')
-      startCustomerOs(flags.verbose, location, flags.tag, cleanup)
+      console.log(`🦦 starting customerOS version <${version}>...`)
+      console.log('⏳ this can take a few mins...')
+      startCustomerOs(flags.verbose, location, version, cleanup)
     }
 
     // start contacts app
     if (args.app === 'contacts' || args.app === 'contacts-gui') {
-      console.log(`🦦 starting Contacts app version <${flags.tag}>...`)
+      console.log(`🦦 starting Contacts app version <${version}>...`)
       let contactsCleanup = false
       if (!flags.location) {
         shell.exec(`git clone ${config.contacts.repo} ${config.setupDir}`)
@@ -88,7 +93,7 @@ export default class DevStart extends Command {
         contactsCleanup = true
       }
 
-      startContacts(flags.verbose, location, flags.tag)
+      startContacts(flags.verbose, location, version)
 
       if (contactsCleanup) {
         shell.exec(`rm -r ${config.setupDir}`)
@@ -97,7 +102,7 @@ export default class DevStart extends Command {
 
     // start oasis app
     if (args.app === 'oasis') {
-      console.log(`🦦 starting Oasis app version <${flags.tag}>...`)
+      console.log(`🦦 starting Oasis app version <${version}>...`)
       let oasisCleanup = false
       if (!flags.location) {
         shell.exec(`git clone ${config.oasis.repo} ${config.setupDir}`)
@@ -105,13 +110,18 @@ export default class DevStart extends Command {
         oasisCleanup = true
       }
 
-      startChannelsApi(flags.verbose, location, flags.tag)
-      startOasisApi(flags.verbose, location, flags.tag)
-      startOasisGui(flags.verbose, location, flags.tag)
+      startChannelsApi(flags.verbose, location, version)
+      startOasisApi(flags.verbose, location, version)
+      startOasisGui(flags.verbose, location, version)
 
       if (oasisCleanup) {
         shell.exec(`rm -r ${config.setupDir}`)
       }
+    }
+
+    // start customer-os-api
+    if (args.app === 'customer-os-api') {
+      console.log(`🦦 starting customer-os-api version <${version}>...`)
     }
 
     this.log('🦦 Congrats!')

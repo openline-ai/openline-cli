@@ -13,9 +13,9 @@ export function installNamespace(verbose: boolean, location = config.setupDir) :
   if (namespaceCheck()) return true
   const NAMESPACE_PATH = location + config.namespace.file
 
-  const ns = shell.exec(`kubectl create -f ./${NAMESPACE_PATH}`, {silent: !verbose})
+  const ns = shell.exec(`kubectl create -f ${NAMESPACE_PATH}`, {silent: !verbose})
   if (ns.code !== 0) {
-    error.logError(ns.stderr, `Unable to create namespace from ./${NAMESPACE_PATH}`, true)
+    error.logError(ns.stderr, `Unable to create namespace from ${NAMESPACE_PATH}`, true)
     return false
   }
 

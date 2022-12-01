@@ -32,7 +32,7 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
   let image: string | null = config.customerOs.apiImage + imageVersion
 
   if (location !== config.setupDir) {
-    const buildPath = location + '/packages/server/customer-os-api'
+    const buildPath = location + '/packages/server'
     buildLocalImage(buildPath, CUSTOMER_OS_API_IMAGE_NAME, verbose)
     image = null
   }
@@ -64,7 +64,7 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
   }
 
   if (location !== config.setupDir) {
-    const buildPath = location + '/packages/server/message-store'
+    const buildPath = location + '/packages/server'
     buildLocalImage(buildPath, MESSAGE_STORE_API_IMAGE_NAME, verbose)
   }
 
