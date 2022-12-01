@@ -17,41 +17,33 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   }
 
   if (imageUrl !== null) {
-    if (verbose) {
-      console.log(`docker pull ${imageUrl}`)
-    }
-
-    const pull = shell.exec(`docker pull ${imageUrl}`, {silent: !verbose})
+    const dockerPull = `docker pull ${imageUrl}`
+    if (verbose) console.log(`[EXEC] ${dockerPull}`)
+    const pull = shell.exec(dockerPull, {silent: !verbose})
     if (pull.code !== 0) {
       error.logError(pull.stderr, `Unable to pull image ${imageUrl}`)
       return false
     }
   }
 
-  if (verbose) {
-    console.log(`kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`)
-  }
-
-  const deploy = shell.exec(`kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`, {silent: !verbose})
+  const kubeApplyDeployConfig = `kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${kubeApplyDeployConfig}`)
+  const deploy = shell.exec(kubeApplyDeployConfig, {silent: !verbose})
   if (deploy.code !== 0) {
     return false
   }
 
-  if (verbose) {
-    console.log(`kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`)
-  }
-
-  const service = shell.exec(`kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`, {silent: !verbose})
+  const kubeApplyServiceConfig = `kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${kubeApplyServiceConfig}`)
+  const service = shell.exec(kubeApplyServiceConfig, {silent: !verbose})
   if (service.code !== 0) {
     return false
   }
 
-  if (verbose) {
-    console.log(`kubectl apply -f ${deployConfig.loadbalancerYaml} --namespace ${NAMESPACE}`)
-  }
-
   if (deployConfig.loadbalancerYaml !== null) {
-    const lb = shell.exec(`kubectl apply -f ${deployConfig.loadbalancerYaml} --namespace ${NAMESPACE}`, {silent: !verbose})
+    const kubeApplyLoadbalancer = `kubectl apply -f ${deployConfig.loadbalancerYaml} --namespace ${NAMESPACE}`
+    if (verbose) console.log(`[EXEC] ${kubeApplyLoadbalancer}`)
+    const lb = shell.exec(kubeApplyLoadbalancer, {silent: !verbose})
     if (lb.code !== 0) {
       return false
     }
