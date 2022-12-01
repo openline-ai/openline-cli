@@ -12,8 +12,9 @@ export function namespaceCheck() :boolean {
 export function installNamespace(verbose: boolean, location = config.setupDir) :boolean {
   if (namespaceCheck()) return true
   const NAMESPACE_PATH = location + config.namespace.file
-
-  const ns = shell.exec(`kubectl create -f ${NAMESPACE_PATH}`, {silent: !verbose})
+  const kubeCreateNamespace = `kubectl create -f ${NAMESPACE_PATH}`
+  if (verbose) console.log(`[EXEC] ${kubeCreateNamespace}`)
+  const ns = shell.exec(kubeCreateNamespace, {silent: !verbose})
   if (ns.code !== 0) {
     error.logError(ns.stderr, `Unable to create namespace from ${NAMESPACE_PATH}`, true)
     return false

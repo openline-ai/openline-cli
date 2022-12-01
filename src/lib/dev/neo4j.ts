@@ -15,8 +15,13 @@ export function installNeo4j(verbose :boolean, location = config.setupDir) :bool
   if (neo4jCheck()) return true
   const HELM_VALUES_PATH = location + config.customerOs.neo4jHelmValues
 
-  shell.exec('helm repo add neo4j https://helm.neo4j.com/neo4j', {silent: !verbose})
-  const neoInstall = shell.exec(`helm install ${NEO4J_SERVICE} neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ${HELM_VALUES_PATH} --namespace ${NAMESPACE}`, {silent: !verbose})
+  const helmAdd = 'helm repo add neo4j https://helm.neo4j.com/neo4j'
+  if (verbose) console.log(`[EXEC] ${helmAdd}`)
+  shell.exec(helmAdd, {silent: !verbose})
+
+  const helmInstall = `helm install ${NEO4J_SERVICE} neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ${HELM_VALUES_PATH} --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${helmInstall}`)
+  const neoInstall = shell.exec(helmInstall, {silent: !verbose})
   if (neoInstall.code !== 0) {
     error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone', true)
     return false
@@ -98,7 +103,9 @@ function updateCypherLocation(scriptLoc: string, cypherLoc: string, verbose: boo
 }
 
 export function uninstallNeo4j(verbose:boolean) :boolean {
-  const result = shell.exec(`helm uninstall ${NEO4J_SERVICE} --namespace ${NAMESPACE}`, {silent: !verbose})
+  const helmUninstall = `helm uninstall ${NEO4J_SERVICE} --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${helmUninstall}`)
+  const result = shell.exec(helmUninstall, {silent: !verbose})
   if (result.code !== 0) {
     error.logError(result.stderr, 'Unable to helm uninstall Neo4j database')
     return false

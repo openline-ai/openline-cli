@@ -31,7 +31,9 @@ function setupPersistentVolume(verbose: boolean, location = config.setupDir) : b
   if (postgresqlPersistentVolumeCheck()) return true
   const PERSISTENT_VOLUME_PATH = location + config.customerOs.postgresqlPersistentVolume
 
-  const pv = shell.exec(`kubectl apply -f ${PERSISTENT_VOLUME_PATH} --namespace ${NAMESPACE}`, {silent: !verbose})
+  const kubePV = `kubectl apply -f ${PERSISTENT_VOLUME_PATH} --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${kubePV}`)
+  const pv = shell.exec(kubePV, {silent: !verbose})
   if (pv.code !== 0) {
     error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume', true)
     return false
@@ -44,7 +46,9 @@ function setupPersistentVolumeClaim(verbose: boolean, location = config.setupDir
   if (postgresqlPersistentVolumeClaimCheck()) return true
   const PERSISTENT_VOLUME_CLAIM_PATH = location + config.customerOs.postgresqlPersistentVolumeClaim
 
-  const pvc = shell.exec(`kubectl apply -f ${PERSISTENT_VOLUME_CLAIM_PATH} --namespace ${NAMESPACE}`, {silent: !verbose})
+  const kubePVC = `kubectl apply -f ${PERSISTENT_VOLUME_CLAIM_PATH} --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${kubePVC}`)
+  const pvc = shell.exec(kubePVC, {silent: !verbose})
   if (pvc.code !== 0) {
     error.logError(pvc.stderr, 'Unable to setup postgreSQL persistent volume claim', true)
     return false
@@ -57,8 +61,13 @@ function deployPostgresql(verbose: boolean, location = config.setupDir) {
   if (postgresqlServiceCheck()) return true
   const HELM_VALUES_PATH = location + config.customerOs.postgresqlHelmValues
 
-  shell.exec('helm repo add bitnami https://charts.bitnami.com/bitnami', {silent: !verbose})
-  const postgresql = shell.exec(`helm install --values ${HELM_VALUES_PATH} ${POSTGRESQL_SERVICE} bitnami/postgresql --namespace ${NAMESPACE}`, {silent: !verbose})
+  const helmAdd = 'helm repo add bitnami https://charts.bitnami.com/bitnami'
+  if (verbose) console.log(`[EXEC] ${helmAdd}`)
+  shell.exec(helmAdd, {silent: !verbose})
+
+  const helmInstall = `helm install --values ${HELM_VALUES_PATH} ${POSTGRESQL_SERVICE} bitnami/postgresql --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${helmInstall}`)
+  const postgresql = shell.exec(helmInstall, {silent: !verbose})
   if (postgresql.code !== 0) {
     error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql', true)
     return false
@@ -133,7 +142,9 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
 }
 
 export function uninstallPostgresql(verbose:boolean) :boolean {
-  const result = shell.exec(`helm uninstall ${POSTGRESQL_SERVICE} --namespace ${NAMESPACE}`, {silent: !verbose})
+  const helmUninstall = `helm uninstall ${POSTGRESQL_SERVICE} --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${helmUninstall}`)
+  const result = shell.exec(helmUninstall, {silent: !verbose})
   if (result.code !== 0) {
     error.logError(result.stderr, 'Unable to helm uninstall Neo4j database')
     return false
