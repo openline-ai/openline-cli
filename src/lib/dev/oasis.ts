@@ -81,9 +81,10 @@ export function installOasisApi(verbose: boolean, location = config.setupDir, im
     serviceYaml: SERVICE,
     loadbalancerYaml: LOADBALANCER,
   }
+
   const deploy = deployImage(image, installConfig, verbose)
   if (deploy === false) {
-    error.logError('Error loading image', 'Unable to deploy Oasis API', true)
+    error.logError('Error deploying image', 'Unable to deploy Oasis API', true)
     return false
   }
 
