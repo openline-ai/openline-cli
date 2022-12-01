@@ -20,7 +20,7 @@ export default class DevStart extends Command {
   ]
 
   static flags = {
-    all: Flags.boolean({char: 'a', description: 'start all Openline apps & services'}),
+    all: Flags.boolean({description: 'start all Openline apps & services'}),
     tag: Flags.string({
       char: 't',
       description: 'version tag of the image you would like to deploy',
@@ -63,7 +63,8 @@ export default class DevStart extends Command {
     let cleanup = false
 
     if (flags.all) {
-      startEverything(flags.verbose, location, version)
+      if (!startEverything(flags.verbose, location, version)) this.exit(1)
+      this.log('✅ success!')
     } else {
       console.log('🦦 initiating Openline dev server...')
       startup(flags.verbose)
@@ -312,7 +313,7 @@ function startEverything(verbose: boolean, location: string | undefined, imageVe
   // start contacts app
   console.log(`🦦 starting Contacts app version <${imageVersion}>...`)
   let contactsCleanup = false
-  if (location === undefined) {
+  if (location === config.setupDir) {
     shell.exec(`git clone ${config.contacts.repo} ${config.setupDir}`)
     location = config.setupDir
     contactsCleanup = true
@@ -326,7 +327,7 @@ function startEverything(verbose: boolean, location: string | undefined, imageVe
 
   // start oasis app
   let oasisCleanup = false
-  if (location === undefined) {
+  if (location === config.setupDir) {
     shell.exec(`git clone ${config.oasis.repo} ${config.setupDir}`)
     location = config.setupDir
     oasisCleanup = true
