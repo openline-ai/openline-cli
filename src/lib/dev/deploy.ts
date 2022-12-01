@@ -11,9 +11,14 @@ export interface Yaml {
 export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose = false) :boolean {
   const NAMESPACE = 'openline'
 
+  if (verbose) {
+    console.log('Deploying image', imageUrl)
+    console.log(deployConfig)
+  }
+
   if (imageUrl !== null) {
     if (verbose) {
-      shell.exec(`echo docker pull ${imageUrl}`, {silent: true})
+      console.log(`docker pull ${imageUrl}`)
     }
 
     const pull = shell.exec(`docker pull ${imageUrl}`, {silent: !verbose})
@@ -24,7 +29,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   }
 
   if (verbose) {
-    shell.exec(`echo kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`, {silent: true})
+    console.log(`kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`)
   }
 
   const deploy = shell.exec(`kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`, {silent: !verbose})
@@ -33,7 +38,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   }
 
   if (verbose) {
-    shell.exec(`echo kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`, {silent: true})
+    console.log(`kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`)
   }
 
   const service = shell.exec(`kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`, {silent: !verbose})
@@ -42,7 +47,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   }
 
   if (verbose) {
-    shell.exec(`echo kubectl apply -f ${deployConfig.loadbalancerYaml} --namespace ${NAMESPACE}`, {silent: true})
+    console.log(`kubectl apply -f ${deployConfig.loadbalancerYaml} --namespace ${NAMESPACE}`)
   }
 
   if (deployConfig.loadbalancerYaml !== null) {

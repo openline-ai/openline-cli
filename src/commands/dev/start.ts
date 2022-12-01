@@ -198,6 +198,36 @@ export default class DevStart extends Command {
       }
     }
 
+    // start oasis-api, oasis-gui, or contacts-api
+    const oasis = ['oasis-api', 'oasis-gui', 'contacts-api']
+    if (oasis.includes(args.app.toLowerCase())) {
+      let oasisCleanup = false
+      if (!flags.location) {
+        shell.exec(`git clone ${config.oasis.repo} ${config.setupDir}`)
+        location = config.setupDir
+        oasisCleanup = true
+      }
+
+      if (args.app.toLowerCase() === 'oasis-api') {
+        console.log(`🦦 starting oasis-api version <${version}>...`)
+        startOasisApi(flags.verbose, location, version)
+      }
+
+      if (args.app.toLowerCase() === 'oasis-gui') {
+        console.log(`🦦 starting oasis-gui version <${version}>...`)
+        startOasisGui(flags.verbose, location, version)
+      }
+
+      if (args.app.toLowerCase() === 'channels-api') {
+        console.log(`🦦 starting channels-api version <${version}>...`)
+        startChannelsApi(flags.verbose, location, version)
+      }
+
+      if (oasisCleanup) {
+        shell.exec(`rm -r ${config.setupDir}`)
+      }
+    }
+
     this.log('🦦 Congrats!')
   }
 }
