@@ -1,5 +1,6 @@
 import {Command, Flags} from '@oclif/core'
 import * as shell from 'shelljs'
+import {uninstallFusionAuth} from '../../lib/dev/auth'
 import {deleteApp} from '../../lib/dev/delete'
 import {logError} from '../../lib/dev/errors'
 
@@ -87,11 +88,6 @@ export default class DevRm extends Command {
         services = ['message-store-service', 'message-store-loadbalancer-service']
       }
 
-      if (args.service.toLowerCase() === 'auth') {
-        deployments = ['fusionauth-customer-os']
-        services = ['fusionauth-customer-os']
-      }
-
       if (args.service.toLowerCase() === 'oasis-api') {
         deployments = ['oasis-api']
         services = ['oasis-api-service', 'oasis-api-loadbalancer']
@@ -112,7 +108,7 @@ export default class DevRm extends Command {
         services = ['contacts-gui-service', 'contacts-gui-loadbalancer']
       }
 
-      const deleted = deleteApp(deployments, services, flags.verbose)
+      const deleted = (args.service.toLowerCase() === 'auth') ? uninstallFusionAuth(flags.verbose) : deleteApp(deployments, services, flags.verbose)
       if (deleted) {
         console.log(`✅ ${args.service} deleted successfully`)
       }

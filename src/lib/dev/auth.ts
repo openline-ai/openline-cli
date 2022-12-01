@@ -23,3 +23,13 @@ export function installFusionAuth(verbose :boolean, location = config.setupDir) 
 
   return true
 }
+
+export function uninstallFusionAuth(verbose:boolean) :boolean {
+  const result = shell.exec(`helm uninstall ${FUSIONAUTH_SERVICE} --namespace ${NAMESPACE}`, {silent: !verbose})
+  if (result.code !== 0) {
+    error.logError(result.stderr, 'Unable to helm uninstall fusion auth')
+    return false
+  }
+
+  return true
+}

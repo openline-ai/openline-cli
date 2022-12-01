@@ -60,15 +60,14 @@ export default class DevStart extends Command {
     let version = flags.tag
     let cleanup = false
 
-    if (!location) {
+    if (location) {
+      version = 'local'
+      if (location[0] !== '/') location = '/' + location
+    } else {
       shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
       location = config.setupDir
       cleanup = true
-    } else if (location[0] !== '/') {
-      location = '/' + location
     }
-
-    if (location) version = 'local'
 
     // start core services
     console.log('🦦 initiating Openline dev server...')
@@ -119,9 +118,22 @@ export default class DevStart extends Command {
       }
     }
 
-    // start customer-os-api
-    if (args.app === 'customer-os-api') {
-      console.log(`🦦 starting customer-os-api version <${version}>...`)
+    // start auth
+    if (args.app === 'auth') {
+      console.log(`🦦 starting authentication version <${version}>...`)
+      let authCleanup = false
+      if (!flags.location) {
+        shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
+        location = config.setupDir
+        authCleanup = true
+      }
+
+      const auth = fusionauth.installFusionAuth(flags.verbose, location)
+      if (!auth) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+      if (authCleanup) {
+        shell.exec(`rm -r ${config.setupDir}`)
+      }
     }
 
     this.log('🦦 Congrats!')
