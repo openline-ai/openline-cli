@@ -1,6 +1,10 @@
 import * as shell from 'shelljs'
 import * as error from './errors'
 import * as replace from 'replace-in-file'
+import {getConfig} from '../../config/dev'
+
+const config = getConfig()
+const NAMESPACE = config.namespace.name
 
 export interface Yaml {
     deployYaml: string,
@@ -9,8 +13,6 @@ export interface Yaml {
 }
 
 export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose = false) :boolean {
-  const NAMESPACE = 'openline'
-
   if (verbose) {
     console.log('Deploying image', imageUrl)
     console.log(deployConfig)
@@ -68,5 +70,13 @@ export function updateImageTag(deployFiles: string[], imageVersion: string, verb
     return false
   }
 
+  return true
+}
+
+export function deployLoadbalancer(YamlConfigPath: string, verbose: boolean) :boolean {
+  const kubeApplyLoadbalancer = `kubectl apply -f ${YamlConfigPath} --namespace ${NAMESPACE}`
+  if (verbose) console.log(`[EXEC] ${kubeApplyLoadbalancer}`)
+  const lb = shell.exec(kubeApplyLoadbalancer, {silent: !verbose})
+  if (lb.code !== 0) return false
   return true
 }

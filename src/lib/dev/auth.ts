@@ -1,6 +1,7 @@
 import * as shell from 'shelljs'
 import * as error from './errors'
 import {getConfig} from '../../config/dev'
+import {deployLoadbalancer} from './deploy'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -13,6 +14,7 @@ function fusionauthCheck() :boolean {
 export function installFusionAuth(verbose :boolean, location = config.setupDir) :boolean {
   if (fusionauthCheck()) return true
   const HELM_VALUES_PATH = location + config.customerOs.fusionauthHelmValues
+  const LOADBALANCER_PATH = location + config.customerOs.fusionauthLoadbalancer
 
   const helmAdd = 'helm repo add fusionauth https://fusionauth.github.io/charts'
   if (verbose) console.log(`[EXEC] ${helmAdd}`)
@@ -23,6 +25,12 @@ export function installFusionAuth(verbose :boolean, location = config.setupDir) 
   const fa = shell.exec(helmInstall, {silent: !verbose})
   if (fa.code !== 0) {
     error.logError(fa.stderr, 'Unable to complete helm install of fusion auth', true)
+    return false
+  }
+
+  const lb = deployLoadbalancer(LOADBALANCER_PATH, verbose)
+  if (!lb) {
+    error.logError('Error deploying loadbalancer for FusionAuth', 'Try again')
     return false
   }
 

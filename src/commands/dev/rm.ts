@@ -53,6 +53,7 @@ export default class DevRm extends Command {
         logError('Problem deleting Openline dev server', 'Let\'s nuke it from orbit...')
       }
     } else {
+      let deleted = false
       if (args.service.toLowerCase() === 'customer-os') {
         // deletes customer-os-api and message-store-api, but leaves auth and db in place
         deployments = ['customer-os-api', 'message-store']
@@ -111,11 +112,11 @@ export default class DevRm extends Command {
         services = ['contacts-gui-service', 'contacts-gui-loadbalancer']
       }
 
-      const helm = ['auth', 'db']
-      let deleted = false
-
       if (args.service.toLowerCase() === 'auth') {
-        deleted = uninstallFusionAuth(flags.verbose)
+        const helmDeleted = uninstallFusionAuth(flags.verbose)
+        if (!helmDeleted) this.exit(1)
+        deployments = []
+        services = ['fusion-auth-loadbalancer']
       }
 
       if (args.service.toLowerCase() === 'db') {
@@ -125,7 +126,7 @@ export default class DevRm extends Command {
         }
       }
 
-      if (!helm.includes(args.service.toLowerCase())) {
+      if (deployments.length > 0 || services.length > 0) {
         deleted = deleteApp(deployments, services, flags.verbose)
       }
 
