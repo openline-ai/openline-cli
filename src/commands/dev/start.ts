@@ -216,8 +216,13 @@ function startup(verbose: boolean) :boolean {
   // explicitly set context to colima
   const setContext = 'kubectl config use-context colima'
   if (verbose) console.log(`[EXEC] ${setContext}`)
-  const update = shell.exec(updatePermissions, {silent: true})
+  const update = shell.exec(setContext, {silent: true})
   if (!update) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+  // cleanup old setup files
+  const config = getConfig()
+  const dirCheck = shell.exec(`cd ${config.setupDir}`).code === 0
+  if (dirCheck) shell.exec(`rm -r ${config.setupDir}`)
 
   return true
 }
