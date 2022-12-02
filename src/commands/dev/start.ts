@@ -135,7 +135,7 @@ export default class DevStart extends Command {
           if (!msapi) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
         }
 
-        if (cleanup) shell.exec(`rm -r ${config.setupDir}`)
+        if (cleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !flags.verbose})
       }
 
       // start contacts app
@@ -150,7 +150,7 @@ export default class DevStart extends Command {
 
         startContacts(flags.verbose, location, version)
 
-        if (contactsCleanup) shell.exec(`rm -r ${config.setupDir}`)
+        if (contactsCleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !flags.verbose})
       }
 
       // start oasis app
@@ -185,7 +185,7 @@ export default class DevStart extends Command {
           startChannelsApi(flags.verbose, location, version)
         }
 
-        if (oasisCleanup) shell.exec(`rm -r ${config.setupDir}`)
+        if (oasisCleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !flags.verbose})
       }
 
       this.log('✅ success!')
@@ -269,7 +269,7 @@ function startCustomerOs(verbose: boolean, location: string | undefined, imageVe
   const neoConfig = neo.provisionNeo4j(verbose, location)
   if (!neoConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
 
-  if (cleanup) shell.exec(`rm -r ${config.setupDir}`)
+  if (cleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !verbose})
 
   return true
 }
@@ -336,7 +336,7 @@ function startEverything(verbose: boolean, location: string | undefined, imageVe
   if (!startContacts(verbose, location, imageVersion)) return false
 
   if (contactsCleanup) {
-    shell.exec(`rm -r ${config.setupDir}`)
+    shell.exec(`rm -r ${config.setupDir}`, {silent: !verbose})
   }
 
   // start oasis app
@@ -353,7 +353,7 @@ function startEverything(verbose: boolean, location: string | undefined, imageVe
   if (!startOasisGui(verbose, location, imageVersion)) return false
 
   if (oasisCleanup) {
-    shell.exec(`rm -r ${config.setupDir}`)
+    shell.exec(`rm -r ${config.setupDir}`, {silent: !verbose})
   }
 
   return true
