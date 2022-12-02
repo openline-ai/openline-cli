@@ -124,3 +124,15 @@ export function installOasisGui(verbose: boolean, location = config.setupDir, im
 
   return true
 }
+
+export function pingChannelsApi() :boolean {
+  return shell.exec('curl localhost:8013/health', {silent: true}).code === 0
+}
+
+export function pingOasisApi() :boolean {
+  return shell.exec('curl localhost:8006/health', {silent: true}).code === 0
+}
+
+export function pingOasisGui() :boolean {
+  return shell.exec('curl localhost:3006', {silent: true}).code === 0
+}

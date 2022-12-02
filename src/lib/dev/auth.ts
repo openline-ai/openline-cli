@@ -66,3 +66,7 @@ export function uninstallFusionAuth(verbose:boolean) :boolean {
 
   return true
 }
+
+export function pingFusionAuth() :boolean {
+  return shell.exec('curl localhost:9011', {silent: true}).code === 0
+}

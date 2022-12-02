@@ -12,4 +12,5 @@
     "src/**/*"
   ],
   "composite": true,
+  "esModuleInterop": true,
 }

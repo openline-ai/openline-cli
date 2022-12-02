@@ -82,3 +82,11 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
 
   return true
 }
+
+export function pingCustomerOsApi() :boolean {
+  return shell.exec('curl localhost:10000/health', {silent: true}).code === 0
+}
+
+export function pingMessageStoreApi() :boolean {
+  return shell.exec('nc -zv -w5 localhost 9009', {silent: true}).code === 0
+}
