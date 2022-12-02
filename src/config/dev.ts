@@ -25,6 +25,9 @@ export function getConfig() :any {
   config.contacts.guiLoadbalancer = '/deployment/infra/k8s/contacts-gui-loadbalancer.yaml'
   config.contacts.repo = 'https://github.com/openline-ai/openline-contacts.git'
 
+  config.cli = {}
+  config.cli.repo = 'https://github.com/openline-ai/openline-cli.git'
+
   // customerOS config
   config.customerOs = {}
   config.customerOs.githubPath = 'https://raw.githubusercontent.com/openline-ai/openline-customer-os/otter'
@@ -77,6 +80,12 @@ export function getConfig() :any {
   // Voice network
   config.voice = {}
   config.voice.repo = 'https://github.com/openline-ai/openline-voice.git'
+
+  config.webchat = {}
+  config.webchat.repo = 'https://github.com/openline-ai/openline-web-chat.git'
+
+  config.website = {}
+  config.website.repo = 'https://github.com/openline-ai/openline.ai.git'
 
   // CLI command dependencies
   config.dependencies = {}
