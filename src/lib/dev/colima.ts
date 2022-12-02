@@ -6,7 +6,22 @@ export function runningCheck() :boolean {
   return (shell.exec('colima status', {silent: true}).code === 0)
 }
 
-export function contextCheck(): boolean {
+export function contextCheck(verbose: boolean): boolean {
+  const context = shell.exec('kubectl config get-contexts | grep "*"', {silent: !verbose}).stdout
+  if (context.includes('colima')) return true
+
+  const useContext = 'kubectl config use-context colima'
+  if (verbose) console.log(`[EXEC] ${useContext}`)
+  const update = shell.exec(useContext, {silent: true})
+  if (update.code !== 0) {
+    const createContext = 'colima kubernetes reset'
+    if (verbose) console.log(`[EXEC] ${createContext}`)
+    if (shell.exec(createContext, {silent: !verbose}).code === 0) {
+      if (verbose) console.log(`[EXEC] ${useContext}`)
+      return shell.exec(useContext, {silent: true}).code === 0
+    }
+  }
+
   return true
 }
 
@@ -14,7 +29,8 @@ export function startColima(verbose :boolean) :boolean {
   const config = getConfig()
   const isRunning = runningCheck()
   if (isRunning) {
-    return true
+    const isContext = contextCheck(verbose)
+    if (isContext) return true
   }
 
   const CPU = config.server.cpu
@@ -28,5 +44,5 @@ export function startColima(verbose :boolean) :boolean {
     return false
   }
 
-  return true
+  return contextCheck(verbose)
 }
