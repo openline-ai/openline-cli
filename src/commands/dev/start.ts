@@ -66,7 +66,6 @@ export default class DevStart extends Command {
       if (!startEverything(flags.verbose, location, version)) this.exit(1)
       this.log('✅ success!')
     } else {
-      console.log('🦦 initiating Openline dev server...')
       startup(flags.verbose)
 
       // apps & services that require customer-os
@@ -76,7 +75,7 @@ export default class DevStart extends Command {
           version = 'local'
           if (location[0] !== '/') location = '/' + location
         } else {
-          shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
+          shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir} --quiet`)
           location = config.setupDir
           cleanup = true
         }
@@ -139,16 +138,14 @@ export default class DevStart extends Command {
         console.log(`🦦 starting Contacts app version <${version}>...`)
         let contactsCleanup = false
         if (!flags.location) {
-          shell.exec(`git clone ${config.contacts.repo} ${config.setupDir}`)
+          shell.exec(`git clone ${config.contacts.repo} ${config.setupDir} --quiet`)
           location = config.setupDir
           contactsCleanup = true
         }
 
         startContacts(flags.verbose, location, version)
 
-        if (contactsCleanup) {
-          shell.exec(`rm -r ${config.setupDir}`)
-        }
+        if (contactsCleanup) shell.exec(`rm -r ${config.setupDir}`)
       }
 
       // start oasis app
@@ -156,7 +153,7 @@ export default class DevStart extends Command {
       if (oasis.includes(args.app.toLowerCase())) {
         let oasisCleanup = false
         if (!flags.location) {
-          shell.exec(`git clone ${config.oasis.repo} ${config.setupDir}`)
+          shell.exec(`git clone ${config.oasis.repo} ${config.setupDir} --quiet`)
           location = config.setupDir
           oasisCleanup = true
         }
@@ -183,9 +180,7 @@ export default class DevStart extends Command {
           startChannelsApi(flags.verbose, location, version)
         }
 
-        if (oasisCleanup) {
-          shell.exec(`rm -r ${config.setupDir}`)
-        }
+        if (oasisCleanup) shell.exec(`rm -r ${config.setupDir}`)
       }
 
       this.log('✅ success!')
@@ -201,11 +196,23 @@ function startup(verbose: boolean) :boolean {
   }
 
   // Start colima with Openline dev server config
+  console.log('🦦 initiating Openline dev server...')
   const isRunning = colima.runningCheck()
   if (!isRunning) {
     const start = colima.startColima(verbose)
     if (!start) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
   }
+
+  // set permissions on kube config
+  const updatePermissions = 'chmod og-r ~/.kube/config'
+  if (verbose) console.log(`[EXEC] ${updatePermissions}`)
+  shell.exec(updatePermissions, {silent: true})
+
+  // explicitly set context to colima
+  const setContext = 'kubectl config use-context colima'
+  if (verbose) console.log(`[EXEC] ${setContext}`)
+  const update = shell.exec(updatePermissions, {silent: true})
+  if (!update) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
 
   return true
 }
@@ -252,9 +259,7 @@ function startCustomerOs(verbose: boolean, location: string | undefined, imageVe
   const neoConfig = neo.provisionNeo4j(verbose, location)
   if (!neoConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
 
-  if (cleanup) {
-    shell.exec(`rm -r ${config.setupDir}`)
-  }
+  if (cleanup) shell.exec(`rm -r ${config.setupDir}`)
 
   return true
 }
@@ -290,10 +295,9 @@ function startOasisGui(verbose: boolean, location: string | undefined, imageVers
 function startEverything(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
   const config = getConfig()
   let cleanup = false
-  console.log('🦦 initiating Openline dev server...')
   if (!startup(verbose)) return false
   if (location === undefined) {
-    shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir}`)
+    shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir} --quiet`)
     location = config.setupDir
     cleanup = true
   } else {
@@ -314,7 +318,7 @@ function startEverything(verbose: boolean, location: string | undefined, imageVe
   console.log(`🦦 starting Contacts app version <${imageVersion}>...`)
   let contactsCleanup = false
   if (location === config.setupDir) {
-    shell.exec(`git clone ${config.contacts.repo} ${config.setupDir}`)
+    shell.exec(`git clone ${config.contacts.repo} ${config.setupDir} --quiet`)
     location = config.setupDir
     contactsCleanup = true
   }
@@ -328,7 +332,7 @@ function startEverything(verbose: boolean, location: string | undefined, imageVe
   // start oasis app
   let oasisCleanup = false
   if (location === config.setupDir) {
-    shell.exec(`git clone ${config.oasis.repo} ${config.setupDir}`)
+    shell.exec(`git clone ${config.oasis.repo} ${config.setupDir} --quiet`)
     location = config.setupDir
     oasisCleanup = true
   }
