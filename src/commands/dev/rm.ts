@@ -58,21 +58,25 @@ export default class DevRm extends Command {
       uninstallFusionAuth(flags.verbose)
       deleteApp(deployments, services, flags.verbose)
       break
+
     case 'channels-api':
       deployments = ['channels-api']
       services = ['channels-api-service', 'channels-api-loadbalancer']
       deleteApp(deployments, services, flags.verbose)
       break
+
     case 'contacts':
       deployments = ['contacts-gui']
       services = ['contacts-gui-service', 'contacts-gui-loadbalancer']
       deleteApp(deployments, services, flags.verbose)
       break
+
     case 'contacts-gui':
       deployments = ['contacts-gui']
       services = ['contacts-gui-service', 'contacts-gui-loadbalancer']
       deleteApp(deployments, services, flags.verbose)
       break
+
     case 'customer-os':
       deployments = ['customer-os-api', 'message-store']
       services = [
@@ -83,15 +87,18 @@ export default class DevRm extends Command {
       ]
       deleteApp(deployments, services, flags.verbose)
       break
+
     case 'customer-os-api':
       deployments = ['customer-os-api']
       services = ['customer-os-api-service', 'customer-os-api-loadbalancer']
       deleteApp(deployments, services, flags.verbose)
       break
+
     case 'db':
       uninstallNeo4j(flags.verbose)
       uninstallPostgresql(flags.verbose)
       break
+
     case 'oasis':
       deployments = ['oasis-api', 'channels-api', 'oasis-frontend']
       services = [
@@ -104,16 +111,19 @@ export default class DevRm extends Command {
       ]
       deleteApp(deployments, services, flags.verbose)
       break
+
     case 'oasis-api':
       deployments = ['oasis-api']
       services = ['oasis-api-service', 'oasis-api-loadbalancer']
       deleteApp(deployments, services, flags.verbose)
       break
+
     case 'oasis-gui':
       deployments = ['oasis-frontend']
       services = ['oasis-frontend-service', 'oasis-frontend-loadbalancer']
       deleteApp(deployments, services, flags.verbose)
       break
+
     case 'message-store-api':
       deployments = ['message-store']
       services = ['message-store-service', 'message-store-loadbalancer-service']
