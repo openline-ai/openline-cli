@@ -51,6 +51,7 @@ export function getConfig() :any {
   config.customerOs.neo4jProvisioning = '/deployment/scripts/neo4j/provision-neo4j.sh'
   // customerOS FusionAuth
   config.customerOs.fusionauthHelmValues = '/deployment/infra/helm/fusionauth/fusionauth-values.yaml'
+  config.customerOs.fusionauthLoadbalancer = '/deployment/infra/k8s/fusion-auth-load-balancer.yaml'
   config.customerOs.repo = 'https://github.com/openline-ai/openline-customer-os.git'
 
   // Oasis App config
