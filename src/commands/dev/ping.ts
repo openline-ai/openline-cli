@@ -1,5 +1,9 @@
-import {Command, Flags} from '@oclif/core'
-import * as shell from 'shelljs'
+import {Command} from '@oclif/core'
+import {pingFusionAuth} from '../../lib/dev/auth'
+import {pingContactsGui} from '../../lib/dev/contacts'
+import {pingCustomerOsApi, pingMessageStoreApi} from '../../lib/dev/customer-os'
+import {pingOasisGui, pingOasisApi, pingChannelsApi} from '../../lib/dev/oasis'
+const Table = require('cli-table') // eslint-disable-line unicorn/prefer-module
 
 export default class DevPing extends Command {
   static description = 'heath check to determine if openline service is up'
@@ -8,62 +12,36 @@ export default class DevPing extends Command {
     '<%= config.bin %> <%= command.id %>',
   ]
 
-  static flags = {
-    verbose: Flags.boolean({char: 'v'}),
-  }
+  static flags = {}
 
-  static args = [
-    {
-      name: 'app',
-      required: false,
-      description: 'the Openline application you would like to ping',
-      default: 'customer-os',
-      options: ['customer-os'],
-    },
-  ]
+  static args = []
 
   public async run(): Promise<void> {
     // const {flags} = await this.parse(DevPing)
 
-    console.log('🦦 customerOS endpoints')
-    const cosHealth = shell.exec('curl localhost:10000/health', {silent: true})
-    const msHealth = shell.exec('nc -zv -w5 localhost 9009', {silent: true})
+    // const auth = pingFusionAuth() ? '✅' : '❌'
+    const contactsGui = pingContactsGui() ? '✅' : '❌'
+    const customerOsApi = pingCustomerOsApi() ? '✅' : '❌'
+    const messageStoreApi = pingMessageStoreApi() ? '✅' : '❌'
+    const channelsApi = pingChannelsApi() ? '✅' : '❌'
+    const oasisApi = pingOasisApi() ? '✅' : '❌'
+    const oasisGui = pingOasisGui() ? '✅' : '❌'
 
-    if (msHealth.code === 0) {
-      console.log('✅ message store gRPC API is up and reachable on port 9009')
-    } else {
-      console.log('❌ message store gRPC API is not reachable')
-    }
+    const table = new Table({
+      head: ['App', 'Service', 'Port', 'Reachable?'],
+      // colWidths: [100, 100, 100]
+    })
 
-    if (cosHealth.code === 0) {
-      console.log('✅ customerOS GraphQL API is up and reachable on port 10000')
-    } else {
-      console.log('❌ customerOS GraphQL API is not reachable')
-    }
+    table.push(
+      // ['customerOs', 'auth', auth],
+      ['customer-os', 'customer-os-api', '10000', customerOsApi],
+      ['customer-os', 'message-store-api', '9009', messageStoreApi],
+      ['contacts', 'contacts-gui', '3000', contactsGui],
+      ['oasis', 'channels-api', '8013', channelsApi],
+      ['oasis', 'oasis-api', '8006', oasisApi],
+      ['oasis', 'oasis-gui', '3006', oasisGui],
+    )
 
-    if (cosHealth.code !== 0 || msHealth.code !== 0) {
-      console.log('=> Try running openline dev start customer-os')
-    }
-
-    console.log('')
-    console.log('🦦 oasis endpoints')
-    const oasisApi = shell.exec('curl localhost:8006/health', {silent: true})
-    const channelsApi = shell.exec('curl localhost:8013/health', {silent: true})
-
-    if (oasisApi.code === 0) {
-      console.log('✅ Oasis API is up and reachable on port 8006')
-    } else {
-      console.log('❌ Oasis API is not reachable')
-    }
-
-    if (channelsApi.code === 0) {
-      console.log('✅ Channels API is up and reachable on port 8013')
-    } else {
-      console.log('❌ Channels API is not reachable')
-    }
-
-    if (oasisApi.code !== 0 || channelsApi.code !== 0) {
-      console.log('=> Try running openline dev start oasis')
-    }
+    console.log(table.toString())
   }
 }
