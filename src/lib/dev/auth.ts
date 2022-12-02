@@ -68,5 +68,5 @@ export function uninstallFusionAuth(verbose:boolean) :boolean {
 }
 
 export function pingFusionAuth() :boolean {
-  return shell.exec('curl localhost:9011', {silent: true}).code === 0
+  return shell.exec('curl --max-time 2 localhost:9011/health', {silent: true}).code === 0
 }
