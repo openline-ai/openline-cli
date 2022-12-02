@@ -221,8 +221,8 @@ function startup(verbose: boolean) :boolean {
 
   // cleanup old setup files
   const config = getConfig()
-  const dirCheck = shell.exec(`cd ${config.setupDir}`).code === 0
-  if (dirCheck) shell.exec(`rm -r ${config.setupDir}`)
+  const dirCheck = shell.exec(`cd ${config.setupDir}`, {silent: true}).code === 0
+  if (dirCheck) shell.exec(`rm -r ${config.setupDir}`, {silent: true})
 
   return true
 }
