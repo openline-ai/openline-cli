@@ -6,6 +6,10 @@ export function runningCheck() :boolean {
   return (shell.exec('colima status', {silent: true}).code === 0)
 }
 
+export function contextCheck(): boolean {
+  return true
+}
+
 export function startColima(verbose :boolean) :boolean {
   const config = getConfig()
   const isRunning = runningCheck()
