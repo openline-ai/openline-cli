@@ -9,6 +9,8 @@ export default class DevClone extends Command {
     '<%= config.bin %> <%= command.id %>',
   ]
 
+  static aliases = ['dev:clc']
+
   static flags = {
     branch: Flags.string({
       char: 'b',
