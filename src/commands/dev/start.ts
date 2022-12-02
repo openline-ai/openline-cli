@@ -31,6 +31,7 @@ export default class DevStart extends Command {
       description: 'location for the source code to be used in the installation',
     }),
     verbose: Flags.boolean({char: 'v'}),
+    test: Flags.boolean({hidden: true}),
   }
 
   static args = [
@@ -61,6 +62,11 @@ export default class DevStart extends Command {
     let location = flags.location
     let version = flags.tag
     let cleanup = false
+
+    if (flags.test) {
+      fusionauth.addHosts(true)
+      this.exit(1)
+    }
 
     if (flags.all) {
       if (!startEverything(flags.verbose, location, version)) this.exit(1)
