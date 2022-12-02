@@ -5,6 +5,7 @@ import {uninstallNeo4j} from '../../lib/dev/neo4j'
 import {uninstallPostgresql} from '../../lib/dev/postgres'
 import {deleteApp} from '../../lib/dev/delete'
 import {logError} from '../../lib/dev/errors'
+import {contextCheck} from '../../lib/dev/colima'
 
 export default class DevRm extends Command {
   static description = 'Delete Openline services'
@@ -43,6 +44,8 @@ export default class DevRm extends Command {
     const {args, flags} = await this.parse(DevRm)
     let deployments :string[] = []
     let services :string[] = []
+
+    if (!contextCheck(flags.verbose)) this.exit(1)
 
     if (flags.all) {
       const reset = shell.exec('colima kubernetes reset', {silent: !flags.verbose})
