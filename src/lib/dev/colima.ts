@@ -1,23 +1,24 @@
 import * as shell from 'shelljs'
 import * as error from './errors'
 import {getConfig} from '../../config/dev'
+import {logTerminal} from '../logs'
 
 export function runningCheck() :boolean {
   return (shell.exec('colima status', {silent: true}).code === 0)
 }
 
 export function contextCheck(verbose: boolean): boolean {
-  const context = shell.exec('kubectl config get-contexts | grep "*"', {silent: !verbose}).stdout
+  const context = shell.exec('kubectl config get-contexts | grep "*"', {silent: true}).stdout
   if (context.includes('colima')) return true
 
   const useContext = 'kubectl config use-context colima'
-  if (verbose) console.log(`[EXEC] ${useContext}`)
+  if (verbose) logTerminal('EXEC', useContext)
   const update = shell.exec(useContext, {silent: true})
   if (update.code !== 0) {
     const createContext = 'colima kubernetes reset'
-    if (verbose) console.log(`[EXEC] ${createContext}`)
+    if (verbose) logTerminal('EXEC', createContext)
     if (shell.exec(createContext, {silent: !verbose}).code === 0) {
-      if (verbose) console.log(`[EXEC] ${useContext}`)
+      if (verbose) logTerminal('EXEC', useContext)
       return shell.exec(useContext, {silent: true}).code === 0
     }
   }

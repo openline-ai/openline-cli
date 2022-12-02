@@ -1,6 +1,7 @@
 import * as shell from 'shelljs'
 import * as error from './errors'
 import {getConfig} from '../../config/dev'
+import {logTerminal} from '../logs'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -143,10 +144,12 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
 
 export function uninstallPostgresql(verbose:boolean) :boolean {
   const helmUninstall = `helm uninstall ${POSTGRESQL_SERVICE} --namespace ${NAMESPACE}`
-  if (verbose) console.log(`[EXEC] ${helmUninstall}`)
+  if (verbose) logTerminal('EXEC', helmUninstall)
   const result = shell.exec(helmUninstall, {silent: !verbose})
-  if (result.code !== 0) {
-    error.logError(result.stderr, 'Unable to helm uninstall Neo4j database')
+  if (result.code === 0) {
+    logTerminal('SUCCESS', 'PostgreSQL successfully uninstalled')
+  } else {
+    logTerminal('ERROR', result.stderr, 'dev:postgres:uninstallPostgresql')
     return false
   }
 

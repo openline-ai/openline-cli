@@ -2,6 +2,7 @@ import * as shell from 'shelljs'
 import * as error from './errors'
 import {getConfig} from '../../config/dev'
 import {deployLoadbalancer} from './deploy'
+import {logTerminal} from '../logs'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -57,10 +58,12 @@ export function installFusionAuth(verbose :boolean, location = config.setupDir) 
 
 export function uninstallFusionAuth(verbose:boolean) :boolean {
   const helmUninstall = `helm uninstall ${FUSIONAUTH_SERVICE} --namespace ${NAMESPACE}`
-  if (verbose) console.log(`[EXEC] ${helmUninstall}`)
-  const result = shell.exec(helmUninstall, {silent: !verbose})
-  if (result.code !== 0) {
-    error.logError(result.stderr, 'Unable to helm uninstall fusion auth')
+  if (verbose) logTerminal('EXEC', helmUninstall)
+  const result = shell.exec(helmUninstall, {silent: true})
+  if (result.code === 0) {
+    logTerminal('SUCCESS', 'auth deployment successfully uninstalled')
+  } else {
+    logTerminal('ERROR', result.stderr, 'dev:auth:uninstallFusionAuth')
     return false
   }
 

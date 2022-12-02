@@ -2,6 +2,7 @@ import * as shell from 'shelljs'
 import * as error from './errors'
 import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
+import {logTerminal} from '../logs'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -104,10 +105,12 @@ function updateCypherLocation(scriptLoc: string, cypherLoc: string, verbose: boo
 
 export function uninstallNeo4j(verbose:boolean) :boolean {
   const helmUninstall = `helm uninstall ${NEO4J_SERVICE} --namespace ${NAMESPACE}`
-  if (verbose) console.log(`[EXEC] ${helmUninstall}`)
-  const result = shell.exec(helmUninstall, {silent: !verbose})
-  if (result.code !== 0) {
-    error.logError(result.stderr, 'Unable to helm uninstall Neo4j database')
+  if (verbose) logTerminal('EXEC', helmUninstall)
+  const result = shell.exec(helmUninstall, {silent: true})
+  if (result.code === 0) {
+    logTerminal('SUCCESS', 'Neo4j successfully uninstalled')
+  } else {
+    logTerminal('ERROR', result.stderr, 'dev:neo4j:uninstallNeo4j')
     return false
   }
 
