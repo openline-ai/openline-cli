@@ -64,7 +64,6 @@ export default class DevStart extends Command {
     let cleanup = false
 
     if (flags.test) {
-      fusionauth.addHosts(true)
       this.exit(1)
     }
 
