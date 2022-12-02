@@ -11,6 +11,22 @@ function fusionauthCheck() :boolean {
   return (shell.exec(`kubectl get service ${FUSIONAUTH_SERVICE} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
+function hostsCheck() :boolean {
+  const check = shell.exec('grep fusionauth-customer-os.openline.svc.cluster.local /etc/hosts', {silent: true}).stdout
+  if (check === '') return false
+  return true
+}
+
+function addHosts(verbose: boolean) :boolean {
+  if (hostsCheck()) return true
+  const cmd = 'sudo bash -c "echo 127.0.0.1 fusionauth-customer-os.openline.svc.cluster.local >> /etc/hosts"'
+  console.log('⏳ updating host file with fusionauth configuration')
+  console.log('❗️ this requires sudo permissions and is required for fusionauth to work')
+  console.log('❗️ if granted, the following command will execute...')
+  console.log(`==> ${cmd}`)
+  return (shell.exec(cmd, {silent: !verbose}).code === 0)
+}
+
 export function installFusionAuth(verbose :boolean, location = config.setupDir) :boolean {
   if (fusionauthCheck()) return true
   const HELM_VALUES_PATH = location + config.customerOs.fusionauthHelmValues
@@ -33,6 +49,8 @@ export function installFusionAuth(verbose :boolean, location = config.setupDir) 
     error.logError('Error deploying loadbalancer for FusionAuth', 'Try again')
     return false
   }
+
+  if (!addHosts(verbose)) return false
 
   return true
 }
