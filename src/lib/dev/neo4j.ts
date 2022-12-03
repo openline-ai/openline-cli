@@ -90,7 +90,7 @@ function updateCypherLocation(scriptLoc: string, cypherLoc: string, verbose: boo
     return false
   }
 
-  logTerminal('SUCCESS', 'Neo4j database successfully provisioned')
+  logTerminal('SUCCESS', 'neo4j database successfully provisioned')
   return true
 }
 
