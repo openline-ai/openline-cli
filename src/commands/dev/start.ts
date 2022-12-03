@@ -1,7 +1,5 @@
 /* eslint-disable  complexity */
 import {Command, Flags} from '@oclif/core'
-import * as colima from '../../lib/dev/colima'
-import * as mac from '../../lib/mac-dependency-check'
 import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
@@ -83,6 +81,7 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
+      fusionauth.installFusionAuth(flags.verbose, location)
       this.exit(0)
     }
 
@@ -154,26 +153,6 @@ export default class DevStart extends Command {
 }
 
 
-
-function startCoreServices(verbose: boolean, location: string | undefined) :boolean {
-
-
-  // Install databases
-  if (verbose) console.log('⏳ starting Neo4j')
-  const neo4j = neo.installNeo4j(verbose, location)
-  if (!neo4j) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-  if (verbose) console.log('⏳ starting postgreSQL')
-  const postgresql = sql.installPostgresql(verbose, location)
-  if (!postgresql) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-  // Install authentication
-  if (verbose) console.log('⏳ installing fusionauth')
-  const auth = fusionauth.installFusionAuth(verbose, location)
-  if (!auth) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-  return true
-}
 
 function startCustomerOs(verbose: boolean, location: string | undefined, imageVersion: string, cleanup: boolean) :boolean {
   const config = getConfig()
