@@ -108,65 +108,150 @@ export default class DevStart extends Command {
     case 'auth':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       fusionauth.installFusionAuth(flags.verbose, location)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
     case 'channels-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.cleanupSetupFiles()
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      oasis.installChannelsApi(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
     case 'contacts':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.installDatabases(flags.verbose, location)
+      fusionauth.installFusionAuth(flags.verbose, location)
+      installCustomerOsApi(flags.verbose, location, version)
+      installMessageStoreApi(flags.verbose, location, version)
+      sql.provisionPostgresql(flags.verbose, location)
+      neo.provisionNeo4j(flags.verbose, location)
+      start.cleanupSetupFiles()
+      // install contacts
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      installContactsGui(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
     case 'contacts-gui':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.cleanupSetupFiles()
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      installContactsGui(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
     case 'customer-os':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.installDatabases(flags.verbose, location)
+      fusionauth.installFusionAuth(flags.verbose, location)
+      installCustomerOsApi(flags.verbose, location, version)
+      installMessageStoreApi(flags.verbose, location, version)
+      sql.provisionPostgresql(flags.verbose, location)
+      neo.provisionNeo4j(flags.verbose, location)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
     case 'customer-os-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      installCustomerOsApi(flags.verbose, location, version)
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
     case 'db':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.installDatabases(flags.verbose, location)
+      sql.provisionPostgresql(flags.verbose, location)
+      neo.provisionNeo4j(flags.verbose, location)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
     case 'oasis':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.installDatabases(flags.verbose, location)
+      fusionauth.installFusionAuth(flags.verbose, location)
+      installCustomerOsApi(flags.verbose, location, version)
+      installMessageStoreApi(flags.verbose, location, version)
+      sql.provisionPostgresql(flags.verbose, location)
+      neo.provisionNeo4j(flags.verbose, location)
+      start.cleanupSetupFiles()
+      // install oasis
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      oasis.installChannelsApi(flags.verbose, location, version)
+      oasis.installOasisApi(flags.verbose, location, version)
+      oasis.installOasisGui(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
     case 'oasis-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.cleanupSetupFiles()
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      oasis.installOasisApi(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
     case 'oasis-gui':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.cleanupSetupFiles()
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      oasis.installOasisGui(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
     case 'message-store-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      installMessageStoreApi(flags.verbose, location, version)
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
     }
   }
