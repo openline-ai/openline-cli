@@ -1,7 +1,8 @@
 import {logTerminal} from '../../lib/logs'
 import * as shell from 'shelljs'
 
-export function cloneRepo(repo: string, verbose: boolean, location?: string, branch?: string) :void {
+// eslint-disable-next-line max-params
+export function cloneRepo(repo: string, verbose: boolean, location?: string, branch?: string, quiet?: boolean) :void {
   let cmd = `git clone ${repo}`
   if (location) {
     cmd += ' ' + location
@@ -9,6 +10,10 @@ export function cloneRepo(repo: string, verbose: boolean, location?: string, bra
 
   if (branch) {
     cmd += ` -b ${branch}`
+  }
+
+  if (quiet) {
+    cmd += ' -q'
   }
 
   if (verbose) logTerminal('EXEC', cmd)

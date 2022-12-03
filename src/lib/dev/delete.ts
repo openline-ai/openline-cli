@@ -34,7 +34,8 @@ export function deleteAll(verbose: boolean) :boolean {
   if (verbose) logTerminal('EXEC', cmd)
   const reset = shell.exec(cmd, {silent: true})
   if (reset.code === 0) {
-    logTerminal('SUCCESS', 'Openline dev server has been deleted', 'to stop the dev server, run => openline dev stop')
+    logTerminal('SUCCESS', 'Openline dev server has been deleted')
+    logTerminal('INFO', 'to stop the dev server, run => openline dev stop')
   } else {
     logTerminal('ERROR', reset.stderr, 'dev:delete:deleteAll')
     return false

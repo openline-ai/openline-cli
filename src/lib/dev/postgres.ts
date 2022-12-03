@@ -90,7 +90,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      ms = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep message-store|grep Running| cut -f1 -d ' '`, {silent: !verbose}).stdout
+      ms = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep message-store|grep Running| cut -f1 -d ' '`, {silent: true}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning postgreSQL timed out', 'dev:postgres:provisionPostresql')
@@ -103,7 +103,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      cosDb = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${POSTGRESQL_SERVICE}|grep Running| cut -f1 -d ' '`, {silent: !verbose}).stdout
+      cosDb = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${POSTGRESQL_SERVICE}|grep Running| cut -f1 -d ' '`, {silent: true}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning postgreSQL timed out', 'dev:postgres:provisionPostresql')
@@ -120,7 +120,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      provision = shell.exec(`echo ${POSTGRESQL_DB_SETUP}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: !verbose}).stdout
+      provision = shell.exec(`echo ${POSTGRESQL_DB_SETUP}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: true}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning message store DB timed out', 'dev:postgres:provisionPostresql')
