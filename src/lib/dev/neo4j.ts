@@ -43,7 +43,7 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `Neo4j starting up, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      neo = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${NEO4J_SERVICE}|grep Running|cut -f1 -d ' '`, {silent: !verbose}).stdout
+      neo = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${NEO4J_SERVICE}|grep Running|cut -f1 -d ' '`, {silent: true}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning Neo4j timed out', 'dev:neo4j:provionNeo4j')
@@ -56,7 +56,7 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `Neo4j initializing, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      started = shell.exec(`kubectl logs -n ${NAMESPACE} ${neo}`, {silent: !verbose}).stdout
+      started = shell.exec(`kubectl logs -n ${NAMESPACE} ${neo}`, {silent: true}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning Neo4j timed out', 'dev:neo4j:provionNeo4j')
@@ -72,7 +72,6 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
     return false
   }
 
-  logTerminal('SUCCESS', 'Neo4j database successfully provisioned')
   return true
 }
 
