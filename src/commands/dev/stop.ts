@@ -1,6 +1,6 @@
 import {Command, Flags} from '@oclif/core'
-import * as error from '../../lib/dev/errors'
 import * as shell from 'shelljs'
+import {logTerminal} from '../../lib/logs'
 
 export default class DevStop extends Command {
   static description = 'Stops the Openline development server & saves current config.'
@@ -19,12 +19,12 @@ export default class DevStop extends Command {
     const {flags} = await this.parse(DevStop)
 
     this.log('🦦 Saving current configuration...')
-    this.log('🦦 Stopping Opeline dev server')
-    const reset = shell.exec('colima stop', {silent: !flags.verbose})
+    if (flags.verbose) logTerminal('EXEC', 'colima stop')
+    const reset = shell.exec('colima stop', {silent: true})
     if (reset.code === 0) {
-      '✅ Openline dev server stopped'
+      logTerminal('SUCCESS', 'Openline dev server stopped')
     } else {
-      error.logError(reset.stderr, 'Run this command to nuke your instance and start over => openline dev rm --all')
+      logTerminal('ERROR', reset.stderr, 'dev:stop')
     }
   }
 }

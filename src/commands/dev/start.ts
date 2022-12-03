@@ -11,6 +11,7 @@ import {getConfig} from '../../config/dev'
 import {installCustomerOsApi, installMessageStoreApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
 import * as oasis from '../../lib/dev/oasis'
+import * as start from '../../lib/dev/start'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -41,17 +42,17 @@ export default class DevStart extends Command {
       description: 'the Openline application you would like to start',
       default: 'customer-os',
       options: [
-        'customer-os',
-        'contacts',
-        'oasis',
         'auth',
-        'db',
-        'customer-os-api',
-        'message-store-api',
-        'oasis-api',
         'channels-api',
-        'oasis-gui',
+        'contacts',
         'contacts-gui',
+        'customer-os',
+        'customer-os-api',
+        'db',
+        'oasis',
+        'oasis-api',
+        'oasis-gui',
+        'message-store-api',
       ],
     },
   ]
@@ -64,132 +65,178 @@ export default class DevStart extends Command {
     let cleanup = false
 
     if (flags.test) {
-      this.exit(1)
+      start.dependencyCheck(true)
+      this.exit(0)
     }
 
     if (flags.all) {
-      if (!startEverything(flags.verbose, location, version)) this.exit(1)
-      this.log('✅ success!')
-    } else {
-      startup(flags.verbose)
-
-      // apps & services that require customer-os
-      const customerOs = ['customer-os', 'contacts', 'oasis', 'auth', 'db', 'customer-os-api', 'message-store-api']
-      if (customerOs.includes(args.app.toLowerCase())) {
-        if (location) {
-          version = 'local'
-          if (location[0] !== '/') location = '/' + location
-        } else {
-          shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir} --quiet`)
-          location = config.setupDir
-          cleanup = true
-        }
-
-        // apps & services that require all core services (databases & auth)
-        const coreServices = ['customer-os', 'contacts', 'oasis', 'auth', 'db']
-        if (coreServices.includes(args.app.toLowerCase())) {
-          // start core services
-          console.log('🦦 setting up core infrastructure...')
-          startCoreServices(flags.verbose, location)
-        }
-
-        // apps that require full customerOS install
-        const fullCustomerOs = ['customer-os', 'contacts', 'oasis']
-        if (fullCustomerOs.includes(args.app.toLowerCase())) {
-          console.log(`🦦 starting customerOS version <${version}>...`)
-          console.log('⏳ this can take a few mins...')
-          startCustomerOs(flags.verbose, location, version, cleanup)
-        }
-
-        // start db only
-        if (args.app.toLowerCase() === 'db') {
-          console.log(`🦦 starting databases version <${version}>...`)
-          // Provision databases
-          if (flags.verbose) console.log('⏳ configuring postgreSQL')
-          const sqlConfig = sql.provisionPostgresql(flags.verbose, location)
-          if (!sqlConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-          if (flags.verbose) console.log('⏳ configuring Neo4j...this can take up to 10 mins')
-          const neoConfig = neo.provisionNeo4j(flags.verbose, location)
-          if (!neoConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-        }
-
-        // start authentication only
-        if (args.app.toLowerCase() === 'auth') {
-          console.log(`🦦 starting authentication version <${version}>...`)
-          const auth = fusionauth.installFusionAuth(flags.verbose, location)
-          if (!auth) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-        }
-
-        // start customer-os-api only
-        if (args.app.toLowerCase() === 'customer-os-api') {
-          console.log(`🦦 starting customer-os-api version <${version}>...`)
-          const api = installCustomerOsApi(flags.verbose, location, version)
-          if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-        }
-
-        // start message-store api only
-        if (args.app.toLowerCase() === 'message-store-api') {
-          console.log(`🦦 starting message-store-api version <${version}>...`)
-          const msapi = installMessageStoreApi(flags.verbose, location, version)
-          if (!msapi) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-        }
-
-        if (cleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !flags.verbose})
-      }
-
-      // start contacts app
-      if (args.app.toLowerCase() === 'contacts' || args.app === 'contacts-gui') {
-        console.log(`🦦 starting Contacts app version <${version}>...`)
-        let contactsCleanup = false
-        if (!flags.location) {
-          shell.exec(`git clone ${config.contacts.repo} ${config.setupDir} --quiet`)
-          location = config.setupDir
-          contactsCleanup = true
-        }
-
-        startContacts(flags.verbose, location, version)
-
-        if (contactsCleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !flags.verbose})
-      }
-
-      // start oasis app
-      const oasis = ['oasis', 'oasis-api', 'oasis-gui', 'contacts-api']
-      if (oasis.includes(args.app.toLowerCase())) {
-        let oasisCleanup = false
-        if (!flags.location) {
-          shell.exec(`git clone ${config.oasis.repo} ${config.setupDir} --quiet`)
-          location = config.setupDir
-          oasisCleanup = true
-        }
-
-        if (args.app.toLowerCase() === 'oasis') {
-          console.log(`🦦 starting Oasis app version <${version}>...`)
-          startChannelsApi(flags.verbose, location, version)
-          startOasisApi(flags.verbose, location, version)
-          startOasisGui(flags.verbose, location, version)
-        }
-
-        if (args.app.toLowerCase() === 'oasis-api') {
-          console.log(`🦦 starting oasis-api version <${version}>...`)
-          startOasisApi(flags.verbose, location, version)
-        }
-
-        if (args.app.toLowerCase() === 'oasis-gui') {
-          console.log(`🦦 starting oasis-gui version <${version}>...`)
-          startOasisGui(flags.verbose, location, version)
-        }
-
-        if (args.app.toLowerCase() === 'channels-api') {
-          console.log(`🦦 starting channels-api version <${version}>...`)
-          startChannelsApi(flags.verbose, location, version)
-        }
-
-        if (oasisCleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !flags.verbose})
-      }
-
-      this.log('✅ success!')
+      start.dependencyCheck(flags.verbose)
+      this.exit(0)
     }
+
+    const app = args.app.toLowerCase()
+    switch (app) {
+    case 'auth':
+      start.dependencyCheck(flags.verbose)
+      break
+
+    case 'channels-api':
+      start.dependencyCheck(flags.verbose)
+      break
+
+    case 'contacts':
+      start.dependencyCheck(flags.verbose)
+      break
+
+    case 'contacts-gui':
+      start.dependencyCheck(flags.verbose)
+      break
+
+    case 'customer-os':
+      start.dependencyCheck(flags.verbose)
+      break
+
+    case 'customer-os-api':
+      start.dependencyCheck(flags.verbose)
+      break
+
+    case 'db':
+      start.dependencyCheck(flags.verbose)
+      break
+
+    case 'oasis':
+      start.dependencyCheck(flags.verbose)
+      break
+
+    case 'oasis-api':
+      start.dependencyCheck(flags.verbose)
+      break
+
+    case 'oasis-gui':
+      start.dependencyCheck(flags.verbose)
+      break
+
+    case 'message-store-api':
+      start.dependencyCheck(flags.verbose)
+      break
+    }
+
+    // apps & services that require customer-os
+    const customerOs = ['customer-os', 'contacts', 'oasis', 'auth', 'db', 'customer-os-api', 'message-store-api']
+    if (customerOs.includes(args.app.toLowerCase())) {
+      if (location) {
+        version = 'local'
+        if (location[0] !== '/') location = '/' + location
+      } else {
+        shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir} --quiet`)
+        location = config.setupDir
+        cleanup = true
+      }
+
+      // apps & services that require all core services (databases & auth)
+      const coreServices = ['customer-os', 'contacts', 'oasis', 'auth', 'db']
+      if (coreServices.includes(args.app.toLowerCase())) {
+        // start core services
+        console.log('🦦 setting up core infrastructure...')
+        startCoreServices(flags.verbose, location)
+      }
+
+      // apps that require full customerOS install
+      const fullCustomerOs = ['customer-os', 'contacts', 'oasis']
+      if (fullCustomerOs.includes(args.app.toLowerCase())) {
+        console.log(`🦦 starting customerOS version <${version}>...`)
+        console.log('⏳ this can take a few mins...')
+        startCustomerOs(flags.verbose, location, version, cleanup)
+      }
+
+      // start db only
+      if (args.app.toLowerCase() === 'db') {
+        console.log(`🦦 starting databases version <${version}>...`)
+        // Provision databases
+        if (flags.verbose) console.log('⏳ configuring postgreSQL')
+        const sqlConfig = sql.provisionPostgresql(flags.verbose, location)
+        if (!sqlConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+
+        if (flags.verbose) console.log('⏳ configuring Neo4j...this can take up to 10 mins')
+        const neoConfig = neo.provisionNeo4j(flags.verbose, location)
+        if (!neoConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+      }
+
+      // start authentication only
+      if (args.app.toLowerCase() === 'auth') {
+        console.log(`🦦 starting authentication version <${version}>...`)
+        const auth = fusionauth.installFusionAuth(flags.verbose, location)
+        if (!auth) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+      }
+
+      // start customer-os-api only
+      if (args.app.toLowerCase() === 'customer-os-api') {
+        console.log(`🦦 starting customer-os-api version <${version}>...`)
+        const api = installCustomerOsApi(flags.verbose, location, version)
+        if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+      }
+
+      // start message-store api only
+      if (args.app.toLowerCase() === 'message-store-api') {
+        console.log(`🦦 starting message-store-api version <${version}>...`)
+        const msapi = installMessageStoreApi(flags.verbose, location, version)
+        if (!msapi) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
+      }
+
+      if (cleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !flags.verbose})
+    }
+
+    // start contacts app
+    if (args.app.toLowerCase() === 'contacts' || args.app === 'contacts-gui') {
+      console.log(`🦦 starting Contacts app version <${version}>...`)
+      let contactsCleanup = false
+      if (!flags.location) {
+        shell.exec(`git clone ${config.contacts.repo} ${config.setupDir} --quiet`)
+        location = config.setupDir
+        contactsCleanup = true
+      }
+
+      startContacts(flags.verbose, location, version)
+
+      if (contactsCleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !flags.verbose})
+    }
+
+    // start oasis app
+    const oasis = ['oasis', 'oasis-api', 'oasis-gui', 'contacts-api']
+    if (oasis.includes(args.app.toLowerCase())) {
+      let oasisCleanup = false
+      if (!flags.location) {
+        shell.exec(`git clone ${config.oasis.repo} ${config.setupDir} --quiet`)
+        location = config.setupDir
+        oasisCleanup = true
+      }
+
+      if (args.app.toLowerCase() === 'oasis') {
+        console.log(`🦦 starting Oasis app version <${version}>...`)
+        startChannelsApi(flags.verbose, location, version)
+        startOasisApi(flags.verbose, location, version)
+        startOasisGui(flags.verbose, location, version)
+      }
+
+      if (args.app.toLowerCase() === 'oasis-api') {
+        console.log(`🦦 starting oasis-api version <${version}>...`)
+        startOasisApi(flags.verbose, location, version)
+      }
+
+      if (args.app.toLowerCase() === 'oasis-gui') {
+        console.log(`🦦 starting oasis-gui version <${version}>...`)
+        startOasisGui(flags.verbose, location, version)
+      }
+
+      if (args.app.toLowerCase() === 'channels-api') {
+        console.log(`🦦 starting channels-api version <${version}>...`)
+        startChannelsApi(flags.verbose, location, version)
+      }
+
+      if (oasisCleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !flags.verbose})
+    }
+
+    this.log('✅ success!')
   }
 }
 
