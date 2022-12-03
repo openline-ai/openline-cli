@@ -82,6 +82,10 @@ export default class DevStart extends Command {
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       fusionauth.installFusionAuth(flags.verbose, location)
+      installCustomerOsApi(flags.verbose, location, version)
+      installMessageStoreApi(flags.verbose, location, version)
+      sql.provisionPostgresql(flags.verbose, location)
+      neo.provisionNeo4j(flags.verbose, location)
       this.exit(0)
     }
 
@@ -154,24 +158,6 @@ export default class DevStart extends Command {
 
 
 
-function startCustomerOs(verbose: boolean, location: string | undefined, imageVersion: string, cleanup: boolean) :boolean {
-  const config = getConfig()
-  if (verbose) console.log('⏳ installing customerOS API')
-  const api = installCustomerOsApi(verbose, location, imageVersion)
-  if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-  if (verbose) console.log('⏳ installing message store API')
-  const msapi = installMessageStoreApi(verbose, location, imageVersion)
-  if (!msapi) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-  // Provision databases
-  if (verbose) console.log('⏳ configuring postgreSQL')
-  const sqlConfig = sql.provisionPostgresql(verbose, location)
-  if (!sqlConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-
-  if (verbose) console.log('⏳ configuring Neo4j...this can take up to 10 mins')
-  const neoConfig = neo.provisionNeo4j(verbose, location)
-  if (!neoConfig) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
 
   if (cleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !verbose})
 
