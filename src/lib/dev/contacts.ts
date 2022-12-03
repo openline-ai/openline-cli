@@ -1,8 +1,8 @@
 import * as shell from 'shelljs'
-import * as error from './errors'
 import {getConfig} from '../../config/dev'
 import {deployImage, Yaml, updateImageTag} from './deploy'
 import {buildLocalImage} from './build-image'
+import {logTerminal} from '../logs'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -20,13 +20,14 @@ export function installContactsGui(verbose: boolean, location = config.setupDir,
   const LOADBALANCER = location + config.contacts.guiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
-    const tag = updateImageTag([DEPLOYMENT], imageVersion, verbose)
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
     if (!tag) return false
   }
 
   let image: string | null = config.contacts.guiImage + imageVersion
 
   if (location !== config.setupDir) {
+    // come back to this when Dockerfiles are standardized
     const buildPath = location + '/packages/apps/contacts'
     buildLocalImage(buildPath, CONTACTS_IMAGE, verbose)
     image = null
@@ -38,11 +39,9 @@ export function installContactsGui(verbose: boolean, location = config.setupDir,
     loadbalancerYaml: LOADBALANCER,
   }
   const deploy = deployImage(image, installConfig, verbose)
-  if (deploy === false) {
-    error.logError('Error loading image', 'Unable to deploy Contacts GUI', true)
-    return false
-  }
+  if (deploy === false) return false
 
+  logTerminal('SUCCESS', 'contacts-gui successfully installed')
   return true
 }
 
