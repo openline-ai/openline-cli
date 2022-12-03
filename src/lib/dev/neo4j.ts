@@ -1,5 +1,4 @@
 import * as shell from 'shelljs'
-import * as error from './errors'
 import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
@@ -29,6 +28,7 @@ export function installNeo4j(verbose :boolean, location = config.setupDir) :bool
     exit(1)
   }
 
+  logTerminal('SUCCESS', 'Neo4j database successfully installed')
   return true
 }
 
@@ -41,15 +41,12 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
 
   while (neo === '') {
     if (retry < maxAttempts) {
-      if (verbose) {
-        console.log(`⏳ Neo4j starting up, please wait... ${retry}/${maxAttempts}`)
-      }
-
+      if (verbose) logTerminal('INFO', `Neo4j starting up, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
       neo = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${NEO4J_SERVICE}|grep Running|cut -f1 -d ' '`, {silent: !verbose}).stdout
       retry++
     } else {
-      error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start', true)
+      logTerminal('ERROR', 'Provisioning Neo4j timed out', 'dev:neo4j:provionNeo4j')
       return false
     }
   }
@@ -57,31 +54,25 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
   let started = ''
   while (!started.includes('password')) {
     if (retry < maxAttempts) {
-      if (verbose) {
-        console.log(`⏳ Neo4j initalizing, please wait... ${retry}/${maxAttempts}`)
-      }
-
+      if (verbose) logTerminal('INFO', `Neo4j initializing, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
       started = shell.exec(`kubectl logs -n ${NAMESPACE} ${neo}`, {silent: !verbose}).stdout
       retry++
     } else {
-      error.logError('Provisioning Neo4j timed out', 'To retry, re-run => openline dev start', true)
+      logTerminal('ERROR', 'Provisioning Neo4j timed out', 'dev:neo4j:provionNeo4j')
       return false
     }
-  }
-
-  if (verbose) {
-    console.log('⏳ provisioning Neo4j, please wait...')
   }
 
   updateCypherLocation(NEO4J_DB_SETUP, CYPHER, verbose)
   shell.exec(`chmod u+x ${NEO4J_DB_SETUP}`)
   const provisionNeo = shell.exec(`${NEO4J_DB_SETUP}`)
   if (provisionNeo.code !== 0) {
-    error.logError(provisionNeo.stderr, 'Neo4j provisioning failed.', true)
+    logTerminal('ERROR', provisionNeo.stderr, 'dev:neo4j:provionNeo4j')
     return false
   }
 
+  logTerminal('SUCCESS', 'Neo4j database successfully provisioned')
   return true
 }
 
@@ -101,6 +92,7 @@ function updateCypherLocation(scriptLoc: string, cypherLoc: string, verbose: boo
     return false
   }
 
+  logTerminal('SUCCESS', 'Neo4j database successfully provisioned')
   return true
 }
 

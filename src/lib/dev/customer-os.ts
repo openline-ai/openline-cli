@@ -1,8 +1,8 @@
 import * as shell from 'shelljs'
-import * as error from './errors'
 import {getConfig} from '../../config/dev'
 import {deployImage, Yaml, updateImageTag} from './deploy'
 import {buildLocalImage} from './build-image'
+import {logTerminal} from '../logs'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -25,13 +25,14 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
   const CUSTOMER_OS_API_IMAGE_NAME = 'customer-os-api'
 
   if (imageVersion.toLowerCase() !== 'latest') {
-    const tag = updateImageTag([DEPLOYMENT], imageVersion, verbose)
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
     if (!tag) return false
   }
 
   let image: string | null = config.customerOs.apiImage + imageVersion
 
   if (location !== config.setupDir) {
+    // Need to come back to this after we standardize Dockerfiles
     const buildPath = location + '/packages/server'
     buildLocalImage(buildPath, CUSTOMER_OS_API_IMAGE_NAME, verbose)
     image = null
@@ -43,11 +44,9 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
     loadbalancerYaml: LOADBALANCER,
   }
   const deploy = deployImage(image, installConfig, verbose)
-  if (deploy === false) {
-    error.logError('Error loading image', 'Unable to deploy customerOS API', true)
-    return false
-  }
+  if (deploy === false) return false
 
+  logTerminal('SUCCESS', 'customer-os-api successfully installed')
   return true
 }
 
@@ -59,11 +58,12 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
   const MESSAGE_STORE_API_IMAGE_NAME = 'message-store'
 
   if (imageVersion.toLowerCase() !== 'latest') {
-    const tag = updateImageTag([DEPLOYMENT], imageVersion, verbose)
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
     if (!tag) return false
   }
 
   if (location !== config.setupDir) {
+    // come back to this
     const buildPath = location + '/packages/server'
     buildLocalImage(buildPath, MESSAGE_STORE_API_IMAGE_NAME, verbose)
   }
@@ -75,11 +75,9 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
     loadbalancerYaml: LOADBALANCER,
   }
   const deploy = deployImage(image, installConfig, verbose)
-  if (deploy === false) {
-    error.logError('Error loading image', 'Unable to deploy message store API', true)
-    return false
-  }
+  if (deploy === false) return false
 
+  logTerminal('SUCCESS', 'message-store-api successfully installed')
   return true
 }
 
