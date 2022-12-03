@@ -40,7 +40,7 @@ export function startDevServer(verbose: boolean) :boolean {
   return true
 }
 
-export function installDatabases(verbose: boolean, location: string) :boolean {
+export function installDatabases(verbose: boolean, location: string | undefined) :boolean {
   logTerminal('INFO', 'installing customerOS databases...')
   installNeo4j(verbose, location)
   installPostgresql(verbose, location)
