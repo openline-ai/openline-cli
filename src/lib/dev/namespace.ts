@@ -1,6 +1,7 @@
+import {exit} from 'node:process'
 import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
-import * as error from './errors'
+import {logTerminal} from '../logs'
 
 const config = getConfig()
 
@@ -13,11 +14,11 @@ export function installNamespace(verbose: boolean, location = config.setupDir) :
   if (namespaceCheck()) return true
   const NAMESPACE_PATH = location + config.namespace.file
   const kubeCreateNamespace = `kubectl create -f ${NAMESPACE_PATH}`
-  if (verbose) console.log(`[EXEC] ${kubeCreateNamespace}`)
+  if (verbose) logTerminal('EXEC', kubeCreateNamespace)
   const ns = shell.exec(kubeCreateNamespace, {silent: !verbose})
   if (ns.code !== 0) {
-    error.logError(ns.stderr, `Unable to create namespace from ${NAMESPACE_PATH}`, true)
-    return false
+    logTerminal('ERROR', ns.stderr)
+    exit(1)
   }
 
   return true
