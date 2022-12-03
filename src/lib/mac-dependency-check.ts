@@ -1,100 +1,45 @@
-import * as required from './dependencies'
-
-interface Checks {
-    xcode: boolean,
-    homebrew: boolean,
-    docker: boolean,
-    colima: boolean,
-    kubectl: boolean,
-    helm: boolean
-}
-
-function dependencyCheck(verbose: boolean) :Checks {
-  console.log('⏳ Openline dependency check...')
-  const need = {
-    xcode: false,
-    homebrew: false,
-    docker: false,
-    colima: false,
-    kubectl: false,
-    helm: false,
-  }
-  // Checking if dependency installed
-  need.xcode = required.xcodeCheck()
-
-  need.homebrew = required.brewCheck()
-
-  need.docker = required.dockerCheck()
-
-  need.colima = required.colimaCheck()
-
-  need.kubectl = required.kubeCheck()
-
-  need.helm = required.helmCheck()
-
-  if (verbose) {
-    console.log(need)
-  }
-
-  return need
-}
+import * as mac from './dependencies'
+import * as colors from 'colors' // eslint-disable-line no-restricted-imports
+const Table = require('cli-table') // eslint-disable-line unicorn/prefer-module
 
 export function installDependencies(verbose: boolean) :boolean {
-  const need = dependencyCheck(verbose)
+  // Checking if dependency installed
+  const xcode = mac.xcodeCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const brew = mac.brewCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const git = mac.gitCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const docker = mac.dockerCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const colima = mac.colimaCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const kubectl = mac.kubeCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const helm = mac.helmCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
 
-  // Xcode
-  if (!need.xcode) {
-    console.log('Installing Xcode')
-    console.log(required.installXcode() ? '✅ Xcode' : '❌ Xcode install failed')
-    if (!required.installXcode()) {
-      return false
-    }
+  const table = new Table({
+    head: [colors.cyan.bold('Dependency'), colors.cyan.bold('Installed?')],
+  })
+
+  table.push(
+    ['xcode', xcode],
+    ['brew', brew],
+    ['colima', colima],
+    ['docker', docker],
+    ['git', git],
+    ['helm', helm],
+    ['kubectl', kubectl],
+  )
+
+  if (verbose) {
+    console.log(table.toString())
   }
 
-  // Homebrew
-  if (!need.homebrew) {
-    console.log('Installing Homebrew')
-    console.log(required.installBrew() ? '✅ Homebrew' : '❌ Homebrew install failed')
-    if (!required.installBrew()) {
-      return false
-    }
-  }
+  const notInstalled = colors.red.bold('No')
 
-  // Docker
-  if (!need.docker) {
-    console.log('Installing Docker')
-    console.log(required.installDocker() ? '✅ Docker' : '❌ Docker install failed')
-    if (!required.installDocker()) {
-      return false
-    }
-  }
-
-  // Colima
-  if (!need.colima) {
-    console.log('Installing Colima')
-    console.log(required.installColima() ? '✅ Colima' : '❌ Colima install failed')
-    if (!required.installColima()) {
-      return false
-    }
-  }
-
-  // kubectl
-  if (!need.kubectl) {
-    console.log('Installing kubectl')
-    console.log(required.installKube() ? '✅ kubectl' : '❌ kubectl install failed')
-    if (!required.installKube()) {
-      return false
-    }
-  }
-
-  // Helm
-  if (!need.helm) {
-    console.log('Installing Helm')
-    console.log(required.installHelm() ? '✅ Helm' : '❌ Helm install failed')
-    if (!required.installHelm()) {
-      return false
-    }
-  }
+  // install missing dependencies
+  if (xcode === notInstalled) mac.installXcode()
+  if (brew === notInstalled) mac.installBrew()
+  if (colima === notInstalled) mac.installColima()
+  if (docker === notInstalled) mac.installDocker()
+  if (git === notInstalled) mac.installGit()
+  if (helm === notInstalled) mac.installHelm()
+  if (kubectl === notInstalled) mac.installKube()
 
   return true
 }
