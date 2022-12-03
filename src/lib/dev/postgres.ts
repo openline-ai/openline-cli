@@ -1,5 +1,4 @@
 import * as shell from 'shelljs'
-import * as error from './errors'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import {exit} from 'node:process'
@@ -89,15 +88,12 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   const maxAttempts = config.server.timeOuts / 5
   while (ms === '') {
     if (retry < maxAttempts) {
-      if (verbose) {
-        console.log(`⏳ postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
-      }
-
+      if (verbose) logTerminal('INFO', `postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
       ms = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep message-store|grep Running| cut -f1 -d ' '`, {silent: !verbose}).stdout
       retry++
     } else {
-      error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start', true)
+      logTerminal('ERROR', 'Provisioning postgreSQL timed out', 'dev:postgres:provisionPostresql')
       return false
     }
   }
@@ -105,41 +101,34 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   let cosDb = ''
   while (cosDb === '') {
     if (retry < maxAttempts) {
-      if (verbose) {
-        console.log(`⏳ postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
-      }
-
+      if (verbose) logTerminal('INFO', `postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
       cosDb = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${POSTGRESQL_SERVICE}|grep Running| cut -f1 -d ' '`, {silent: !verbose}).stdout
       retry++
     } else {
-      error.logError('Provisioning postgreSQL timed out', 'To retry, re-run => openline dev start', true)
+      logTerminal('ERROR', 'Provisioning postgreSQL timed out', 'dev:postgres:provisionPostresql')
       return false
     }
   }
 
   cosDb = cosDb.slice(0, -1)
 
-  if (verbose) {
-    console.log(`⏳ connecting to ${cosDb} pod`)
-  }
+  if (verbose) logTerminal('INFO', `connecting to ${cosDb} pod`)
 
   let provision = ''
   while (provision === '') {
     if (retry < maxAttempts) {
-      if (verbose) {
-        console.log(`⏳ attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)
-      }
-
+      if (verbose) logTerminal('INFO', `attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
       provision = shell.exec(`echo ${POSTGRESQL_DB_SETUP}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: !verbose}).stdout
       retry++
     } else {
-      error.logError('Provisioning message store DB timed out', 'To retry, re-run => openline dev start', true)
+      logTerminal('ERROR', 'Provisioning message store DB timed out', 'dev:postgres:provisionPostresql')
       return false
     }
   }
 
+  if (verbose) logTerminal('SUCCESS', 'PostgreSQL database successfully provisioned')
   return true
 }
 
