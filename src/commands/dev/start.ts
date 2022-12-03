@@ -1,16 +1,14 @@
-/* eslint-disable  complexity */
 import {Command, Flags} from '@oclif/core'
 import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
 import * as fusionauth from '../../lib/dev/auth'
-import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {installCustomerOsApi, installMessageStoreApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
 import * as oasis from '../../lib/dev/oasis'
 import * as start from '../../lib/dev/start'
-import { cloneRepo } from '../../lib/clone/clone-repo'
+import {cloneRepo} from '../../lib/clone/clone-repo'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -61,7 +59,6 @@ export default class DevStart extends Command {
     const config = getConfig()
     let location = flags.location
     let version = flags.tag
-    let cleanup = false
 
     if (flags.test) {
       this.exit(0)
@@ -74,10 +71,12 @@ export default class DevStart extends Command {
     if (location) {
       version = 'local'
       if (location[0] !== '/') location = '/' + location
+    }
 
     if (flags.all) {
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
@@ -86,6 +85,17 @@ export default class DevStart extends Command {
       installMessageStoreApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
+      start.cleanupSetupFiles()
+      // install contacts
+      cloneRepo(config.contacts.repo, flags.verbose, config.setupDir)
+      installContactsGui(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      // install oasis
+      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir)
+      oasis.installChannelsApi(flags.verbose, location, version)
+      oasis.installOasisApi(flags.verbose, location, version)
+      oasis.installOasisGui(flags.verbose, location, version)
+      start.cleanupSetupFiles()
       this.exit(0)
     }
 
@@ -154,97 +164,4 @@ export default class DevStart extends Command {
       break
     }
   }
-}
-
-
-
-
-  if (cleanup) shell.exec(`rm -r ${config.setupDir}`, {silent: !verbose})
-
-  return true
-}
-
-function startContacts(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
-  if (verbose) console.log('⏳ installing Contacts GUI')
-  const gui = installContactsGui(verbose, location, imageVersion)
-  if (!gui) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-  return true
-}
-
-function startChannelsApi(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
-  if (verbose) console.log('⏳ installing channels API')
-  const api = oasis.installChannelsApi(verbose, location, imageVersion)
-  if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-  return true
-}
-
-function startOasisApi(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
-  if (verbose) console.log('⏳ installing Oasis API')
-  const api = oasis.installOasisApi(verbose, location, imageVersion)
-  if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-  return true
-}
-
-function startOasisGui(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
-  if (verbose) console.log('⏳ installing Oasis GUI')
-  const api = oasis.installOasisGui(verbose, location, imageVersion)
-  if (!api) process.exit(1) // eslint-disable-line no-process-exit, unicorn/no-process-exit
-  return true
-}
-
-function startEverything(verbose: boolean, location: string | undefined, imageVersion: string) :boolean {
-  const config = getConfig()
-  let cleanup = false
-  if (!startup(verbose)) return false
-  if (location === undefined) {
-    shell.exec(`git clone ${config.customerOs.repo} ${config.setupDir} --quiet`)
-    location = config.setupDir
-    cleanup = true
-  } else {
-    imageVersion = 'local'
-    if (location[0] !== '/') location = '/' + location
-  }
-
-  // start core services
-  console.log('🦦 setting up core infrastructure...')
-  if (!startCoreServices(verbose, location)) return false
-
-  // start customerOS
-  console.log(`🦦 starting customerOS version <${imageVersion}>...`)
-  console.log('⏳ this can take a few mins...')
-  if (!startCustomerOs(verbose, location, imageVersion, cleanup)) return false
-
-  // start contacts app
-  console.log(`🦦 starting Contacts app version <${imageVersion}>...`)
-  let contactsCleanup = false
-  if (location === config.setupDir) {
-    shell.exec(`git clone ${config.contacts.repo} ${config.setupDir} --quiet`)
-    location = config.setupDir
-    contactsCleanup = true
-  }
-
-  if (!startContacts(verbose, location, imageVersion)) return false
-
-  if (contactsCleanup) {
-    shell.exec(`rm -r ${config.setupDir}`, {silent: !verbose})
-  }
-
-  // start oasis app
-  let oasisCleanup = false
-  if (location === config.setupDir) {
-    shell.exec(`git clone ${config.oasis.repo} ${config.setupDir} --quiet`)
-    location = config.setupDir
-    oasisCleanup = true
-  }
-
-  console.log(`🦦 starting Oasis app version <${imageVersion}>...`)
-  if (!startChannelsApi(verbose, location, imageVersion)) return false
-  if (!startOasisApi(verbose, location, imageVersion)) return false
-  if (!startOasisGui(verbose, location, imageVersion)) return false
-
-  if (oasisCleanup) {
-    shell.exec(`rm -r ${config.setupDir}`, {silent: !verbose})
-  }
-
-  return true
 }
