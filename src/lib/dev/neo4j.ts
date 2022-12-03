@@ -3,6 +3,7 @@ import * as error from './errors'
 import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
+import {exit} from 'node:process'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -17,15 +18,15 @@ export function installNeo4j(verbose :boolean, location = config.setupDir) :bool
   const HELM_VALUES_PATH = location + config.customerOs.neo4jHelmValues
 
   const helmAdd = 'helm repo add neo4j https://helm.neo4j.com/neo4j'
-  if (verbose) console.log(`[EXEC] ${helmAdd}`)
-  shell.exec(helmAdd, {silent: !verbose})
+  if (verbose) logTerminal('EXEC', helmAdd)
+  shell.exec(helmAdd, {silent: true})
 
   const helmInstall = `helm install ${NEO4J_SERVICE} neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ${HELM_VALUES_PATH} --namespace ${NAMESPACE}`
-  if (verbose) console.log(`[EXEC] ${helmInstall}`)
+  if (verbose) logTerminal('EXEC', helmInstall)
   const neoInstall = shell.exec(helmInstall, {silent: !verbose})
   if (neoInstall.code !== 0) {
-    error.logError(neoInstall.stderr, 'Unable to complete helm install of neo4j-standalone', true)
-    return false
+    logTerminal('ERROR', neoInstall.stderr, 'dev:neo4j:installNeo4j')
+    exit(1)
   }
 
   return true

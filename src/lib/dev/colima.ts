@@ -1,5 +1,5 @@
+import {exit} from 'node:process'
 import * as shell from 'shelljs'
-import * as error from './errors'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 
@@ -8,13 +8,19 @@ export function runningCheck() :boolean {
 }
 
 export function contextCheck(verbose: boolean): boolean {
-  const context = shell.exec('kubectl config get-contexts | grep "*"', {silent: true}).stdout
+  if (verbose) logTerminal('INFO', 'checking kubernetes contexts...')
+  const check = 'kubectl config get-contexts | grep "*"'
+  if (verbose) logTerminal('EXEC', check)
+  const context = shell.exec(check, {silent: true}).stdout
   if (context.includes('colima')) return true
 
+  if (verbose) logTerminal('INFO', 'setting kubernetes context to colima...')
   const useContext = 'kubectl config use-context colima'
   if (verbose) logTerminal('EXEC', useContext)
   const update = shell.exec(useContext, {silent: true})
   if (update.code !== 0) {
+    // this creates the colima context in ~./kube/config if it doesn't exist
+    if (verbose) logTerminal('INFO', 'creating kubernetes context for colima')
     const createContext = 'colima kubernetes reset'
     if (verbose) logTerminal('EXEC', createContext)
     if (shell.exec(createContext, {silent: !verbose}).code === 0) {
@@ -28,21 +34,26 @@ export function contextCheck(verbose: boolean): boolean {
 
 export function startColima(verbose :boolean) :boolean {
   const config = getConfig()
+
+  // check to see if Colima is already running
   const isRunning = runningCheck()
   if (isRunning) {
+    // if running, checks to make sure context hasn't changed (still colima)
     const isContext = contextCheck(verbose)
     if (isContext) return true
   }
 
+  // start up Colima with Openline configurations
+  contextCheck(false)
   const CPU = config.server.cpu
   const MEMORY = config.server.memory
   const DISK = config.server.disk
   const colimaStart = `colima start --with-kubernetes --cpu ${CPU} --memory ${MEMORY} --disk ${DISK}`
-  if (verbose) console.log(`[EXEC] ${colimaStart}`)
-  const start = shell.exec(colimaStart, {silent: !verbose})
+  if (verbose) logTerminal('EXEC', colimaStart)
+  const start = shell.exec(colimaStart, {silent: true})
   if (start.code !== 0) {
-    error.logError(start.stderr, 'Could not start colima')
-    return false
+    logTerminal('ERROR', start.stderr, 'dev:colima:startColima')
+    exit(1)
   }
 
   return contextCheck(verbose)
