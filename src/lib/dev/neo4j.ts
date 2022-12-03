@@ -28,7 +28,6 @@ export function installNeo4j(verbose :boolean, location = config.setupDir) :bool
     exit(1)
   }
 
-  logTerminal('SUCCESS', 'Neo4j database successfully installed')
   return true
 }
 
