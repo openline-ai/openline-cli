@@ -1,8 +1,8 @@
 import * as shell from 'shelljs'
-import * as error from './errors'
 import {getConfig} from '../../config/dev'
 import {deployImage, Yaml, updateImageTag} from './deploy'
 import {buildLocalImage} from './build-image'
+import {logTerminal} from '../logs'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -30,13 +30,14 @@ export function installChannelsApi(verbose: boolean, location = config.setupDir,
   const LOADBALANCER = location + config.oasis.channelsApiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
-    const tag = updateImageTag([DEPLOYMENT], imageVersion, verbose)
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
     if (!tag) return false
   }
 
   let image: string | null = config.oasis.channelsApiImage + imageVersion
 
   if (location !== config.setupDir) {
+    // come back to this when Dockerfiles are standardized
     const buildPath = location + '/packages/server/channels-api'
     buildLocalImage(buildPath, CHANNELS_API_IMAGE, verbose)
     image = null
@@ -48,11 +49,9 @@ export function installChannelsApi(verbose: boolean, location = config.setupDir,
     loadbalancerYaml: LOADBALANCER,
   }
   const deploy = deployImage(image, installConfig, verbose)
-  if (deploy === false) {
-    error.logError('Error loading image', 'Unable to deploy Channels API', true)
-    return false
-  }
+  if (deploy === false) return false
 
+  logTerminal('SUCCESS', 'channels-api successfully installed')
   return true
 }
 
@@ -64,13 +63,14 @@ export function installOasisApi(verbose: boolean, location = config.setupDir, im
   const LOADBALANCER = location + config.oasis.apiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
-    const tag = updateImageTag([DEPLOYMENT], imageVersion, verbose)
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
     if (!tag) return false
   }
 
   let image: string | null = config.oasis.apiImage + imageVersion
 
   if (location !== config.setupDir) {
+    // come back to this when Dockerfiles are cleaned up
     const buildPath = location + '/packages/server/oasis-api'
     buildLocalImage(buildPath, OASIS_API_IMAGE, verbose)
     image = null
@@ -83,11 +83,9 @@ export function installOasisApi(verbose: boolean, location = config.setupDir, im
   }
 
   const deploy = deployImage(image, installConfig, verbose)
-  if (deploy === false) {
-    error.logError('Error deploying image', 'Unable to deploy Oasis API', true)
-    return false
-  }
+  if (deploy === false) return false
 
+  logTerminal('SUCCESS', 'oasis-api successfully installed')
   return true
 }
 
@@ -99,13 +97,14 @@ export function installOasisGui(verbose: boolean, location = config.setupDir, im
   const LOADBALANCER = location + config.oasis.guiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
-    const tag = updateImageTag([DEPLOYMENT], imageVersion, verbose)
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
     if (!tag) return false
   }
 
   let image: string | null = config.oasis.guiImage + imageVersion
 
   if (location !== config.setupDir) {
+    // come back to this when Dockerfiles are cleaned up
     const buildPath = location + '/packages/apps/oasis/oasis-frontend'
     buildLocalImage(buildPath, OASIS_GUI_IMAGE, verbose)
     image = null
@@ -117,11 +116,9 @@ export function installOasisGui(verbose: boolean, location = config.setupDir, im
     loadbalancerYaml: LOADBALANCER,
   }
   const deploy = deployImage(image, installConfig, verbose)
-  if (deploy === false) {
-    error.logError('Error loading image', 'Unable to deploy Oasis GUI', true)
-    return false
-  }
+  if (deploy === false) return false
 
+  logTerminal('SUCCESS', 'oasis-gui successfully installed')
   return true
 }
 
