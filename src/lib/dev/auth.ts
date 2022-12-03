@@ -1,8 +1,8 @@
 import * as shell from 'shelljs'
-import * as error from './errors'
 import {getConfig} from '../../config/dev'
 import {deployLoadbalancer} from './deploy'
 import {logTerminal} from '../logs'
+import {exit} from 'node:process'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -21,10 +21,10 @@ function hostsCheck() :boolean {
 function addHosts(verbose: boolean) :boolean {
   if (hostsCheck()) return true
   const cmd = 'sudo bash -c "echo 127.0.0.1 fusionauth-customer-os.openline.svc.cluster.local >> /etc/hosts"'
-  console.log('⏳ updating host file with fusionauth configuration')
-  console.log('❗️ this requires sudo permissions and is required for fusionauth to work')
-  console.log('❗️ if granted, the following command will execute...')
-  console.log(`==> ${cmd}`)
+  logTerminal('INFO', 'updating host file with fusionauth configuration')
+  logTerminal('INFO', 'this requires sudo permissions and is required for fusionauth to work')
+  logTerminal('INFO', 'if granted, the following command will execute...')
+  logTerminal('INFO', cmd)
   return (shell.exec(cmd, {silent: !verbose}).code === 0)
 }
 
@@ -34,25 +34,21 @@ export function installFusionAuth(verbose :boolean, location = config.setupDir) 
   const LOADBALANCER_PATH = location + config.customerOs.fusionauthLoadbalancer
 
   const helmAdd = 'helm repo add fusionauth https://fusionauth.github.io/charts'
-  if (verbose) console.log(`[EXEC] ${helmAdd}`)
-  shell.exec(helmAdd, {silent: !verbose})
+  if (verbose) logTerminal('EXEC', helmAdd)
+  shell.exec(helmAdd, {silent: true})
 
   const helmInstall = `helm install ${FUSIONAUTH_SERVICE} fusionauth/fusionauth -f ${HELM_VALUES_PATH} --namespace ${NAMESPACE}`
-  if (verbose) console.log(`[EXEC] ${helmInstall}`)
+  if (verbose) logTerminal('EXEC', helmInstall)
   const fa = shell.exec(helmInstall, {silent: !verbose})
   if (fa.code !== 0) {
-    error.logError(fa.stderr, 'Unable to complete helm install of fusion auth', true)
-    return false
+    logTerminal('ERROR', fa.stderr)
+    exit(1)
   }
 
-  const lb = deployLoadbalancer(LOADBALANCER_PATH, verbose)
-  if (!lb) {
-    error.logError('Error deploying loadbalancer for FusionAuth', 'Try again')
-    return false
-  }
-
+  if (!deployLoadbalancer(LOADBALANCER_PATH, verbose)) return false
   if (!addHosts(verbose)) return false
 
+  logTerminal('SUCCESS', 'auth successfully installed')
   return true
 }
 
