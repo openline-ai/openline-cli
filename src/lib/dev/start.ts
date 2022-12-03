@@ -45,5 +45,6 @@ export function installDatabases(verbose: boolean, location: string) :boolean {
   installNeo4j(verbose, location)
   installPostgresql(verbose, location)
 
+  logTerminal('SUCCESS', 'customerOS databases succesfully installed')
   return true
 }
