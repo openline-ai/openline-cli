@@ -9,6 +9,7 @@ import {installContactsGui} from '../../lib/dev/contacts'
 import * as oasis from '../../lib/dev/oasis'
 import * as start from '../../lib/dev/start'
 import {cloneRepo} from '../../lib/clone/clone-repo'
+import {logTerminal} from '../../lib/logs'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -77,7 +78,7 @@ export default class DevStart extends Command {
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
       // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       fusionauth.installFusionAuth(flags.verbose, location)
@@ -87,15 +88,18 @@ export default class DevStart extends Command {
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
       // install contacts
-      cloneRepo(config.contacts.repo, flags.verbose, config.setupDir)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       installContactsGui(flags.verbose, location, version)
       start.cleanupSetupFiles()
       // install oasis
-      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       oasis.installChannelsApi(flags.verbose, location, version)
       oasis.installOasisApi(flags.verbose, location, version)
       oasis.installOasisGui(flags.verbose, location, version)
       start.cleanupSetupFiles()
+
+      logTerminal('SUCCESS', 'Openline dev server has been started')
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       this.exit(0)
     }
 
@@ -105,6 +109,8 @@ export default class DevStart extends Command {
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir)
+      ns.installNamespace(flags.verbose, location)
+      fusionauth.installFusionAuth(flags.verbose, location)
       break
 
     case 'channels-api':
