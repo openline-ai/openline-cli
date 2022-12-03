@@ -2,6 +2,7 @@ import * as shell from 'shelljs'
 import * as error from './errors'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
+import {exit} from 'node:process'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -33,11 +34,11 @@ function setupPersistentVolume(verbose: boolean, location = config.setupDir) : b
   const PERSISTENT_VOLUME_PATH = location + config.customerOs.postgresqlPersistentVolume
 
   const kubePV = `kubectl apply -f ${PERSISTENT_VOLUME_PATH} --namespace ${NAMESPACE}`
-  if (verbose) console.log(`[EXEC] ${kubePV}`)
+  if (verbose) logTerminal('EXEC', kubePV)
   const pv = shell.exec(kubePV, {silent: !verbose})
   if (pv.code !== 0) {
-    error.logError(pv.stderr, 'Unable to setup postgreSQL persistent volume', true)
-    return false
+    logTerminal('ERROR', pv.stderr, 'dev:postgres:setupPersistentVolume')
+    exit(1)
   }
 
   return true
@@ -48,11 +49,11 @@ function setupPersistentVolumeClaim(verbose: boolean, location = config.setupDir
   const PERSISTENT_VOLUME_CLAIM_PATH = location + config.customerOs.postgresqlPersistentVolumeClaim
 
   const kubePVC = `kubectl apply -f ${PERSISTENT_VOLUME_CLAIM_PATH} --namespace ${NAMESPACE}`
-  if (verbose) console.log(`[EXEC] ${kubePVC}`)
+  if (verbose) logTerminal('EXEC', kubePVC)
   const pvc = shell.exec(kubePVC, {silent: !verbose})
   if (pvc.code !== 0) {
-    error.logError(pvc.stderr, 'Unable to setup postgreSQL persistent volume claim', true)
-    return false
+    logTerminal('ERROR', pvc.stderr, 'dev:postgres:setupPersistentVolumeClaim')
+    exit(1)
   }
 
   return true
@@ -63,15 +64,15 @@ function deployPostgresql(verbose: boolean, location = config.setupDir) {
   const HELM_VALUES_PATH = location + config.customerOs.postgresqlHelmValues
 
   const helmAdd = 'helm repo add bitnami https://charts.bitnami.com/bitnami'
-  if (verbose) console.log(`[EXEC] ${helmAdd}`)
-  shell.exec(helmAdd, {silent: !verbose})
+  if (verbose) logTerminal('EXEC', helmAdd)
+  shell.exec(helmAdd, {silent: true})
 
   const helmInstall = `helm install --values ${HELM_VALUES_PATH} ${POSTGRESQL_SERVICE} bitnami/postgresql --namespace ${NAMESPACE}`
-  if (verbose) console.log(`[EXEC] ${helmInstall}`)
+  if (verbose) logTerminal('EXEC', helmInstall)
   const postgresql = shell.exec(helmInstall, {silent: !verbose})
   if (postgresql.code !== 0) {
-    error.logError(postgresql.stderr, 'Unable to complete helm install of postgresql', true)
-    return false
+    logTerminal('ERROR', postgresql.stderr)
+    exit(1)
   }
 
   return true
