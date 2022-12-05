@@ -1,6 +1,6 @@
 import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
-import {deployImage, Yaml, updateImageTag, updateImageName} from './deploy'
+import {deployImage, Yaml, updateImageTag} from './deploy'
 import {buildLocalImage} from './build-image'
 import {logTerminal} from '../logs'
 
@@ -18,10 +18,10 @@ export function installContactsGui(verbose: boolean, location = config.setupDir,
   const DEPLOYMENT = location + config.contacts.guiDeployment
   const SERVICE = location + config.contacts.guiService
   const LOADBALANCER = location + config.contacts.guiLoadbalancer
-
+/*
   const imgName = updateImageName([DEPLOYMENT])
   if (!imgName) return false
-
+*/
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
     if (!tag) return false

@@ -56,7 +56,7 @@ export function startk3d(verbose :boolean) :boolean {
     if (verbose) logTerminal('EXEC', k3dStart)
     start = shell.exec(k3dStart, {silent: true})
   } else {
-    const k3dStart = `k3d cluster create development --registry-create development-registry`
+    const k3dStart = `k3d cluster create development`
     if (verbose) logTerminal('EXEC', k3dStart)
     start = shell.exec(k3dStart, {silent: true})
   }

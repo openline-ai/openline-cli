@@ -31,17 +31,8 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   }
 
   if (getPlatform() == "linux") {
-    const port = k3d.getRegistryPort(false)
-    const newRepo = 'development-registry.localhost:' + port
-    const tagCmd = 'docker tag ' + imageUrl + ' ' + imageUrl?.replace("ghcr.io", newRepo)
-    if (verbose) logTerminal('EXEC', tagCmd)
-    const tag = shell.exec(tagCmd, {silent: !verbose})
-    if (tag.code !== 0) {
-      logTerminal('ERROR', tag.stderr, 'dev:deploy:tagImage')
-      return false
-    }
 
-    const pushCmd = 'docker push ' + imageUrl?.replace("ghcr.io", newRepo)
+    const pushCmd = 'k3d image import ' + imageUrl
     if (verbose) logTerminal('EXEC', pushCmd)
     const push = shell.exec(pushCmd, {silent: !verbose})
     if (push.code !== 0) {
@@ -78,7 +69,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
 
   return true
 }
-
+/*
 export function updateImageName(deployFiles: string[]) :boolean {
 
   if (getPlatform() == "linux") {
@@ -96,9 +87,21 @@ export function updateImageName(deployFiles: string[]) :boolean {
       logTerminal('ERROR', error)
       return false
     }
+    const repoOptions = {
+      files: deployFiles,
+      from: 'imagePullPolicy: Never',
+      to: 'imagePullPilicy: Always',
+    }
+    try {
+      replace.sync(repoOptions)
+    } catch (error: any) {
+      logTerminal('ERROR', error)
+      return false
+    }
   }
   return true
 }
+*/
 
 export function updateImageTag(deployFiles: string[], imageVersion: string) :boolean {
   const options = {
