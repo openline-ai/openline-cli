@@ -3,8 +3,8 @@ import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import { getPlatform } from '../dependencies'
-import fs from 'fs'
-import YAML from 'yaml'
+import * as fs from 'fs'
+import * as YAML from 'yaml'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -66,7 +66,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
       return false
     }
     if (getPlatform() == "linux") {
-      const file = fs.readFileSync(deployConfig.loadbalancerYaml, 'utf8')
+      const file = fs.readFileSync(deployConfig.loadbalancerYaml?deployConfig.loadbalancerYaml:'', 'utf8')
       const config = YAML.parse(file)
       for(const val of config.spec.ports) {
          const port = val.port
