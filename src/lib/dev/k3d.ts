@@ -85,19 +85,13 @@ export function deleteAll(verbose: boolean) :boolean {
 
 export function stopK3d(verbose: boolean) {
   logTerminal('INFO', '🦦 Saving current configuration...')
+  const stopCommand = 'k3d cluster stop development'
   if (verbose)
-    logTerminal('EXEC', 'k3d custer stop')
-  const reset = shell.exec('k3d cluster stop', { silent: true })
+    logTerminal('EXEC', stopCommand)
+  const reset = shell.exec(stopCommand, { silent: true })
   if (reset.code === 0) {
     logTerminal('SUCCESS', 'Openline dev server stopped')
   } else {
     logTerminal('ERROR', reset.stderr, 'dev:stop')
   }
-}
-
-export function getRegistryPort(verbose: boolean):number {
-  const command = 'docker ps -f name=development-registry |tail -1 |sed -n \'s/^.*:\\([0-9]*\\)->.*$/\\1/p\'';
-  if (verbose) logTerminal('EXEC', command)
-  const port = shell.exec(command, {silent: true}).stdout
-  return parseInt(port)
 }

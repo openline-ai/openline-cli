@@ -101,7 +101,7 @@ export function getConfig() :any {
 
 
   config.dependencies.linux = {}
-  config.dependencies.linux.k3d = 'curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sudo bash && sudo apt-get -y install  libnss-myhostname'
+  config.dependencies.linux.k3d = 'curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sudo bash'
   
   config.dependencies.linux.docker = '/bin/bash -c \'curl -fsSL https://get.docker.com/ | sudo sh &&  sudo usermod -a -G docker $USER\''
   config.dependencies.linux.git = 'sudo apt-get install -y git'

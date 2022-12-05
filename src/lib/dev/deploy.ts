@@ -69,39 +69,6 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
 
   return true
 }
-/*
-export function updateImageName(deployFiles: string[]) :boolean {
-
-  if (getPlatform() == "linux") {
-    const port = k3d.getRegistryPort(false)
-    const newRepo = 'development-registry.localhost:' + port
-
-    const repoOptions = {
-      files: deployFiles,
-      from: 'ghcr.io',
-      to: newRepo,
-    }
-    try {
-      replace.sync(repoOptions)
-    } catch (error: any) {
-      logTerminal('ERROR', error)
-      return false
-    }
-    const repoOptions = {
-      files: deployFiles,
-      from: 'imagePullPolicy: Never',
-      to: 'imagePullPilicy: Always',
-    }
-    try {
-      replace.sync(repoOptions)
-    } catch (error: any) {
-      logTerminal('ERROR', error)
-      return false
-    }
-  }
-  return true
-}
-*/
 
 export function updateImageTag(deployFiles: string[], imageVersion: string) :boolean {
   const options = {
