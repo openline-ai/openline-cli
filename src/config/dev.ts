@@ -101,16 +101,16 @@ export function getConfig() :any {
 
 
   config.dependencies.linux = {}
-  config.dependencies.linux.colima = '/bin/bash -c \'curl -o ' + config.setupDir + '/colima "https://github.com/abiosoft/colima/releases/download/v0.4.5/colima-$(uname)-$(uname -m)" && ' +
+  config.dependencies.linux.colima = '/bin/bash -c \'curl -Lo ' + config.setupDir + '/colima "https://github.com/abiosoft/colima/releases/download/v0.4.5/colima-$(uname)-$(uname -m)" && ' +
                                     'sudo install -o root -g root -m 0755 ' + config.setupDir + '/colima /usr/local/bin/colima\''
   config.dependencies.linux.docker = '/bin/bash -c \'curl -fsSL https://get.docker.com/ | sudo sh &&  sudo usermod -a -G docker $USER\''
   config.dependencies.linux.git = 'sudo apt-get install git'
   config.dependencies.linux.helm = '/bin/bash -c \'mkdir -p ' + config.setupDir + '/helm && ' +
-                                  'curl -o ' + config.setupDir + '/helm/helm.tar.gz "https://get.helm.sh/helm-v3.10.2-linux-amd64.tar.gz" && ' +
+                                  'curl -Lo ' + config.setupDir + '/helm/helm.tar.gz "https://get.helm.sh/helm-v3.10.2-linux-amd64.tar.gz" && ' +
                                   'cd ' + config.setupDir + '/helm && ' +
                                   'tar -zxvf helm.tar.gz &&' +
                                   'sudo install -o root -g root -m 0755 ./linux-amd64/helm /usr/local/bin/helm\''
-  config.dependencies.linux.kubectl = '/bin/bash -c \'curl -o ' + config.setupDir + '/kubectl "https://dl.k8s.io/release/v1.25.3/bin/linux/amd64/kubectl" && ' +
+  config.dependencies.linux.kubectl = '/bin/bash -c \'curl -Lo ' + config.setupDir + '/kubectl "https://dl.k8s.io/release/v1.25.3/bin/linux/amd64/kubectl" && ' +
                                       'sudo install -o root -g root -m 0755 ' + config.setupDir + '/kubectl /usr/local/bin/kubectl\''
   return config
 }
