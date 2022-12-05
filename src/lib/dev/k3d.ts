@@ -1,10 +1,11 @@
+import { integer } from '@oclif/core/lib/parser'
 import {exit} from 'node:process'
 import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 
 export function runningCheck() :boolean {
-  return (shell.exec('colima status', {silent: true}).code === 0)
+  return (shell.exec('k3d node list', {silent: true}).stdout.includes('running'))
 }
 
 export function contextCheck(verbose: boolean): boolean {
@@ -55,7 +56,7 @@ export function startk3d(verbose :boolean) :boolean {
     if (verbose) logTerminal('EXEC', k3dStart)
     start = shell.exec(k3dStart, {silent: true})
   } else {
-    const k3dStart = `k3d cluster create development`
+    const k3dStart = `k3d cluster create development --registry-create development-registry`
     if (verbose) logTerminal('EXEC', k3dStart)
     start = shell.exec(k3dStart, {silent: true})
   }
@@ -86,10 +87,15 @@ export function stopK3d(verbose: boolean) {
   logTerminal('INFO', '🦦 Saving current configuration...')
   if (verbose)
     logTerminal('EXEC', 'k3d custer stop')
-  const reset = shell.exec('k3d custer stop', { silent: true })
+  const reset = shell.exec('k3d cluster stop', { silent: true })
   if (reset.code === 0) {
     logTerminal('SUCCESS', 'Openline dev server stopped')
   } else {
     logTerminal('ERROR', reset.stderr, 'dev:stop')
   }
+}
+
+export function getRegistryPort(verbose: boolean):number {
+  const port = shell.exec("docker ps -f name=development-registry |tail -1 |sed -n 's/^.*:\([0-9]*\)->.*$/\1/p'", {silent: true}).stdout
+  return parseInt(port)
 }

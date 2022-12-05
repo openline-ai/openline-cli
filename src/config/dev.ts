@@ -101,10 +101,10 @@ export function getConfig() :any {
 
 
   config.dependencies.linux = {}
-  config.dependencies.linux.k3d = 'curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sudo bash'
+  config.dependencies.linux.k3d = 'curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sudo bash && sudo apt-get -y install  libnss-myhostname'
   
   config.dependencies.linux.docker = '/bin/bash -c \'curl -fsSL https://get.docker.com/ | sudo sh &&  sudo usermod -a -G docker $USER\''
-  config.dependencies.linux.git = 'sudo apt-get install git'
+  config.dependencies.linux.git = 'sudo apt-get install -y git'
   config.dependencies.linux.helm = '/bin/bash -c \'mkdir -p ' + config.setupDir + '/helm && ' +
                                   'curl -Lo ' + config.setupDir + '/helm/helm.tar.gz "https://get.helm.sh/helm-v3.10.2-linux-amd64.tar.gz" && ' +
                                   'cd ' + config.setupDir + '/helm && ' +
