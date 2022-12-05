@@ -1,5 +1,10 @@
 import * as shell from 'shelljs'
 import {logTerminal} from '../logs'
+import * as colima from './colima'
+import * as k3d from './k3d'
+
+import { getPlatform } from '../dependencies'
+
 
 export function deleteApp(deployments: string[], services: string[], verbose: boolean) :boolean {
   const NAMESPACE = 'openline'
@@ -30,16 +35,11 @@ export function deleteApp(deployments: string[], services: string[], verbose: bo
 }
 
 export function deleteAll(verbose: boolean) :boolean {
-  const cmd = 'colima kubernetes reset'
-  if (verbose) logTerminal('EXEC', cmd)
-  const reset = shell.exec(cmd, {silent: true})
-  if (reset.code === 0) {
-    logTerminal('SUCCESS', 'Openline dev server has been deleted')
-    logTerminal('INFO', 'to stop the dev server, run => openline dev stop')
-  } else {
-    logTerminal('ERROR', reset.stderr, 'dev:delete:deleteAll')
-    return false
+  switch (getPlatform()) {
+    case "mac":
+      return colima.deleteAll(verbose)
+    case "linux":
+      return k3d.deleteAll(verbose)
   }
-
-  return true
+  return false
 }

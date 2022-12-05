@@ -7,7 +7,7 @@ const config = getConfig()
 const fs = require('fs')
 
 
-function getPlatform() :string {
+export function getPlatform() :string {
   switch (process.platform) {
     case 'darwin':
       return "mac";
@@ -49,6 +49,25 @@ export function installColima() :boolean {
     logTerminal('SUCCESS', 'colima successfully installed')
   } else {
     logTerminal('ERROR', 'colima installation failed', 'Please install colima before retrying the command.')
+    exit(1)
+  }
+
+  return true
+}
+
+
+// colima
+export function k3dCheck() :boolean {
+  return (shell.exec('which colima', {silent: true}).code === 0)
+}
+
+export function installK3d() :boolean {
+  logTerminal('INFO', 'We need to install k3d before continuing')
+  const result = shell.exec(config.dependencies[getPlatform()].k3d).code === 0
+  if (result) {
+    logTerminal('SUCCESS', 'k3d successfully installed')
+  } else {
+    logTerminal('ERROR', 'k3d installation failed', 'Please install k3d before retrying the command.')
     exit(1)
   }
 

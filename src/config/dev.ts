@@ -101,8 +101,8 @@ export function getConfig() :any {
 
 
   config.dependencies.linux = {}
-  config.dependencies.linux.colima = '/bin/bash -c \'curl -Lo ' + config.setupDir + '/colima "https://github.com/abiosoft/colima/releases/download/v0.4.5/colima-$(uname)-$(uname -m)" && ' +
-                                    'sudo install -o root -g root -m 0755 ' + config.setupDir + '/colima /usr/local/bin/colima\''
+  config.dependencies.linux.k3d = 'curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sudo bash'
+  
   config.dependencies.linux.docker = '/bin/bash -c \'curl -fsSL https://get.docker.com/ | sudo sh &&  sudo usermod -a -G docker $USER\''
   config.dependencies.linux.git = 'sudo apt-get install git'
   config.dependencies.linux.helm = '/bin/bash -c \'mkdir -p ' + config.setupDir + '/helm && ' +
