@@ -37,5 +37,6 @@ export function installDependencies(verbose: boolean) :boolean {
   if (helm === notInstalled) deps.installHelm()
   if (kubectl === notInstalled) deps.installKube()
 
+  deps.checkDockerGroup()
   return true
 }

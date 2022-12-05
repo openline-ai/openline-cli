@@ -37,6 +37,15 @@ export function createSetupDir() :boolean {
   return true
 }
 
+export function checkDockerGroup() :void {
+  const result = shell.exec("groups").stdout.includes("docker")
+  if (result) {
+    logTerminal('SUCCESS', 'User in Docker group')
+  } else {
+    logTerminal('ERROR', 'User Not Yet in Docker Group', 'Please log out and back in then re-run the command')
+    exit(1)
+  }
+}
 // colima
 export function colimaCheck() :boolean {
   return (shell.exec('which colima', {silent: true}).code === 0)
