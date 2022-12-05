@@ -9,9 +9,22 @@ export function colimaCheck() :boolean {
   return (shell.exec('which colima', {silent: true}).code === 0)
 }
 
+function getPlatform() :string {
+  switch (process.platform) {
+    case 'darwin':
+      return "mac";
+    case 'linux':
+      return "linux";
+    default:
+      logTerminal('ERROR', 'Operating system unsupported at this time')
+      return "unknwon"
+
+  }
+}
+
 export function installColima() :boolean {
   logTerminal('INFO', 'We need to install colima before continuing')
-  const result = shell.exec(config.dependencies.colimaMac).code === 0
+  const result = shell.exec(config.dependencies[getPlatform()].colima).code === 0
   if (result) {
     logTerminal('SUCCESS', 'colima successfully installed')
   } else {
@@ -29,7 +42,7 @@ export function dockerCheck() :boolean {
 
 export function installDocker() :boolean {
   logTerminal('INFO', 'We need to install docker before continuing')
-  const result = shell.exec(config.dependencies.dockerMac).code === 0
+  const result = shell.exec(config.dependencies[getPlatform()].docker).code === 0
   if (result) {
     logTerminal('SUCCESS', 'docker successfully installed')
   } else {
@@ -47,7 +60,7 @@ export function gitCheck() :boolean {
 
 export function installGit() :boolean {
   logTerminal('INFO', 'We need to install git before continuing')
-  const results = shell.exec(config.dependencies.gitMac).code === 0
+  const results = shell.exec(config.dependencies[getPlatform()].git).code === 0
   if (results) {
     logTerminal('SUCCESS', 'git successfully installed')
   } else {
@@ -65,7 +78,7 @@ export function helmCheck() :boolean {
 
 export function installHelm() :boolean {
   logTerminal('INFO', 'We need to install helm before continuing')
-  const results = shell.exec(config.dependencies.helmMac).code === 0
+  const results = shell.exec(config.dependencies[getPlatform()].helm).code === 0
   if (results) {
     logTerminal('SUCCESS', 'helm successfully installed')
   } else {
@@ -83,7 +96,7 @@ export function brewCheck() :boolean {
 
 export function installBrew() :void {
   logTerminal('INFO', 'We need to install homebrew before continuing.', 'Process will exit after install as you will need to set your path.  Please follow the instructions at the end of the installation.')
-  const results = shell.exec(config.dependencies.homebrew).code === 0
+  const results = shell.exec(config.dependencies.mac.homebrew).code === 0
   if (results) {
     logTerminal('SUCCESS', 'homebrew successfully installed  Please follow the homebrew instructions above, and once complete, restart the command.')
     exit(0)
@@ -98,9 +111,9 @@ export function kubeCheck() :boolean {
   return (shell.exec('which kubectl', {silent: true}).code === 0)
 }
 
-export function installKube() :boolean {
+export function installKube() :void {
   logTerminal('INFO', 'We need to install kubectl before continuing')
-  const results = shell.exec(config.dependencies.kubectlMac).code === 0
+  const results = shell.exec(config.dependencies[getPlatform()].kubectl).code === 0
   if (results) {
     logTerminal('SUCCESS', 'kubectl successfully installed')
   } else {
@@ -116,9 +129,9 @@ export function xcodeCheck() :boolean {
   return (shell.exec('which xcode-select', {silent: true}).code === 0)
 }
 
-export function installXcode() :boolean {
+export function installXcode() :void {
   logTerminal('INFO', 'We need to install xcode before continuing')
-  const results = shell.exec(config.dependencies.xcode).code === 0
+  const results = shell.exec(config.dependencies.mac.xcode).code === 0
   if (results) {
     logTerminal('SUCCESS', 'xcode successfully installed')
   } else {

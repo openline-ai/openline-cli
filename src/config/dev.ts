@@ -89,13 +89,25 @@ export function getConfig() :any {
 
   // CLI command dependencies
   config.dependencies = {}
-  config.dependencies.colimaMac = 'brew install colima'
-  config.dependencies.dockerMac = 'brew install docker'
-  config.dependencies.gitMac = 'brew install git'
-  config.dependencies.helmMac = 'brew install helm'
-  config.dependencies.homebrew = '/bin/bash -c \'$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\''
-  config.dependencies.kubectlMac = 'brew install kubectl'
-  config.dependencies.xcode = 'xcode-select --install'
+  config.dependencies.mac.colima = 'brew install colima'
+  config.dependencies.mac.docker = 'brew install docker'
+  config.dependencies.mac.git = 'brew install git'
+  config.dependencies.mac.helm = 'brew install helm'
+  config.dependencies.mac.homebrew = '/bin/bash -c \'$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\''
+  config.dependencies.mac.kubectl = 'brew install kubectl'
+  config.dependencies.mac.xcode = 'xcode-select --install'
 
+
+  config.dependencies.linux.colima = '/bin/bash -c \'curl -o ' + config.setupDir + '/colima "https://github.com/abiosoft/colima/releases/download/v0.4.5/colima-$(uname)-$(uname -m)" && ' +
+                                    'sudo install -o root -g root -m 0755 ' + config.setupDir + '/colima /usr/local/bin/colima\''
+  config.dependencies.linux.docker = '/bin/bash -c \'curl -fsSL https://get.docker.com/ | sudo sh &&  sudo usermod -a -G docker $USER\''
+  config.dependencies.linux.git = 'sudo apt-get install git'
+  config.dependencies.linux.helm = '/bin/bash -c \'mkdir -p ' + config.setupDir + '/helm && ' +
+                                  'curl -o ' + config.setupDir + '/helm/helm.tar.gz "https://get.helm.sh/helm-v3.10.2-linux-amd64.tar.gz" && ' +
+                                  'cd ' + config.setupDir + '/helm && ' +
+                                  'tar -zxvf helm.tar.gz &&' +
+                                  'sudo install -o root -g root -m 0755 ./linux-amd64/helm /usr/local/bin/helm\''
+  config.dependencies.linux.kubectl = '/bin/bash -c \'curl -o ' + config.setupDir + '/kubectl "https://dl.k8s.io/release/v1.25.3/bin/linux/amd64/kubectl" && ' +
+                                      'sudo install -o root -g root -m 0755 ' + config.setupDir + '/kubectl /usr/local/bin/kubectl\''
   return config
 }

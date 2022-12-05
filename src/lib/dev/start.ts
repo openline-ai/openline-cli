@@ -1,5 +1,6 @@
 import {logTerminal} from '../logs'
-import {installDependencies} from '../mac-dependency-check'
+import {installDependencies as installMacDependencies} from '../mac-dependency-check'
+import {installDependencies as installLinuxDependencies} from '../linux-dependency-check'
 import * as colima from './colima'
 import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
@@ -15,14 +16,16 @@ export function cleanupSetupFiles() :void {
 
 export function dependencyCheck(verbose: boolean) :boolean {
   // macOS check
-  const isDarwin = process.platform === 'darwin'
-  if (!isDarwin) {
-    logTerminal('ERROR', 'Operating system unsupported at this time')
-    return false
-  }
+  switch (process.platform) {
+    case 'darwin':
+      return installMacDependencies(verbose);
+    case 'linux':
+      return installLinuxDependencies(verbose);
+    default:
+      logTerminal('ERROR', 'Operating system unsupported at this time')
+      return false
 
-  // mac dependency check & install missing dependencies
-  return installDependencies(verbose)
+  }
 }
 
 export function startDevServer(verbose: boolean) :boolean {
