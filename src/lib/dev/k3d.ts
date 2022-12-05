@@ -95,3 +95,18 @@ export function stopK3d(verbose: boolean) {
     logTerminal('ERROR', reset.stderr, 'dev:stop')
   }
 }
+
+export function createPortForward(verbose: boolean, port: number,  protocol: string|undefined) {
+  let forwardString: string
+  if (protocol) {
+    forwardString = `${port}:${port}/${protocol}@loadbalancer`
+  } else {
+  forwardString = `${port}:${port}@loadbalancer`
+  }
+  const addPortCmd = `k3d cluster edit development --port-add ${forwardString}`
+  const addPort = shell.exec(addPortCmd, {silent: !verbose})
+  if (addPort.code !== 0) {
+    logTerminal('ERROR', addPort.stderr, 'dev:deploy:deployImage')
+    return false
+  }
+}

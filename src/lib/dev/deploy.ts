@@ -5,6 +5,7 @@ import {logTerminal} from '../logs'
 import { getPlatform } from '../dependencies'
 import * as fs from 'fs'
 import * as YAML from 'yaml'
+import * as k3d from './k3d'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -58,32 +59,9 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   }
 
   if (deployConfig.loadbalancerYaml !== null) {
-    const kubeApplyLoadbalancer = `kubectl apply -f ${deployConfig.loadbalancerYaml} --namespace ${NAMESPACE}`
-    if (verbose) logTerminal('EXEC', kubeApplyLoadbalancer)
-    const lb = shell.exec(kubeApplyLoadbalancer, {silent: !verbose})
-    if (lb.code !== 0) {
-      logTerminal('ERROR', lb.stderr, 'dev:deploy:deployImage')
+    const lb = deployLoadbalancer(deployConfig.loadbalancerYaml?deployConfig.loadbalancerYaml:'', verbose)
+    if (!lb) {
       return false
-    }
-    if (getPlatform() == "linux") {
-      const file = fs.readFileSync(deployConfig.loadbalancerYaml?deployConfig.loadbalancerYaml:'', 'utf8')
-      const config = YAML.parse(file)
-      for(const val of config.spec.ports) {
-         const port = val.port
-         const protocol = val.protocol
-         let forwardString: string
-         if (protocol) {
-            forwardString = `${port}:${port}/${protocol}@loadbalancer`
-         } else {
-          forwardString = `${port}:${port}@loadbalancer`
-         }
-         const addPortCmd = `k3d cluster edit development --port-add ${forwardString}`
-         const addPort = shell.exec(addPortCmd, {silent: !verbose})
-         if (addPort.code !== 0) {
-           logTerminal('ERROR', addPort.stderr, 'dev:deploy:deployImage')
-           return false
-         }
-      }
     }
   }
 
@@ -114,6 +92,14 @@ export function deployLoadbalancer(YamlConfigPath: string, verbose: boolean) :bo
     logTerminal('ERROR', lb.stderr, 'dev:deploy:deployLoadbalancer')
     return false
   }
-
+  if (getPlatform() == "linux") {
+    const file = fs.readFileSync(YamlConfigPath?YamlConfigPath:'', 'utf8')
+    const config = YAML.parse(file)
+    for(const val of config.spec.ports) {
+      if(!k3d.createPortForward(verbose, val.port, val.protocol)) {
+        return false;
+      }
+    }
+  }
   return true
 }
