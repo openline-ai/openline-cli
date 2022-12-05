@@ -29,10 +29,6 @@ export function installChannelsApi(verbose: boolean, location = config.setupDir,
   const SERVICE = location + config.oasis.channelsApiService
   const LOADBALANCER = location + config.oasis.channelsApiLoadbalancer
 
-  /*
-  const imgName = updateImageName([DEPLOYMENT])
-  if (!imgName) return false
-*/
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
     if (!tag) return false
