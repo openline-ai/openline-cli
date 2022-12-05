@@ -32,7 +32,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
 
   if (getPlatform() == "linux") {
 
-    const pushCmd = 'k3d image import ' + imageUrl
+    const pushCmd = 'k3d image import ' + imageUrl " -c development"
     if (verbose) logTerminal('EXEC', pushCmd)
     const push = shell.exec(pushCmd, {silent: !verbose})
     if (push.code !== 0) {
