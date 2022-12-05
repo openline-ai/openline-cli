@@ -4,6 +4,7 @@ const Table = require('cli-table') // eslint-disable-line unicorn/prefer-module
 
 export function installDependencies(verbose: boolean) :boolean {
   // Checking if dependency installed
+  const setupDir = deps.setupDirCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const git = deps.gitCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const docker = deps.dockerCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const colima = deps.colimaCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
@@ -29,6 +30,7 @@ export function installDependencies(verbose: boolean) :boolean {
   const notInstalled = colors.red.bold('No')
 
   // install missing dependencies
+  if (setupDir === notInstalled) deps.createSetupDir()
   if (colima === notInstalled) deps.installColima()
   if (docker === notInstalled) deps.installDocker()
   if (git === notInstalled) deps.installGit()

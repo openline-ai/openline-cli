@@ -4,10 +4,8 @@ import {getConfig} from '../config/dev'
 import {logTerminal} from './logs'
 const config = getConfig()
 
-// colima
-export function colimaCheck() :boolean {
-  return (shell.exec('which colima', {silent: true}).code === 0)
-}
+const fs = require('fs')
+
 
 function getPlatform() :string {
   switch (process.platform) {
@@ -20,6 +18,28 @@ function getPlatform() :string {
       return "unknwon"
 
   }
+}
+
+export function setupDirCheck() :boolean {
+  return (fs.existsSync(config.setupDir))
+}
+
+export function createSetupDir() :boolean {
+  logTerminal('INFO', 'Creating Setup Dir')
+  const result = shell.exec("mkdir -p " + config.setupDir).code === 0
+  if (result) {
+    logTerminal('SUCCESS', 'Setup dir created')
+  } else {
+    logTerminal('ERROR', 'Failed to create setup dir')
+    exit(1)
+  }
+
+  return true
+}
+
+// colima
+export function colimaCheck() :boolean {
+  return (shell.exec('which colima', {silent: true}).code === 0)
 }
 
 export function installColima() :boolean {
