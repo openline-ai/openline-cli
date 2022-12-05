@@ -88,7 +88,9 @@ export function getConfig() :any {
   config.website.repo = 'https://github.com/openline-ai/openline.ai.git'
 
   // CLI command dependencies
-  config.dependencies = {}
+  config.dependencies = {}  
+  config.dependencies.mac = {}
+
   config.dependencies.mac.colima = 'brew install colima'
   config.dependencies.mac.docker = 'brew install docker'
   config.dependencies.mac.git = 'brew install git'
@@ -98,6 +100,7 @@ export function getConfig() :any {
   config.dependencies.mac.xcode = 'xcode-select --install'
 
 
+  config.dependencies.linux = {}
   config.dependencies.linux.colima = '/bin/bash -c \'curl -o ' + config.setupDir + '/colima "https://github.com/abiosoft/colima/releases/download/v0.4.5/colima-$(uname)-$(uname -m)" && ' +
                                     'sudo install -o root -g root -m 0755 ' + config.setupDir + '/colima /usr/local/bin/colima\''
   config.dependencies.linux.docker = '/bin/bash -c \'curl -fsSL https://get.docker.com/ | sudo sh &&  sudo usermod -a -G docker $USER\''
