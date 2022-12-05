@@ -3,7 +3,10 @@ import {uninstallFusionAuth} from '../../lib/dev/auth'
 import {uninstallNeo4j} from '../../lib/dev/neo4j'
 import {uninstallPostgresql} from '../../lib/dev/postgres'
 import {deleteAll, deleteApp} from '../../lib/dev/delete'
-import {contextCheck} from '../../lib/dev/colima'
+import * as colima from '../../lib/dev/colima'
+import * as k3d from '../../lib/dev/k3d'
+
+import { getPlatform } from '../../lib/dependencies'
 
 export default class DevRm extends Command {
   static description = 'Delete Openline services'
@@ -43,7 +46,14 @@ export default class DevRm extends Command {
     let deployments :string[] = []
     let services :string[] = []
 
-    if (!contextCheck(flags.verbose)) this.exit(1)
+    switch (getPlatform()) {
+      case "mac":
+        if (!colima.contextCheck(flags.verbose)) this.exit(1)
+        break
+      case "linux":
+        if (!k3d.contextCheck(flags.verbose)) this.exit(1)
+        break
+    }
 
     if (flags.all) {
       deleteAll(flags.verbose)

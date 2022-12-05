@@ -1,10 +1,11 @@
+import { integer } from '@oclif/core/lib/parser'
 import {exit} from 'node:process'
 import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 
 export function runningCheck() :boolean {
-  return (shell.exec('colima status', {silent: true}).code === 0)
+  return (shell.exec('k3d node list', {silent: true}).stdout.includes('running'))
 }
 
 export function contextCheck(verbose: boolean): boolean {
@@ -12,16 +13,16 @@ export function contextCheck(verbose: boolean): boolean {
   const check = 'kubectl config get-contexts | grep "*"'
   if (verbose) logTerminal('EXEC', check)
   const context = shell.exec(check, {silent: true}).stdout
-  if (context.includes('colima')) return true
+  if (context.includes('k3d')) return true
 
-  if (verbose) logTerminal('INFO', 'setting kubernetes context to colima...')
-  const useContext = 'kubectl config use-context colima'
+  if (verbose) logTerminal('INFO', 'setting kubernetes context to k3d-development...')
+  const useContext = 'kubectl config use-context k3d-development'
   if (verbose) logTerminal('EXEC', useContext)
   const update = shell.exec(useContext, {silent: true})
   if (update.code !== 0) {
     // this creates the colima context in ~./kube/config if it doesn't exist
-    if (verbose) logTerminal('INFO', 'creating kubernetes context for colima')
-    const createContext = 'colima kubernetes reset'
+    if (verbose) logTerminal('INFO', 'creating kubernetes context for k3d-developmet')
+    const createContext = 'k3d kubeconfig merge mycluster --kubeconfig-switch-context'
     if (verbose) logTerminal('EXEC', createContext)
     if (shell.exec(createContext, {silent: !verbose}).code === 0) {
       if (verbose) logTerminal('EXEC', useContext)
@@ -32,7 +33,7 @@ export function contextCheck(verbose: boolean): boolean {
   return true
 }
 
-export function startColima(verbose :boolean) :boolean {
+export function startk3d(verbose :boolean) :boolean {
   const config = getConfig()
 
   // check to see if Colima is already running
@@ -45,14 +46,22 @@ export function startColima(verbose :boolean) :boolean {
 
   // start up Colima with Openline configurations
   contextCheck(false)
-  const CPU = config.server.cpu
-  const MEMORY = config.server.memory
-  const DISK = config.server.disk
-  const colimaStart = `colima start --with-kubernetes --cpu ${CPU} --memory ${MEMORY} --disk ${DISK}`
-  if (verbose) logTerminal('EXEC', colimaStart)
-  const start = shell.exec(colimaStart, {silent: true})
+
+  const check = 'k3d cluster list'
+  let start: shell.ShellReturnValue
+  if (verbose) logTerminal('EXEC', check)
+  const context = shell.exec(check, {silent: true}).stdout
+  if (context.includes('development')) {
+    const k3dStart = `k3d cluster start development`
+    if (verbose) logTerminal('EXEC', k3dStart)
+    start = shell.exec(k3dStart, {silent: true})
+  } else {
+    const k3dStart = `k3d cluster create development`
+    if (verbose) logTerminal('EXEC', k3dStart)
+    start = shell.exec(k3dStart, {silent: true})
+  }
   if (start.code !== 0) {
-    logTerminal('ERROR', start.stderr, 'dev:colima:startColima')
+    logTerminal('ERROR', start.stderr, 'dev:k3d:startK3d')
     exit(1)
   }
 
@@ -60,7 +69,7 @@ export function startColima(verbose :boolean) :boolean {
 }
 
 export function deleteAll(verbose: boolean) :boolean {
-  const cmd = 'colima kubernetes reset'
+  const cmd = 'k3d cluster delete development'
   if (verbose) logTerminal('EXEC', cmd)
   const reset = shell.exec(cmd, {silent: true})
   if (reset.code === 0) {
@@ -74,11 +83,12 @@ export function deleteAll(verbose: boolean) :boolean {
   return true
 }
 
-export function stopColima(verbose: boolean) {
+export function stopK3d(verbose: boolean) {
   logTerminal('INFO', '🦦 Saving current configuration...')
+  const stopCommand = 'k3d cluster stop development'
   if (verbose)
-    logTerminal('EXEC', 'colima stop')
-  const reset = shell.exec('colima stop', { silent: true })
+    logTerminal('EXEC', stopCommand)
+  const reset = shell.exec(stopCommand, { silent: true })
   if (reset.code === 0) {
     logTerminal('SUCCESS', 'Openline dev server stopped')
   } else {

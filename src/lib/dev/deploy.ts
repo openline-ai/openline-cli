@@ -2,6 +2,9 @@ import * as shell from 'shelljs'
 import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
+import { getPlatform } from '../dependencies'
+import * as k3d from './k3d'
+
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -23,6 +26,17 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
     const pull = shell.exec(dockerPull, {silent: true})
     if (pull.code !== 0) {
       logTerminal('ERROR', pull.stderr, 'dev:deploy:deployImage')
+      return false
+    }
+  }
+
+  if (getPlatform() == "linux") {
+
+    const pushCmd = 'k3d image import ' + imageUrl + " -c development"
+    if (verbose) logTerminal('EXEC', pushCmd)
+    const push = shell.exec(pushCmd, {silent: !verbose})
+    if (push.code !== 0) {
+      logTerminal('ERROR', push.stderr, 'dev:deploy:tagImage')
       return false
     }
   }
