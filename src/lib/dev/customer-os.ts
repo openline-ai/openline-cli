@@ -1,6 +1,6 @@
 import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
-import {deployImage, Yaml, updateImageTag} from './deploy'
+import {deployImage, Yaml, updateImageTag, updateImageName} from './deploy'
 import {buildLocalImage} from './build-image'
 import {logTerminal} from '../logs'
 
@@ -56,6 +56,9 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
   const SERVICE = location + config.customerOs.messageStoreService
   const LOADBALANCER = location + config.customerOs.messageStoreLoadbalancer
   const MESSAGE_STORE_API_IMAGE_NAME = 'message-store'
+
+  const imgName = updateImageName([DEPLOYMENT])
+  if (!imgName) return false
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)

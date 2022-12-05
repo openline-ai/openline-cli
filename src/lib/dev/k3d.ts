@@ -96,6 +96,8 @@ export function stopK3d(verbose: boolean) {
 }
 
 export function getRegistryPort(verbose: boolean):number {
-  const port = shell.exec("docker ps -f name=development-registry |tail -1 |sed -n 's/^.*:\([0-9]*\)->.*$/\1/p'", {silent: true}).stdout
+  const command = 'docker ps -f name=development-registry |tail -1 |sed -n \'s/^.*:\\([0-9]*\\)->.*$/\\1/p\'';
+  if (verbose) logTerminal('EXEC', command)
+  const port = shell.exec(command, {silent: true}).stdout
   return parseInt(port)
 }

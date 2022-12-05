@@ -79,18 +79,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   return true
 }
 
-export function updateImageTag(deployFiles: string[], imageVersion: string) :boolean {
-  const options = {
-    files: deployFiles,
-    from: 'latest',
-    to: imageVersion,
-  }
-  try {
-    replace.sync(options)
-  } catch (error: any) {
-    logTerminal('ERROR', error)
-    return false
-  }
+export function updateImageName(deployFiles: string[]) :boolean {
 
   if (getPlatform() == "linux") {
     const port = k3d.getRegistryPort(false)
@@ -108,6 +97,22 @@ export function updateImageTag(deployFiles: string[], imageVersion: string) :boo
       return false
     }
   }
+  return true
+}
+
+export function updateImageTag(deployFiles: string[], imageVersion: string) :boolean {
+  const options = {
+    files: deployFiles,
+    from: 'latest',
+    to: imageVersion,
+  }
+  try {
+    replace.sync(options)
+  } catch (error: any) {
+    logTerminal('ERROR', error)
+    return false
+  }
+
   return true
 }
 
