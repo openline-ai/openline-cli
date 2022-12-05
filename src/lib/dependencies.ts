@@ -38,7 +38,7 @@ export function createSetupDir() :boolean {
 }
 
 export function checkDockerGroup() :void {
-  const result = shell.exec("groups").stdout.includes("docker")
+  const result = shell.exec("groups", {silent: true}).stdout.includes("docker")
   if (result) {
     logTerminal('SUCCESS', 'User in Docker group')
   } else {
