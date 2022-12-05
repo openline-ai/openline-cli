@@ -3,8 +3,8 @@ import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import { getPlatform } from '../dependencies'
-import * as k3d from './k3d'
-
+import fs from 'fs'
+import YAML from 'yaml'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -64,6 +64,26 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
     if (lb.code !== 0) {
       logTerminal('ERROR', lb.stderr, 'dev:deploy:deployImage')
       return false
+    }
+    if (getPlatform() == "linux") {
+      const file = fs.readFileSync(deployConfig.loadbalancerYaml, 'utf8')
+      const config = YAML.parse(file)
+      for(const val of config.spec.ports) {
+         const port = val.port
+         const protocol = val.protocol
+         let forwardString: string
+         if (protocol) {
+            forwardString = `${port}:${port}/${protocol}@loadbalancer`
+         } else {
+          forwardString = `${port}:${port}@loadbalancer`
+         }
+         const addPortCmd = `k3d cluster edit development --port-add ${forwardString}`
+         const addPort = shell.exec(addPortCmd, {silent: !verbose})
+         if (addPort.code !== 0) {
+           logTerminal('ERROR', addPort.stderr, 'dev:deploy:deployImage')
+           return false
+         }
+      }
     }
   }
 
