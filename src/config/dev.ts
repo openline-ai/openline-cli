@@ -50,7 +50,7 @@ export function getConfig() :any {
   config.customerOs.postgresqlSetup = '/deployment/scripts/postgresql/setup.sql'
   // customerOS Neo4j DB
   config.customerOs.neo4jHelmValues = '/deployment/infra/helm/neo4j/neo4j-values.yaml'
-  config.customerOs.neo4jCypher = '/packages/server/customer-os-api/customer-os.cypher'
+  config.customerOs.neo4jCypher = '/deployment/scripts/neo4j/customer-os.cypher'
   config.customerOs.neo4jProvisioning = '/deployment/scripts/neo4j/provision-neo4j.sh'
   // customerOS FusionAuth
   config.customerOs.fusionauthHelmValues = '/deployment/infra/helm/fusionauth/fusionauth-values.yaml'
