@@ -216,7 +216,6 @@ export default class DevRm extends Command {
         deployments: [],
         services: [
           'asterisk',
-          'kamailio-service',
         ],
         statefulsets: ['asterisk'],
       }
