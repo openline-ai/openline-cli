@@ -92,7 +92,7 @@ export function installAsterisk(verbose: boolean, location = config.setupDir, im
 }
 
 export function installVoicePlugin(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
-  if (asteriskCheck()) return true
+  if (voicePluginCheck()) return true
   const DEPLOYMENT = location + config.voice.plugin.Deployment
   const SERVICE = location + config.voice.plugin.Service
 
