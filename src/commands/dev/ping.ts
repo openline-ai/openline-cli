@@ -31,7 +31,6 @@ export default class DevPing extends Command {
     const oasisGui = pingOasisGui() ? colors.bold.green('Yes') : colors.red.bold('No')
     const voiceKamailio = pingKamailio() ? colors.bold.green('Yes') : colors.red.bold('No')
 
-
     const table = new Table({
       head: [colors.cyan.bold('App'), colors.cyan.bold('Service'), colors.cyan.bold('Location'), colors.cyan.bold('Up?')],
       colWidths: [15, 20, 25, 5],

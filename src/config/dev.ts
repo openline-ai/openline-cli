@@ -88,7 +88,7 @@ export function getConfig() :any {
   config.voice.kamailio.Deployment = '/deployment/k8s/local-minikube/apps-config/kamailio.yaml'
   config.voice.kamailio.Service = '/deployment/k8s/local-minikube/apps-config/kamailio-k8s-service.yaml'
   config.voice.kamailio.Loadbalancer = '/deployment/k8s/local-minikube/apps-config/kamailio-k8s-loadbalancer-service.yaml'
-  
+
   // Voice Asterisk
   config.voice.asterisk = {}
   config.voice.asterisk.Image = 'ghcr.io/openline-ai/openline-voice/openline-asterisk-server:'
@@ -108,7 +108,7 @@ export function getConfig() :any {
   config.website.repo = 'https://github.com/openline-ai/openline.ai.git'
 
   // CLI command dependencies
-  config.dependencies = {}  
+  config.dependencies = {}
   config.dependencies.mac = {}
 
   config.dependencies.mac.colima = 'brew install colima'
@@ -119,10 +119,9 @@ export function getConfig() :any {
   config.dependencies.mac.kubectl = 'brew install kubectl'
   config.dependencies.mac.xcode = 'xcode-select --install'
 
-
   config.dependencies.linux = {}
   config.dependencies.linux.k3d = 'curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sudo bash'
-  
+
   config.dependencies.linux.docker = '/bin/bash -c \'curl -fsSL https://get.docker.com/ | sudo sh &&  sudo usermod -a -G docker $USER\''
   config.dependencies.linux.git = 'sudo apt-get install -y git'
   config.dependencies.linux.helm = '/bin/bash -c \'mkdir -p ' + config.setupDir + '/helm && ' +
