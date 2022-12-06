@@ -2,7 +2,7 @@ import {Command, Flags} from '@oclif/core'
 import {uninstallFusionAuth} from '../../lib/dev/auth'
 import {uninstallNeo4j} from '../../lib/dev/neo4j'
 import {uninstallPostgresql} from '../../lib/dev/postgres'
-import {deleteAll, deleteApp} from '../../lib/dev/delete'
+import {deleteAll, deleteApp,Apps} from '../../lib/dev/delete'
 import * as colima from '../../lib/dev/colima'
 import * as k3d from '../../lib/dev/k3d'
 
@@ -37,14 +37,16 @@ export default class DevRm extends Command {
         'oasis-api',
         'oasis-gui',
         'message-store-api',
+        'voice',
+        'kamailio',
+        'asterisk',
+        'voice-plugin'
       ],
     },
   ]
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(DevRm)
-    let deployments :string[] = []
-    let services :string[] = []
 
     switch (getPlatform()) {
       case "mac":
@@ -63,82 +65,173 @@ export default class DevRm extends Command {
     const service = args.service.toLowerCase()
     switch (service) {
     case 'auth':
-      deployments = []
-      services = ['fusion-auth-loadbalancer']
-      uninstallFusionAuth(flags.verbose)
-      deleteApp(deployments, services, flags.verbose)
-      break
+      const authApps: Apps = {
+        deployments: [],
+        services: ['fusion-auth-loadbalancer'],
+        statefulsets: [],
+      }
 
-    case 'channels-api':
-      deployments = ['channels-api']
-      services = ['channels-api-service', 'channels-api-loadbalancer']
-      deleteApp(deployments, services, flags.verbose)
+      uninstallFusionAuth(flags.verbose)
+      deleteApp(authApps, flags.verbose)
       break
 
     case 'contacts':
-      deployments = ['contacts-gui']
-      services = ['contacts-gui-service', 'contacts-gui-loadbalancer']
-      deleteApp(deployments, services, flags.verbose)
+      const contactApps: Apps = {
+        deployments: ['contacts-gui'],
+        services: ['contacts-gui-service', 'contacts-gui-loadbalancer'],
+        statefulsets: [],
+      }
+
+      deleteApp(contactApps, flags.verbose)
       break
 
     case 'contacts-gui':
-      deployments = ['contacts-gui']
-      services = ['contacts-gui-service', 'contacts-gui-loadbalancer']
-      deleteApp(deployments, services, flags.verbose)
+      const contactsGuiApps:Apps = {
+        deployments: ['contacts-gui'],
+        services: ['contacts-gui-service', 'contacts-gui-loadbalancer'],
+        statefulsets: []
+      }
+      deleteApp(contactsGuiApps, flags.verbose)
       break
 
     case 'customer-os':
-      deployments = ['customer-os-api', 'message-store']
-      services = [
-        'customer-os-api-service',
-        'customer-os-api-loadbalancer',
-        'message-store-service',
-        'message-store-loadbalancer-service',
-      ]
-      deleteApp(deployments, services, flags.verbose)
+      const customerOsApps:Apps = {
+        deployments: ['customer-os-api', 'message-store'],
+        services: [
+          'customer-os-api-service',
+          'customer-os-api-loadbalancer',
+          'message-store-service',
+          'message-store-loadbalancer-service',
+        ],
+        statefulsets: []
+      }
+
+      deleteApp(customerOsApps, flags.verbose)
       break
 
     case 'customer-os-api':
-      deployments = ['customer-os-api']
-      services = ['customer-os-api-service', 'customer-os-api-loadbalancer']
-      deleteApp(deployments, services, flags.verbose)
+      const customerOsAPIApps:Apps = {
+        deployments: ['customer-os-api'],
+        services: ['customer-os-api-service', 'customer-os-api-loadbalancer'],
+        statefulsets: []
+      }
+
+      deleteApp(customerOsAPIApps, flags.verbose)
       break
 
     case 'db':
       uninstallNeo4j(flags.verbose)
       uninstallPostgresql(flags.verbose)
       break
+    
 
+    case 'message-store-api':
+      const messageStoreApiApps: Apps = {
+        deployments: ['message-store'],
+        services: ['message-store-service', 'message-store-loadbalancer-service'],
+        statefulsets: []
+      }
+      deleteApp(messageStoreApiApps, flags.verbose)
+      break
+    
+
+    // Oasis Services  
     case 'oasis':
-      deployments = ['oasis-api', 'channels-api', 'oasis-frontend']
-      services = [
-        'oasis-api-service',
-        'oasis-api-loadbalancer',
-        'channels-api-service',
-        'channels-api-loadbalancer',
-        'oasis-frontend-service',
-        'oasis-frontend-loadbalancer',
-      ]
-      deleteApp(deployments, services, flags.verbose)
+      const oasisApps:Apps = {
+        deployments: ['oasis-api', 'channels-api', 'oasis-frontend'],
+        services: [
+          'oasis-api-service',
+          'oasis-api-loadbalancer',
+          'channels-api-service',
+          'channels-api-loadbalancer',
+          'oasis-frontend-service',
+          'oasis-frontend-loadbalancer',
+        ],
+        statefulsets: [],
+      }
+
+      deleteApp(oasisApps, flags.verbose)
       break
 
     case 'oasis-api':
-      deployments = ['oasis-api']
-      services = ['oasis-api-service', 'oasis-api-loadbalancer']
-      deleteApp(deployments, services, flags.verbose)
+      const oasisApiApps:Apps = {
+        deployments: ['oasis-api'],
+        services: ['oasis-api-service', 'oasis-api-loadbalancer'],
+        statefulsets: [],
+      }
+
+      deleteApp(oasisApiApps, flags.verbose)
       break
 
     case 'oasis-gui':
-      deployments = ['oasis-frontend']
-      services = ['oasis-frontend-service', 'oasis-frontend-loadbalancer']
-      deleteApp(deployments, services, flags.verbose)
+      const oasisGuiApps:Apps = {
+        deployments: ['oasis-frontend'],
+        services: ['oasis-frontend-service', 'oasis-frontend-loadbalancer'],
+        statefulsets: [],
+      }
+
+      deleteApp(oasisGuiApps, flags.verbose)
       break
 
-    case 'message-store-api':
-      deployments = ['message-store']
-      services = ['message-store-service', 'message-store-loadbalancer-service']
-      deleteApp(deployments, services, flags.verbose)
+    case 'channels-api':
+      const oasisChannelApiApps:Apps = {
+        deployments: ['channels-api'],
+        services: ['channels-api-service', 'channels-api-loadbalancer'],
+        statefulsets: []
+      }
+
+      deleteApp(oasisChannelApiApps, flags.verbose)
       break
+
+    // Voice Services
+    case 'voice':
+      const voiceApps: Apps = {
+        deployments: ['kamailio', 'voice-plugin'],
+        services: [
+          'asterisk',
+          'kamailio-loadbalancer-service',
+          'kamailio-service',
+          'voice-plugin-service',
+        ],
+        statefulsets: ['asterisk'],
+      }
+
+      deleteApp(voiceApps, flags.verbose)
+      break
+
+    case 'kamailio':
+      const kamailioApps: Apps = {
+        deployments: ['kamailio'],
+        services: [
+          'kamailio-loadbalancer-service',
+          'kamailio-service',
+        ],
+        statefulsets: [],
+      }
+      deleteApp(kamailioApps, flags.verbose)
+      break
+
+    case 'asterisk':
+      const asteriskApps: Apps = {
+        deployments: [],
+        services: [
+          'asterisk',
+          'kamailio-service',
+        ],
+        statefulsets: ['asterisk'],
+      }
+      deleteApp(asteriskApps, flags.verbose)
+      break
+    case 'voice-plugin':
+      const voicePluginApps: Apps = {
+        deployments: ['voice-plugin'],
+        services: [
+          'voice-plugin-service',
+        ],
+        statefulsets: [],
+      }
+      deleteApp(voicePluginApps, flags.verbose)
+      break    
     }
   }
 }
