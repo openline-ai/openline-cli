@@ -65,7 +65,7 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
   if (location !== config.setupDir) {
     // come back to this
     const buildPath = location + '/packages/server/message-store'
-    buildLocalImage(buildPath, buildPath, image, verbose)
+    buildLocalImage(buildPath, buildPath + "/../", image, verbose)
   }
 
   const installConfig: Yaml = {
