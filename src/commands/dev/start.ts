@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import {Command, Flags} from '@oclif/core'
 import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
@@ -251,9 +252,9 @@ export default class DevStart extends Command {
 
     case 'voice':
       start.dependencyCheck(flags.verbose)
-      if(process.arch != "x64") {
-              logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
-              return
+      if (process.arch != 'x64') {
+        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
+        return
       }
 
       start.startDevServer(flags.verbose)
