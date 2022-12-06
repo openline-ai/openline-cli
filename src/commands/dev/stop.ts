@@ -1,10 +1,7 @@
 import {Command, Flags} from '@oclif/core'
-import * as shell from 'shelljs'
-import {logTerminal} from '../../lib/logs'
 import * as colima from '../../lib/dev/colima'
 import * as k3d from '../../lib/dev/k3d'
-import { getPlatform } from '../../lib/dependencies'
-
+import {getPlatform} from '../../lib/dependencies'
 
 export default class DevStop extends Command {
   static description = 'Stops the Openline development server & saves current config.'
@@ -23,13 +20,12 @@ export default class DevStop extends Command {
     const {flags} = await this.parse(DevStop)
 
     switch (getPlatform()) {
-      case "mac":
-        colima.stopColima(flags.verbose)
-        break
-      case "linux":
-        k3d.stopK3d(flags.verbose)
-        break
+    case 'mac':
+      colima.stopColima(flags.verbose)
+      break
+    case 'linux':
+      k3d.stopK3d(flags.verbose)
+      break
     }
   }
-
 }
