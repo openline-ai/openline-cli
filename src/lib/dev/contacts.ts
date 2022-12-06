@@ -29,7 +29,7 @@ export function installContactsGui(verbose: boolean, location = config.setupDir,
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are standardized
     const buildPath = location + '/packages/apps/contacts'
-    buildLocalImage(buildPath, CONTACTS_IMAGE, verbose)
+    buildLocalImage(buildPath, buildPath, CONTACTS_IMAGE, verbose)
     image = null
   }
 
