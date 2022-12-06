@@ -32,8 +32,8 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
 
   if (location !== config.setupDir) {
     // Need to come back to this after we standardize Dockerfiles
-    const buildPath = location + '/packages/server'
-    buildLocalImage(buildPath, image, verbose)
+    const buildPath = location + '/packages/server/customer-os-api'
+    buildLocalImage(buildPath, buildPath, image, verbose)
     image = null
   }
 
@@ -64,8 +64,8 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = location + '/packages/server'
-    buildLocalImage(buildPath, image, verbose)
+    const buildPath = location + '/packages/server/message-store'
+    buildLocalImage(buildPath, buildPath, image, verbose)
   }
 
   const installConfig: Yaml = {

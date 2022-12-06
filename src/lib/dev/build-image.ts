@@ -1,8 +1,8 @@
 import * as shell from 'shelljs'
 import {logTerminal} from '../logs'
 
-export function buildLocalImage(path: string, imageName: string, verbose: boolean) :boolean {
-  const dockerBuild = `docker build -t ${imageName} -f ${path}/${imageName}/Dockerfile ${path}`
+export function buildLocalImage(path: string, context: string, imageName: string, verbose: boolean) :boolean {
+  const dockerBuild = `docker build -t ${imageName} -f ${path}/Dockerfile ${context}`
   if (verbose) logTerminal('EXEC', dockerBuild)
 
   const buildExecution = shell.exec(dockerBuild, {silent: !verbose})
