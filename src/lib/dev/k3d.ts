@@ -22,7 +22,7 @@ export function contextCheck(verbose: boolean): boolean {
   if (update.code !== 0) {
     // this creates the colima context in ~./kube/config if it doesn't exist
     if (verbose) logTerminal('INFO', 'creating kubernetes context for k3d-developmet')
-    const createContext = 'k3d kubeconfig merge mycluster --kubeconfig-switch-context'
+    const createContext = 'k3d kubeconfig merge development --kubeconfig-switch-context'
     if (verbose) logTerminal('EXEC', createContext)
     if (shell.exec(createContext, {silent: !verbose}).code === 0) {
       if (verbose) logTerminal('EXEC', useContext)
