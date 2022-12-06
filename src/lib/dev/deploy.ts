@@ -59,7 +59,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
     return false
   }
 
-  if (deployConfig.loadbalancerYaml !== null) {
+  if ('loadbalancerYaml' in deployConfig && deployConfig.loadbalancerYaml !== null) {
     const lb = deployLoadbalancer(deployConfig.loadbalancerYaml?deployConfig.loadbalancerYaml:'', verbose)
     if (!lb) {
       return false
