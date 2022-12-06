@@ -60,12 +60,13 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
     if (!tag) return false
   }
 
-  const image = config.customerOs.messageStoreImage + imageVersion
+  let image: string | null  = config.customerOs.messageStoreImage + imageVersion
 
   if (location !== config.setupDir) {
     // come back to this
     const buildPath = location + '/packages/server/message-store'
     buildLocalImage(buildPath, buildPath + "/../", image, verbose)
+    image = null
   }
 
   const installConfig: Yaml = {
