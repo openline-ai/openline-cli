@@ -251,6 +251,11 @@ export default class DevStart extends Command {
 
     case 'voice':
       start.dependencyCheck(flags.verbose)
+      if(process.arch != "x64") {
+              logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
+              return
+      }
+
       start.startDevServer(flags.verbose)
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
@@ -279,6 +284,10 @@ export default class DevStart extends Command {
   
     case 'kamailio':
       start.dependencyCheck(flags.verbose)
+      if(process.arch != "x64") {
+        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
+        return
+      }
       start.startDevServer(flags.verbose)
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -291,6 +300,10 @@ export default class DevStart extends Command {
   
     case 'asterisk':
       start.dependencyCheck(flags.verbose)
+      if(process.arch != "x64") {
+        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
+        return
+      }
       start.startDevServer(flags.verbose)
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -303,6 +316,10 @@ export default class DevStart extends Command {
   
     case 'voice-plugin':
       start.dependencyCheck(flags.verbose)
+      if(process.arch != "x64") {
+        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
+        return
+      }
       start.startDevServer(flags.verbose)
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
