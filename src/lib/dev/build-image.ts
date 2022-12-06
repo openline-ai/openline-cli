@@ -11,5 +11,16 @@ export function buildLocalImage(path: string, context: string, imageName: string
     return false
   }
 
+  if (getPlatform() == "linux") {
+
+    const pushCmd = 'k3d image import ' + imageName + " -c development"
+    if (verbose) logTerminal('EXEC', pushCmd)
+    const push = shell.exec(pushCmd, {silent: !verbose})
+    if (push.code !== 0) {
+      logTerminal('ERROR', push.stderr, 'dev:build-image:buildLocalImage')
+      return false
+    }
+  }
+
   return true
 }
