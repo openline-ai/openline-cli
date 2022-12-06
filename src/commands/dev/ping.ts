@@ -3,6 +3,8 @@ import {pingFusionAuth} from '../../lib/dev/auth'
 import {pingContactsGui} from '../../lib/dev/contacts'
 import {pingCustomerOsApi, pingMessageStoreApi} from '../../lib/dev/customer-os'
 import {pingOasisGui, pingOasisApi, pingChannelsApi} from '../../lib/dev/oasis'
+import {pingKamailio} from '../../lib/dev/voice'
+
 import * as colors from 'colors' // eslint-disable-line no-restricted-imports
 const Table = require('cli-table') // eslint-disable-line unicorn/prefer-module
 
@@ -27,6 +29,8 @@ export default class DevPing extends Command {
     const channelsApi = pingChannelsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const oasisApi = pingOasisApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const oasisGui = pingOasisGui() ? colors.bold.green('Yes') : colors.red.bold('No')
+    const voiceKamailio = pingKamailio() ? colors.bold.green('Yes') : colors.red.bold('No')
+
 
     const table = new Table({
       head: [colors.cyan.bold('App'), colors.cyan.bold('Service'), colors.cyan.bold('Location'), colors.cyan.bold('Up?')],
@@ -34,13 +38,15 @@ export default class DevPing extends Command {
     })
 
     table.push(
-      ['customerOs', 'auth', 'http://localhost:9011', auth],
+      ['customer-os', 'auth', 'http://localhost:9011', auth],
       ['customer-os', 'customer-os-api', 'http://localhost:10000', customerOsApi],
       ['customer-os', 'message-store-api', 'http://localhost:9009', messageStoreApi],
       ['contacts', 'contacts-gui', 'http://localhost:3000', contactsGui],
       ['oasis', 'channels-api', 'http://localhost:8013', channelsApi],
       ['oasis', 'oasis-api', 'http://localhost:8006', oasisApi],
       ['oasis', 'oasis-gui', 'http://localhost:3006', oasisGui],
+      ['voice', 'kamailio', 'ws://localhost:8080', voiceKamailio],
+
     )
 
     console.log(table.toString())

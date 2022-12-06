@@ -22,7 +22,6 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
   const DEPLOYMENT = location + config.customerOs.apiDeployment
   const SERVICE = location + config.customerOs.apiService
   const LOADBALANCER = location + config.customerOs.apiLoadbalancer
-  const CUSTOMER_OS_API_IMAGE_NAME = 'customer-os-api'
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -33,8 +32,8 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
 
   if (location !== config.setupDir) {
     // Need to come back to this after we standardize Dockerfiles
-    const buildPath = location + '/packages/server'
-    buildLocalImage(buildPath, CUSTOMER_OS_API_IMAGE_NAME, verbose)
+    const buildPath = location + '/packages/server/customer-os-api'
+    buildLocalImage(buildPath, buildPath, image, verbose)
     image = null
   }
 
@@ -55,20 +54,21 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
   const DEPLOYMENT = location + config.customerOs.messageStoreDeployment
   const SERVICE = location + config.customerOs.messageStoreService
   const LOADBALANCER = location + config.customerOs.messageStoreLoadbalancer
-  const MESSAGE_STORE_API_IMAGE_NAME = 'message-store'
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
     if (!tag) return false
   }
 
+  let image: string | null  = config.customerOs.messageStoreImage + imageVersion
+
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = location + '/packages/server'
-    buildLocalImage(buildPath, MESSAGE_STORE_API_IMAGE_NAME, verbose)
+    const buildPath = location + '/packages/server/message-store'
+    buildLocalImage(buildPath, buildPath + "/../", image, verbose)
+    image = null
   }
 
-  const image = config.customerOs.messageStoreImage + imageVersion
   const installConfig: Yaml = {
     deployYaml: DEPLOYMENT,
     serviceYaml: SERVICE,

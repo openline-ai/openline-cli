@@ -29,18 +29,19 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
       logTerminal('ERROR', pull.stderr, 'dev:deploy:deployImage')
       return false
     }
-  }
 
-  if (getPlatform() == "linux") {
+    if (getPlatform() == "linux") {
 
-    const pushCmd = 'k3d image import ' + imageUrl + " -c development"
-    if (verbose) logTerminal('EXEC', pushCmd)
-    const push = shell.exec(pushCmd, {silent: !verbose})
-    if (push.code !== 0) {
-      logTerminal('ERROR', push.stderr, 'dev:deploy:tagImage')
-      return false
+      const pushCmd = 'k3d image import ' + imageUrl + " -c development"
+      if (verbose) logTerminal('EXEC', pushCmd)
+      const push = shell.exec(pushCmd, {silent: !verbose})
+      if (push.code !== 0) {
+        logTerminal('ERROR', push.stderr, 'dev:deploy:tagImage')
+        return false
+      }
     }
   }
+
 
   const kubeApplyDeployConfig = `kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', kubeApplyDeployConfig)
@@ -58,7 +59,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
     return false
   }
 
-  if (deployConfig.loadbalancerYaml !== null) {
+  if ('loadbalancerYaml' in deployConfig && deployConfig.loadbalancerYaml !== null) {
     const lb = deployLoadbalancer(deployConfig.loadbalancerYaml?deployConfig.loadbalancerYaml:'', verbose)
     if (!lb) {
       return false

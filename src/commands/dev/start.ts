@@ -7,6 +7,7 @@ import {getConfig} from '../../config/dev'
 import {installCustomerOsApi, installMessageStoreApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
 import * as oasis from '../../lib/dev/oasis'
+import * as voice from '../../lib/dev/voice'
 import * as start from '../../lib/dev/start'
 import {cloneRepo} from '../../lib/clone/clone-repo'
 import {logTerminal} from '../../lib/logs'
@@ -41,16 +42,20 @@ export default class DevStart extends Command {
       default: 'customer-os',
       options: [
         'auth',
-        'channels-api',
         'contacts',
         'contacts-gui',
         'customer-os',
         'customer-os-api',
+        'message-store-api',
         'db',
         'oasis',
         'oasis-api',
         'oasis-gui',
-        'message-store-api',
+        'channels-api',
+        'voice',
+        'kamailio',
+        'asterisk',
+        'voice-plugin'
       ],
     },
   ]
@@ -111,18 +116,6 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       fusionauth.installFusionAuth(flags.verbose, location)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'channels-api':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir, undefined, true)
-      oasis.installChannelsApi(flags.verbose, location, version)
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
@@ -240,6 +233,99 @@ export default class DevStart extends Command {
       start.cleanupSetupFiles()
       cloneRepo(config.oasis.repo, flags.verbose, config.setupDir, undefined, true)
       oasis.installOasisGui(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+
+    case 'channels-api':
+      start.dependencyCheck(flags.verbose)
+      start.startDevServer(flags.verbose)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.cleanupSetupFiles()
+      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir, undefined, true)
+      oasis.installChannelsApi(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+
+    case 'voice':
+      start.dependencyCheck(flags.verbose)
+      if(process.arch != "x64") {
+              logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
+              return
+      }
+
+      start.startDevServer(flags.verbose)
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.installDatabases(flags.verbose, location)
+      fusionauth.installFusionAuth(flags.verbose, location)
+      installCustomerOsApi(flags.verbose, location, version)
+      installMessageStoreApi(flags.verbose, location, version)
+      sql.provisionPostgresql(flags.verbose, location)
+      neo.provisionNeo4j(flags.verbose, location)
+      start.cleanupSetupFiles()
+      // install oasis
+      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir, undefined, true)
+      oasis.installChannelsApi(flags.verbose, location, version)
+      oasis.installOasisApi(flags.verbose, location, version)
+      oasis.installOasisGui(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      // install voice
+      cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
+      voice.installKamailio(flags.verbose, location, version)
+      voice.installAsterisk(flags.verbose, location, version)
+      voice.installVoicePlugin(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+  
+    case 'kamailio':
+      start.dependencyCheck(flags.verbose)
+      if(process.arch != "x64") {
+        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
+        return
+      }
+      start.startDevServer(flags.verbose)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.cleanupSetupFiles()
+      cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
+      voice.installKamailio(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+  
+    case 'asterisk':
+      start.dependencyCheck(flags.verbose)
+      if(process.arch != "x64") {
+        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
+        return
+      }
+      start.startDevServer(flags.verbose)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.cleanupSetupFiles()
+      cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
+      voice.installAsterisk(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+  
+    case 'voice-plugin':
+      start.dependencyCheck(flags.verbose)
+      if(process.arch != "x64") {
+        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
+        return
+      }
+      start.startDevServer(flags.verbose)
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      start.cleanupSetupFiles()
+      cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
+      voice.installVoicePlugin(flags.verbose, location, version)
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
