@@ -10,6 +10,9 @@ const KAMAILIO = 'kamailio-service'
 const ASTERISK = 'asterisk'
 const VOICE_PLUGIN = 'voice-plugin-service'
 
+const POSTGRESQL_SERVICE = 'postgresql-customer-os-dev'
+
+
 function kamailioCheck() :boolean {
   return (shell.exec(`kubectl get service ${KAMAILIO} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
@@ -27,6 +30,10 @@ export function installKamailio(verbose: boolean, location = config.setupDir, im
   const DEPLOYMENT = location + config.voice.kamailio.Deployment
   const SERVICE = location + config.voice.kamailio.Service
   const LOADBALANCER = location + config.voice.kamailio.Loadbalancer
+
+  if(!provisionPostgresql(verbose, location)) {
+    return false
+  }
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -111,6 +118,66 @@ export function installVoicePlugin(verbose: boolean, location = config.setupDir,
   if (deploy === false) return false
 
   logTerminal('SUCCESS', 'voice-plugin successfully installed')
+  return true
+}
+
+export function provisionPostgresql(verbose: boolean, location = config.setupDir) :boolean {
+  const sqlUser = 'openline'
+  const sqlDb = 'openline'
+  const sqlPw = 'password'
+  const FILES=["standard-create.sql", "permissions-create.sql", "carriers.sql"]
+
+  let POSTGRESQL_DB_SETUP: string = ""
+  for( const file in FILES) {
+    POSTGRESQL_DB_SETUP = POSTGRESQL_DB_SETUP + " " + location + "/packages/server/kamailio/sql/" + file
+  }
+
+  let ms = ''
+  let retry = 1
+  const maxAttempts = config.server.timeOuts / 5
+  while (ms === '') {
+    if (retry < maxAttempts) {
+      if (verbose) logTerminal('INFO', `postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
+      shell.exec('sleep 2')
+      ms = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep message-store|grep Running| cut -f1 -d ' '`, {silent: true}).stdout
+      retry++
+    } else {
+      logTerminal('ERROR', 'Provisioning postgreSQL timed out', 'dev:postgres:provisionPostresql')
+      return false
+    }
+  }
+
+  let cosDb = ''
+  while (cosDb === '') {
+    if (retry < maxAttempts) {
+      if (verbose) logTerminal('INFO', `postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
+      shell.exec('sleep 2')
+      cosDb = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${POSTGRESQL_SERVICE}|grep Running| cut -f1 -d ' '`, {silent: true}).stdout
+      retry++
+    } else {
+      logTerminal('ERROR', 'Provisioning postgreSQL timed out', 'dev:postgres:provisionPostresql')
+      return false
+    }
+  }
+
+  cosDb = cosDb.slice(0, -1)
+
+  if (verbose) logTerminal('INFO', `connecting to ${cosDb} pod`)
+
+  let provision = ''
+  while (provision === '') {
+    if (retry < maxAttempts) {
+      if (verbose) logTerminal('INFO', `attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)
+      shell.exec('sleep 2')
+      provision = shell.exec(`echo ${POSTGRESQL_DB_SETUP}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: true}).stdout
+      retry++
+    } else {
+      logTerminal('ERROR', 'Provisioning message store DB timed out', 'dev:postgres:provisionPostresql')
+      return false
+    }
+  }
+
+  if (verbose) logTerminal('SUCCESS', 'PostgreSQL database successfully provisioned')
   return true
 }
 
