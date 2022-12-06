@@ -67,7 +67,7 @@ export function installColima() :boolean {
 
 // colima
 export function k3dCheck() :boolean {
-  return (shell.exec('which colima', {silent: true}).code === 0)
+  return (shell.exec('which k3d', {silent: true}).code === 0)
 }
 
 export function installK3d() :boolean {
