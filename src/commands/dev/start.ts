@@ -42,21 +42,21 @@ export default class DevStart extends Command {
       description: 'the Openline application you would like to start',
       default: 'customer-os',
       options: [
+        'asterisk',
         'auth',
+        'channels-api',
         'contacts',
         'contacts-gui',
         'customer-os',
         'customer-os-api',
-        'message-store-api',
         'db',
+        'kamailio',
+        'message-store-api',
         'oasis',
         'oasis-api',
         'oasis-gui',
-        'channels-api',
         'voice',
-        'kamailio',
-        'asterisk',
-        'voice-plugin'
+        'voice-plugin',
       ],
     },
   ]
@@ -252,7 +252,7 @@ export default class DevStart extends Command {
 
     case 'voice':
       start.dependencyCheck(flags.verbose)
-      if (process.arch != 'x64') {
+      if (process.arch !== 'x64') {
         logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
         return
       }
@@ -282,13 +282,14 @@ export default class DevStart extends Command {
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
-  
+
     case 'kamailio':
       start.dependencyCheck(flags.verbose)
-      if(process.arch != "x64") {
+      if (process.arch !== 'x64') {
         logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
         return
       }
+
       start.startDevServer(flags.verbose)
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -298,13 +299,14 @@ export default class DevStart extends Command {
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
-  
+
     case 'asterisk':
       start.dependencyCheck(flags.verbose)
-      if(process.arch != "x64") {
+      if (process.arch !== 'x64') {
         logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
         return
       }
+
       start.startDevServer(flags.verbose)
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -314,13 +316,14 @@ export default class DevStart extends Command {
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
-  
+
     case 'voice-plugin':
       start.dependencyCheck(flags.verbose)
-      if(process.arch != "x64") {
+      if (process.arch !== 'x64') {
         logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
         return
       }
+
       start.startDevServer(flags.verbose)
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
