@@ -1,7 +1,5 @@
-import { integer } from '@oclif/core/lib/parser'
 import {exit} from 'node:process'
 import * as shell from 'shelljs'
-import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 
 export function runningCheck() :boolean {
@@ -34,8 +32,6 @@ export function contextCheck(verbose: boolean): boolean {
 }
 
 export function startk3d(verbose :boolean) :boolean {
-  const config = getConfig()
-
   // check to see if Colima is already running
   const isRunning = runningCheck()
   if (isRunning) {
@@ -52,14 +48,15 @@ export function startk3d(verbose :boolean) :boolean {
   if (verbose) logTerminal('EXEC', check)
   const context = shell.exec(check, {silent: true}).stdout
   if (context.includes('development')) {
-    const k3dStart = `k3d cluster start development`
+    const k3dStart = 'k3d cluster start development'
     if (verbose) logTerminal('EXEC', k3dStart)
     start = shell.exec(k3dStart, {silent: true})
   } else {
-    const k3dStart = `k3d cluster create development`
+    const k3dStart = 'k3d cluster create development'
     if (verbose) logTerminal('EXEC', k3dStart)
     start = shell.exec(k3dStart, {silent: true})
   }
+
   if (start.code !== 0) {
     logTerminal('ERROR', start.stderr, 'dev:k3d:startK3d')
     exit(1)
@@ -83,12 +80,12 @@ export function deleteAll(verbose: boolean) :boolean {
   return true
 }
 
-export function stopK3d(verbose: boolean) {
+export function stopK3d(verbose: boolean) :void {
   logTerminal('INFO', '🦦 Saving current configuration...')
   const stopCommand = 'k3d cluster stop development'
   if (verbose)
     logTerminal('EXEC', stopCommand)
-  const reset = shell.exec(stopCommand, { silent: true })
+  const reset = shell.exec(stopCommand, {silent: true})
   if (reset.code === 0) {
     logTerminal('SUCCESS', 'Openline dev server stopped')
   } else {
@@ -96,17 +93,14 @@ export function stopK3d(verbose: boolean) {
   }
 }
 
-export function createPortForward(verbose: boolean, port: number,  protocol: string|undefined) {
-  let forwardString: string
-  if (protocol) {
-    forwardString = `${port}:${port}/${protocol}@loadbalancer`
-  } else {
-  forwardString = `${port}:${port}@loadbalancer`
-  }
+export function createPortForward(verbose: boolean, port: number,  protocol: string|undefined) :boolean {
+  const forwardString: string = protocol ? `${port}:${port}/${protocol}@loadbalancer` : `${port}:${port}@loadbalancer`
   const addPortCmd = `k3d cluster edit development --port-add ${forwardString}`
   const addPort = shell.exec(addPortCmd, {silent: !verbose})
   if (addPort.code !== 0) {
     logTerminal('ERROR', addPort.stderr, 'dev:deploy:deployImage')
     return false
   }
+
+  return true
 }

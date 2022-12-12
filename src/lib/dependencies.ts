@@ -4,19 +4,17 @@ import {getConfig} from '../config/dev'
 import {logTerminal} from './logs'
 const config = getConfig()
 
-const fs = require('fs')
-
+import fs = require('fs')
 
 export function getPlatform() :string {
   switch (process.platform) {
-    case 'darwin':
-      return "mac";
-    case 'linux':
-      return "linux";
-    default:
-      logTerminal('ERROR', 'Operating system unsupported at this time')
-      return "unknwon"
-
+  case 'darwin':
+    return 'mac'
+  case 'linux':
+    return 'linux'
+  default:
+    logTerminal('ERROR', 'Operating system unsupported at this time')
+    return 'unknown'
   }
 }
 
@@ -26,7 +24,7 @@ export function setupDirCheck() :boolean {
 
 export function createSetupDir() :boolean {
   logTerminal('INFO', 'Creating Setup Dir')
-  const result = shell.exec("mkdir -p " + config.setupDir).code === 0
+  const result = shell.exec('mkdir -p ' + config.setupDir).code === 0
   if (result) {
     logTerminal('SUCCESS', 'Setup dir created')
   } else {
@@ -38,7 +36,7 @@ export function createSetupDir() :boolean {
 }
 
 export function checkDockerGroup() :void {
-  const result = shell.exec("groups", {silent: true}).stdout.includes("docker")
+  const result = shell.exec('groups', {silent: true}).stdout.includes('docker')
   if (result) {
     logTerminal('SUCCESS', 'User in Docker group')
   } else {
@@ -46,6 +44,7 @@ export function checkDockerGroup() :void {
     exit(1)
   }
 }
+
 // colima
 export function colimaCheck() :boolean {
   return (shell.exec('which colima', {silent: true}).code === 0)
@@ -63,7 +62,6 @@ export function installColima() :boolean {
 
   return true
 }
-
 
 // colima
 export function k3dCheck() :boolean {

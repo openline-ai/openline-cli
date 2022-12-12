@@ -8,7 +8,7 @@ const config = getConfig()
 const NAMESPACE = config.namespace.name
 const CHANNELS_API = 'channels-api-service'
 const OASIS_API = 'oasis-api-service'
-const OASIS_GUI = 'oasis-frontend-service'
+const OASIS_GUI = 'oasis-gui-service'
 
 function channelsApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${CHANNELS_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
@@ -39,7 +39,7 @@ export function installChannelsApi(verbose: boolean, location = config.setupDir,
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are standardized
     const buildPath = location + '/packages/server/channels-api'
-    buildLocalImage(buildPath, buildPath+"/../", CHANNELS_API_IMAGE, verbose)
+    buildLocalImage(buildPath, buildPath + '/../', CHANNELS_API_IMAGE, verbose)
     image = null
   }
 
@@ -72,7 +72,7 @@ export function installOasisApi(verbose: boolean, location = config.setupDir, im
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are cleaned up
     const buildPath = location + '/packages/server/oasis-api'
-    buildLocalImage(buildPath, buildPath+"/../", OASIS_API_IMAGE, verbose)
+    buildLocalImage(buildPath, buildPath + '/../', OASIS_API_IMAGE, verbose)
     image = null
   }
 
@@ -91,7 +91,7 @@ export function installOasisApi(verbose: boolean, location = config.setupDir, im
 
 export function installOasisGui(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (oasisGuiCheck()) return true
-  const OASIS_GUI_IMAGE = 'oasis-frontend-dev'
+  const OASIS_GUI_IMAGE = 'oasis-gui'
   const DEPLOYMENT = location + config.oasis.guiDeployment
   const SERVICE = location + config.oasis.guiService
   const LOADBALANCER = location + config.oasis.guiLoadbalancer

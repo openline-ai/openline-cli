@@ -14,7 +14,7 @@ function contactsGuiCheck() :boolean {
 
 export function installContactsGui(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (contactsGuiCheck()) return true
-  const CONTACTS_IMAGE = 'openline-contacts'
+  const CONTACTS_IMAGE = 'contacts-gui'
   const DEPLOYMENT = location + config.contacts.guiDeployment
   const SERVICE = location + config.contacts.guiService
   const LOADBALANCER = location + config.contacts.guiLoadbalancer

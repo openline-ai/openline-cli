@@ -7,7 +7,7 @@ import {logTerminal} from '../logs'
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 const CUSTOMER_OS_API = 'customer-os-api-service'
-const MESSAGE_STORE_API = 'message-store-service'
+const MESSAGE_STORE_API = 'message-store-api-service'
 
 function customerOsApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${CUSTOMER_OS_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
@@ -65,7 +65,7 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
   if (location !== config.setupDir) {
     // come back to this
     const buildPath = location + '/packages/server/message-store'
-    buildLocalImage(buildPath, buildPath + "/../", image, verbose)
+    buildLocalImage(buildPath, buildPath + '/../', image, verbose)
     image = null
   }
 
