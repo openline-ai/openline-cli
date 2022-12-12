@@ -6,7 +6,7 @@ import {exit} from 'node:process'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
-const FUSIONAUTH_SERVICE = 'fusion-auth-service'
+const FUSIONAUTH_SERVICE = 'auth'
 
 function fusionauthCheck() :boolean {
   return (shell.exec(`kubectl get service ${FUSIONAUTH_SERVICE} -n ${NAMESPACE}`, {silent: true}).code === 0)

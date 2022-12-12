@@ -166,8 +166,6 @@ export function installKube() :void {
     logTerminal('ERROR', 'kubectl installation failed', 'Please install kubectl before retrying the command.')
     exit(1)
   }
-
-  exit(0)
 }
 
 // xcode
@@ -184,6 +182,4 @@ export function installXcode() :void {
     logTerminal('ERROR', 'xcode installation failed', 'Please install xcode before retrying the command.')
     exit(1)
   }
-
-  exit(0)
 }
