@@ -2,8 +2,7 @@ import * as shell from 'shelljs'
 import {logTerminal} from '../logs'
 import * as colima from './colima'
 import * as k3d from './k3d'
-
-import { getPlatform } from '../dependencies'
+import {getPlatform} from '../dependencies'
 
 export interface Apps {
   deployments: string[],
@@ -35,7 +34,7 @@ export function deleteApp(apps: Apps, verbose: boolean) :boolean {
       logTerminal('ERROR', result.stderr, 'dev:delete:deleteApp')
     }
   }
-  
+
   for (const service of apps.services) {
     const kubeDeleteService = `kubectl delete service ${service} -n ${NAMESPACE}`
     if (verbose) logTerminal('EXEC', kubeDeleteService)
@@ -52,10 +51,11 @@ export function deleteApp(apps: Apps, verbose: boolean) :boolean {
 
 export function deleteAll(verbose: boolean) :boolean {
   switch (getPlatform()) {
-    case "mac":
-      return colima.deleteAll(verbose)
-    case "linux":
-      return k3d.deleteAll(verbose)
+  case 'mac':
+    return colima.deleteAll(verbose)
+  case 'linux':
+    return k3d.deleteAll(verbose)
   }
+
   return false
 }

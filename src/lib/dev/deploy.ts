@@ -2,8 +2,8 @@ import * as shell from 'shelljs'
 import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
-import { getPlatform } from '../dependencies'
-import * as fs from 'fs'
+import {getPlatform} from '../dependencies'
+import * as fs from 'node:fs'
 import * as YAML from 'yaml'
 import * as k3d from './k3d'
 
@@ -30,9 +30,8 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
       return false
     }
 
-    if (getPlatform() == "linux") {
-
-      const pushCmd = 'k3d image import ' + imageUrl + " -c development"
+    if (getPlatform() === 'linux') {
+      const pushCmd = 'k3d image import ' + imageUrl + ' -c development'
       if (verbose) logTerminal('EXEC', pushCmd)
       const push = shell.exec(pushCmd, {silent: !verbose})
       if (push.code !== 0) {
@@ -41,7 +40,6 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
       }
     }
   }
-
 
   const kubeApplyDeployConfig = `kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', kubeApplyDeployConfig)
@@ -60,7 +58,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   }
 
   if ('loadbalancerYaml' in deployConfig && deployConfig.loadbalancerYaml !== null) {
-    const lb = deployLoadbalancer(deployConfig.loadbalancerYaml?deployConfig.loadbalancerYaml:'', verbose)
+    const lb = deployLoadbalancer(deployConfig.loadbalancerYaml ? deployConfig.loadbalancerYaml : '', verbose)
     if (!lb) {
       return false
     }
@@ -93,14 +91,16 @@ export function deployLoadbalancer(YamlConfigPath: string, verbose: boolean) :bo
     logTerminal('ERROR', lb.stderr, 'dev:deploy:deployLoadbalancer')
     return false
   }
-  if (getPlatform() == "linux") {
-    const file = fs.readFileSync(YamlConfigPath?YamlConfigPath:'', 'utf8')
+
+  if (getPlatform() === 'linux') {
+    const file = fs.readFileSync(YamlConfigPath ? YamlConfigPath : '', 'utf8')
     const config = YAML.parse(file)
-    for(const val of config.spec.ports) {
-      if(!k3d.createPortForward(verbose, val.port, val.protocol)) {
-        return false;
+    for (const val of config.spec.ports) {
+      if (!k3d.createPortForward(verbose, val.port, val.protocol)) {
+        return false
       }
     }
   }
+
   return true
 }

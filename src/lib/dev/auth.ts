@@ -6,21 +6,21 @@ import {exit} from 'node:process'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
-const FUSIONAUTH_SERVICE = 'fusionauth-customer-os'
+const FUSIONAUTH_SERVICE = 'fusion-auth-service'
 
 function fusionauthCheck() :boolean {
   return (shell.exec(`kubectl get service ${FUSIONAUTH_SERVICE} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
 function hostsCheck() :boolean {
-  const check = shell.exec('grep fusionauth-customer-os.openline.svc.cluster.local /etc/hosts', {silent: true}).stdout
+  const check = shell.exec(`grep ${FUSIONAUTH_SERVICE}.openline.svc.cluster.local /etc/hosts`, {silent: true}).stdout
   if (check === '') return false
   return true
 }
 
 function addHosts(verbose: boolean) :boolean {
   if (hostsCheck()) return true
-  const cmd = 'sudo bash -c "echo 127.0.0.1 fusionauth-customer-os.openline.svc.cluster.local >> /etc/hosts"'
+  const cmd = `sudo bash -c "echo 127.0.0.1 ${FUSIONAUTH_SERVICE}.openline.svc.cluster.local >> /etc/hosts"`
   logTerminal('INFO', 'updating host file with fusionauth configuration')
   logTerminal('INFO', 'this requires sudo permissions and is required for fusionauth to work')
   logTerminal('INFO', 'if granted, the following command will execute...')

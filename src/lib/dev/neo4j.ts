@@ -6,7 +6,7 @@ import {exit} from 'node:process'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
-const NEO4J_SERVICE = 'neo4j-customer-os'
+const NEO4J_SERVICE = 'customer-db-neo4j'
 
 function neo4jCheck() :boolean {
   return (shell.exec(`kubectl get service ${NEO4J_SERVICE} -n ${NAMESPACE}`, {silent: true}).code === 0)

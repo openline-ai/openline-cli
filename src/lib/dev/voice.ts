@@ -12,7 +12,6 @@ const VOICE_PLUGIN = 'voice-plugin-service'
 
 const POSTGRESQL_SERVICE = 'postgresql-customer-os-dev'
 
-
 function kamailioCheck() :boolean {
   return (shell.exec(`kubectl get service ${KAMAILIO} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
@@ -31,7 +30,7 @@ export function installKamailio(verbose: boolean, location = config.setupDir, im
   const SERVICE = location + config.voice.kamailio.Service
   const LOADBALANCER = location + config.voice.kamailio.Loadbalancer
 
-  if(!provisionPostgresql(verbose, location)) {
+  if (!provisionPostgresql(verbose, location)) {
     return false
   }
 
@@ -125,11 +124,12 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   const sqlUser = 'openline'
   const sqlDb = 'openline'
   const sqlPw = 'password'
-  const FILES=["standard-create.sql", "permissions-create.sql", "carriers.sql"]
+  const FILES = ['standard-create.sql', 'permissions-create.sql', 'carriers.sql']
 
-  let POSTGRESQL_DB_SETUP: string = ""
-  for( const i in FILES) {
-    POSTGRESQL_DB_SETUP = POSTGRESQL_DB_SETUP + " " + location + "/packages/server/kamailio/sql/" + FILES[i]
+  let POSTGRESQL_DB_SETUP = ''
+  // eslint-disable-next-line guard-for-in
+  for (const i in FILES) {
+    POSTGRESQL_DB_SETUP = POSTGRESQL_DB_SETUP + ' ' + location + '/packages/server/kamailio/sql/' + FILES[i]
   }
 
   let ms = ''
@@ -138,7 +138,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   while (ms === '') {
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
-      ms = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep message-store|grep Running| cut -f1 -d ' '`, {silent: true}).stdout
+      ms = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep message-store-api|grep Running| cut -f1 -d ' '`, {silent: true}).stdout
       if (ms === '') shell.exec('sleep 2')
       retry++
     } else {

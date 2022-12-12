@@ -5,9 +5,9 @@ import {exit} from 'node:process'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
-const POSTGRESQL_SERVICE = 'postgresql-customer-os-dev'
-const PERSISTENT_VOLUME = 'postgresql-customer-os-data'
-const PERSISTENT_VOLUME_CLAIM = 'efs-postgresql-claim'
+const POSTGRESQL_SERVICE = 'customer-db-postgresql'
+const PERSISTENT_VOLUME = 'customer-db-postgresql-data'
+const PERSISTENT_VOLUME_CLAIM = 'customer-db-postgresql-claim'
 
 function postgresqlServiceCheck() :boolean {
   return (shell.exec(`kubectl get service ${POSTGRESQL_SERVICE} -n ${NAMESPACE}`, {silent: true}).code === 0)
@@ -90,7 +90,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      ms = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep message-store|grep Running| cut -f1 -d ' '`, {silent: true}).stdout
+      ms = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep message-store-api|grep Running| cut -f1 -d ' '`, {silent: true}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning postgreSQL timed out', 'dev:postgres:provisionPostresql')
