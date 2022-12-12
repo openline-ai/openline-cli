@@ -7,6 +7,7 @@ export function logTerminal(type: string, description: string, location?: string
     type = '🦦 '
   } else if (type.toUpperCase() === 'EXEC') {
     type = colors.grey(`[${type.toUpperCase()}]`)
+    description = colors.grey(description)
   } else {
     type = colors.cyan(`[${type.toUpperCase()}]`)
   }
