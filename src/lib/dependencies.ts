@@ -152,6 +152,22 @@ export function installBrew() :void {
   }
 }
 
+// netcat
+export function netcatCheck() :boolean {
+  return (shell.exec('which nc', {silent: true}).code === 0)
+}
+
+export function installNetcat() :void {
+  logTerminal('INFO', 'We need to install netcat before continuing')
+  const results = shell.exec(config.dependencies[getPlatform()].netcat).code === 0
+  if (results) {
+    logTerminal('SUCCESS', 'netcat successfully installed')
+  } else {
+    logTerminal('ERROR', 'netcat installation failed', 'Please install netcat before retrying the command.')
+    exit(1)
+  }
+}
+
 // kubectl
 export function kubeCheck() :boolean {
   return (shell.exec('which kubectl', {silent: true}).code === 0)

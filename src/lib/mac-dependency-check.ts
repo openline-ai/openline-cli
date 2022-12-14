@@ -11,6 +11,7 @@ export function installDependencies(verbose: boolean) :boolean {
   const colima = mac.colimaCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const kubectl = mac.kubeCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const helm = mac.helmCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const netcat = mac.netcatCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
 
   const table = new Table({
     head: [colors.cyan.bold('Dependency'), colors.cyan.bold('Installed?')],
@@ -24,6 +25,7 @@ export function installDependencies(verbose: boolean) :boolean {
     ['git', git],
     ['helm', helm],
     ['kubectl', kubectl],
+    ['netcat', netcat],
   )
 
   if (verbose) {
@@ -40,6 +42,7 @@ export function installDependencies(verbose: boolean) :boolean {
   if (git === notInstalled) mac.installGit()
   if (helm === notInstalled) mac.installHelm()
   if (kubectl === notInstalled) mac.installKube()
+  if (netcat === notInstalled) mac.installNetcat()
 
   return true
 }
