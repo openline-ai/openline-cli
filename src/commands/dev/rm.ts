@@ -2,11 +2,11 @@ import {Command, Flags} from '@oclif/core'
 import {uninstallFusionAuth} from '../../lib/dev/auth'
 import {uninstallNeo4j} from '../../lib/dev/neo4j'
 import {uninstallPostgresql} from '../../lib/dev/postgres'
-import {deleteAll, deleteApp,Apps} from '../../lib/dev/delete'
+import {deleteAll, deleteApp, Apps} from '../../lib/dev/delete'
 import * as colima from '../../lib/dev/colima'
 import * as k3d from '../../lib/dev/k3d'
 
-import { getPlatform } from '../../lib/dependencies'
+import {getPlatform} from '../../lib/dependencies'
 
 export default class DevRm extends Command {
   static description = 'Delete Openline services'
@@ -67,7 +67,7 @@ export default class DevRm extends Command {
     case 'auth':
       const authApps: Apps = {
         deployments: [],
-        services: ['fusion-auth-loadbalancer'],
+        services: ['auth-fusionauth-loadbalancer'],
         statefulsets: [],
       }
 
