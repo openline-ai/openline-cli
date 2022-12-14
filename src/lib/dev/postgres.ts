@@ -6,7 +6,7 @@ import {exit} from 'node:process'
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 const POSTGRESQL_SERVICE = 'customer-db-postgresql'
-const PERSISTENT_VOLUME = 'customer-db-postgresql-data'
+const PERSISTENT_VOLUME = 'customer-db-postgresql'
 const PERSISTENT_VOLUME_CLAIM = 'customer-db-postgresql-claim'
 
 function postgresqlServiceCheck() :boolean {
