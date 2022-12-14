@@ -10,7 +10,7 @@ const KAMAILIO = 'kamailio-service'
 const ASTERISK = 'asterisk'
 const VOICE_PLUGIN = 'voice-plugin-service'
 
-const POSTGRESQL_SERVICE = 'postgresql-customer-os-dev'
+const POSTGRESQL_SERVICE = 'customer-db-postgresql'
 
 function kamailioCheck() :boolean {
   return (shell.exec(`kubectl get service ${KAMAILIO} -n ${NAMESPACE}`, {silent: true}).code === 0)
