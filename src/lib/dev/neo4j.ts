@@ -71,6 +71,7 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
     return false
   }
 
+  logTerminal('SUCCESS', 'neo4j database successfully provisioned')
   return true
 }
 
@@ -90,7 +91,7 @@ function updateCypherLocation(scriptLoc: string, cypherLoc: string, verbose: boo
     return false
   }
 
-  logTerminal('SUCCESS', 'neo4j database successfully provisioned')
+  logTerminal('SUCCESS', 'neo4j database cypher file updated')
   return true
 }
 
