@@ -11,3 +11,4 @@ oclif.manifest.json
 .env
 .yarn/install-state.gz
 .yarn/cache/*
+bin/*
