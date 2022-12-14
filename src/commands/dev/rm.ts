@@ -96,12 +96,12 @@ export default class DevRm extends Command {
 
     case 'customer-os':
       const customerOsApps:Apps = {
-        deployments: ['customer-os-api', 'message-store'],
+        deployments: ['customer-os-api', 'message-store-api'],
         services: [
           'customer-os-api-service',
           'customer-os-api-loadbalancer',
-          'message-store-service',
-          'message-store-loadbalancer-service',
+          'message-store-api-service',
+          'message-store-api-loadbalancer',
         ],
         statefulsets: []
       }
@@ -127,8 +127,8 @@ export default class DevRm extends Command {
 
     case 'message-store-api':
       const messageStoreApiApps: Apps = {
-        deployments: ['message-store'],
-        services: ['message-store-service', 'message-store-loadbalancer-service'],
+        deployments: ['message-store-api'],
+        services: ['message-store-api-service', 'message-store-api-loadbalancer'],
         statefulsets: []
       }
       deleteApp(messageStoreApiApps, flags.verbose)
