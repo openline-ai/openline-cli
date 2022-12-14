@@ -95,6 +95,15 @@ export function stopK3d(verbose: boolean) :void {
 
 export function createPortForward(verbose: boolean, port: number,  protocol: string|undefined) :boolean {
   const forwardString: string = protocol ? `${port}:${port}/${protocol}@loadbalancer` : `${port}:${port}@loadbalancer`
+  const filterString: string = protocol ? `:${port}->${port}/${protocol}` : `:${port}->${port}/tcp`
+
+  const existingPorts = shell.exec('docker ps |grep k3d-development-serverlb', {silent: true}).stdout
+  const portAlreadExists = existingPorts.includes(filterString)
+  if (portAlreadExists) {
+    logTerminal('INFO', `${filterString} mapping already exists, skipping`)
+    return true
+  }
+
   const addPortCmd = `k3d cluster edit development --port-add ${forwardString}`
   const addPort = shell.exec(addPortCmd, {silent: !verbose})
   if (addPort.code !== 0) {
