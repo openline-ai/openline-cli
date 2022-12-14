@@ -68,7 +68,7 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
   let neoOutput = []
   do {
     const neoOutputFull = shell.exec(`cat ${NEO4J_CYPHER} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_SERVICE}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
-    neoOutput = neoOutputFull.filter(function(line) {
+    neoOutput = neoOutputFull.filter(function (line) {
       return !(line.includes('see a command prompt') || line === '')
     })
     if (neoOutput.length > 0) {
