@@ -1,5 +1,4 @@
 import * as shell from 'shelljs'
-import * as replace from 'replace-in-file'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import {exit} from 'node:process'
@@ -7,6 +6,7 @@ import {exit} from 'node:process'
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 const NEO4J_SERVICE = 'customer-db-neo4j'
+const NEO4J_POD = 'customer-db-neo4j-0'
 
 function neo4jCheck() :boolean {
   return (shell.exec(`kubectl get service ${NEO4J_SERVICE} -n ${NAMESPACE}`, {silent: true}).code === 0)
@@ -35,8 +35,7 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
   let neo = ''
   let retry = 1
   const maxAttempts = config.server.timeOuts / 2
-  const NEO4J_DB_SETUP = location + config.customerOs.neo4jProvisioning
-  const CYPHER = location + config.customerOs.neo4jCypher
+  const NEO4J_CYPHER = location + config.customerOs.neo4jCypher
 
   while (neo === '') {
     if (retry < maxAttempts) {
@@ -63,35 +62,24 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
     }
   }
 
-  updateCypherLocation(NEO4J_DB_SETUP, CYPHER, verbose)
-  shell.exec(`chmod u+x ${NEO4J_DB_SETUP}`)
-  const provisionNeo = shell.exec(`${NEO4J_DB_SETUP}`)
-  if (provisionNeo.code !== 0) {
-    logTerminal('ERROR', provisionNeo.stderr, 'dev:neo4j:provionNeo4j')
-    return false
-  }
+  const version = shell.exec(`kubectl describe pod ${NEO4J_POD} -n ${NAMESPACE} | grep HELM_NEO4J_VERSION | tr -s ' ' | cut -d ' ' -f 3`, {silent: true}).stdout.trimEnd()
+  if (verbose) logTerminal('INFO', `Neo4j version detected... ${version}`)
+
+  let neoOutput = []
+  do {
+    const neoOutputFull = shell.exec(`cat ${NEO4J_CYPHER} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_SERVICE}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
+    neoOutput = neoOutputFull.filter(function(line) {
+      return !(line.includes('see a command prompt') || line === '')
+    })
+    if (neoOutput.length > 0) {
+      retry++
+      shell.exec(`kubectl delete pod cypher-shell -n ${NAMESPACE}`, {silent: true})
+      shell.exec('sleep 2')
+      if (verbose) logTerminal('INFO', `Neo4j provisioning attempt failed reason = ${JSON.stringify(neoOutput)} retrying... ${retry}/${maxAttempts}`)
+    }
+  } while (neoOutput.length > 0)
 
   logTerminal('SUCCESS', 'neo4j database successfully provisioned')
-  return true
-}
-
-function updateCypherLocation(scriptLoc: string, cypherLoc: string, verbose: boolean) :boolean {
-  const options = {
-    files: scriptLoc,
-    from: './openline-setup/customer-os.cypher',
-    to: cypherLoc,
-  }
-  try {
-    const textReplace = replace.sync(options)
-    if (verbose) {
-      console.log('Replacement results:', textReplace)
-    }
-  } catch (error: any) {
-    error.logError(error, 'Unable to modify config files to use specified image version', true)
-    return false
-  }
-
-  logTerminal('SUCCESS', 'neo4j database cypher file updated')
   return true
 }
 
