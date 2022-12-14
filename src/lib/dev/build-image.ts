@@ -1,7 +1,6 @@
 import * as shell from 'shelljs'
 import {logTerminal} from '../logs'
-import { getPlatform } from '../dependencies'
-
+import {getPlatform} from '../dependencies'
 
 export function buildLocalImage(path: string, context: string, imageName: string, verbose: boolean) :boolean {
   const dockerBuild = `docker build -t ${imageName} -f ${path}/Dockerfile ${context}`
@@ -13,9 +12,8 @@ export function buildLocalImage(path: string, context: string, imageName: string
     return false
   }
 
-  if (getPlatform() == "linux") {
-
-    const pushCmd = 'k3d image import ' + imageName + " -c development"
+  if (getPlatform() === 'linux') {
+    const pushCmd = 'k3d image import ' + imageName + ' -c development'
     if (verbose) logTerminal('EXEC', pushCmd)
     const push = shell.exec(pushCmd, {silent: !verbose})
     if (push.code !== 0) {

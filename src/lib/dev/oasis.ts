@@ -24,7 +24,6 @@ function oasisGuiCheck() :boolean {
 
 export function installChannelsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (channelsApiCheck()) return true
-  const CHANNELS_API_IMAGE = 'channels-api'
   const DEPLOYMENT = location + config.oasis.channelsApiDeployment
   const SERVICE = location + config.oasis.channelsApiService
   const LOADBALANCER = location + config.oasis.channelsApiLoadbalancer
@@ -39,7 +38,7 @@ export function installChannelsApi(verbose: boolean, location = config.setupDir,
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are standardized
     const buildPath = location + '/packages/server/channels-api'
-    buildLocalImage(buildPath, buildPath + '/../', CHANNELS_API_IMAGE, verbose)
+    buildLocalImage(buildPath, buildPath + '/../', image, verbose)
     image = null
   }
 
@@ -57,7 +56,6 @@ export function installChannelsApi(verbose: boolean, location = config.setupDir,
 
 export function installOasisApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (oasisApiCheck()) return true
-  const OASIS_API_IMAGE = 'oasis-api'
   const DEPLOYMENT = location + config.oasis.apiDeployment
   const SERVICE = location + config.oasis.apiService
   const LOADBALANCER = location + config.oasis.apiLoadbalancer
@@ -72,7 +70,7 @@ export function installOasisApi(verbose: boolean, location = config.setupDir, im
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are cleaned up
     const buildPath = location + '/packages/server/oasis-api'
-    buildLocalImage(buildPath, buildPath + '/../', OASIS_API_IMAGE, verbose)
+    buildLocalImage(buildPath, buildPath + '/../', image, verbose)
     image = null
   }
 
@@ -91,7 +89,6 @@ export function installOasisApi(verbose: boolean, location = config.setupDir, im
 
 export function installOasisGui(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (oasisGuiCheck()) return true
-  const OASIS_GUI_IMAGE = 'oasis-gui'
   const DEPLOYMENT = location + config.oasis.guiDeployment
   const SERVICE = location + config.oasis.guiService
   const LOADBALANCER = location + config.oasis.guiLoadbalancer
@@ -106,7 +103,7 @@ export function installOasisGui(verbose: boolean, location = config.setupDir, im
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are cleaned up
     const buildPath = location + '/packages/apps/oasis/oasis-frontend'
-    buildLocalImage(buildPath, buildPath, OASIS_GUI_IMAGE, verbose)
+    buildLocalImage(buildPath, buildPath, image, verbose)
     image = null
   }
 
