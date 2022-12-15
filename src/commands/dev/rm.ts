@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import {Command, Flags} from '@oclif/core'
 import {uninstallFusionAuth} from '../../lib/dev/auth'
 import {uninstallNeo4j} from '../../lib/dev/neo4j'
@@ -40,7 +41,7 @@ export default class DevRm extends Command {
         'voice',
         'kamailio',
         'asterisk',
-        'voice-plugin'
+        'voice-plugin',
       ],
     },
   ]
@@ -49,12 +50,12 @@ export default class DevRm extends Command {
     const {args, flags} = await this.parse(DevRm)
 
     switch (getPlatform()) {
-      case "mac":
-        if (!colima.contextCheck(flags.verbose)) this.exit(1)
-        break
-      case "linux":
-        if (!k3d.contextCheck(flags.verbose)) this.exit(1)
-        break
+    case 'mac':
+      if (!colima.contextCheck(flags.verbose)) this.exit(1)
+      break
+    case 'linux':
+      if (!k3d.contextCheck(flags.verbose)) this.exit(1)
+      break
     }
 
     if (flags.all) {
@@ -64,38 +65,41 @@ export default class DevRm extends Command {
 
     const service = args.service.toLowerCase()
     switch (service) {
-    case 'auth':
-      const authApps: Apps = {
+    case 'auth': {
+      const appServices: Apps = {
         deployments: [],
         services: ['auth-fusionauth-loadbalancer'],
         statefulsets: [],
       }
 
       uninstallFusionAuth(flags.verbose)
-      deleteApp(authApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
-    case 'contacts':
-      const contactApps: Apps = {
+    case 'contacts': {
+      const appServices: Apps = {
         deployments: ['contacts-gui'],
         services: ['contacts-gui-service', 'contacts-gui-loadbalancer'],
         statefulsets: [],
       }
 
-      deleteApp(contactApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
-    case 'contacts-gui':
-      const contactsGuiApps:Apps = {
+    case 'contacts-gui': {
+      const appServices: Apps = {
         deployments: ['contacts-gui'],
         services: ['contacts-gui-service', 'contacts-gui-loadbalancer'],
-        statefulsets: []
+        statefulsets: [],
       }
-      deleteApp(contactsGuiApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
-    case 'customer-os':
-      const customerOsApps:Apps = {
+    case 'customer-os': {
+      const appServices: Apps = {
         deployments: ['customer-os-api', 'message-store-api'],
         services: [
           'customer-os-api-service',
@@ -103,89 +107,94 @@ export default class DevRm extends Command {
           'message-store-api-service',
           'message-store-api-loadbalancer',
         ],
-        statefulsets: []
+        statefulsets: [],
       }
 
-      deleteApp(customerOsApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
-    case 'customer-os-api':
-      const customerOsAPIApps:Apps = {
+    case 'customer-os-api': {
+      const appServices: Apps = {
         deployments: ['customer-os-api'],
         services: ['customer-os-api-service', 'customer-os-api-loadbalancer'],
-        statefulsets: []
+        statefulsets: [],
       }
 
-      deleteApp(customerOsAPIApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
     case 'db':
       uninstallNeo4j(flags.verbose)
       uninstallPostgresql(flags.verbose)
       break
-    
 
-    case 'message-store-api':
-      const messageStoreApiApps: Apps = {
+    case 'message-store-api': {
+      const appServices: Apps = {
         deployments: ['message-store-api'],
         services: ['message-store-api-service', 'message-store-api-loadbalancer'],
-        statefulsets: []
+        statefulsets: [],
       }
-      deleteApp(messageStoreApiApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
-    
+    }
 
-    // Oasis Services  
-    case 'oasis':
-      const oasisApps:Apps = {
-        deployments: ['oasis-api', 'channels-api', 'oasis-frontend'],
+    // Oasis Services
+    case 'oasis': {
+      const appServices: Apps = {
+        deployments: ['oasis-api', 'channels-api', 'oasis-gui'],
         services: [
           'oasis-api-service',
           'oasis-api-loadbalancer',
           'channels-api-service',
           'channels-api-loadbalancer',
-          'oasis-frontend-service',
-          'oasis-frontend-loadbalancer',
+          'oasis-gui-service',
+          'oasis-gui-loadbalancer',
         ],
         statefulsets: [],
       }
 
-      deleteApp(oasisApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
-    case 'oasis-api':
-      const oasisApiApps:Apps = {
+    case 'oasis-api': {
+      const appServices: Apps = {
         deployments: ['oasis-api'],
         services: ['oasis-api-service', 'oasis-api-loadbalancer'],
         statefulsets: [],
       }
 
-      deleteApp(oasisApiApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
-    case 'oasis-gui':
-      const oasisGuiApps:Apps = {
-        deployments: ['oasis-frontend'],
-        services: ['oasis-frontend-service', 'oasis-frontend-loadbalancer'],
+    case 'oasis-gui': {
+      const appServices: Apps = {
+        deployments: ['oasis-gui'],
+        services: ['oasis-gui-service', 'oasis-gui-loadbalancer'],
         statefulsets: [],
       }
 
-      deleteApp(oasisGuiApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
-    case 'channels-api':
-      const oasisChannelApiApps:Apps = {
+    case 'channels-api': {
+      const appServices: Apps = {
         deployments: ['channels-api'],
         services: ['channels-api-service', 'channels-api-loadbalancer'],
-        statefulsets: []
+        statefulsets: [],
       }
 
-      deleteApp(oasisChannelApiApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
     // Voice Services
-    case 'voice':
-      const voiceApps: Apps = {
+    case 'voice': {
+      const appServices: Apps = {
         deployments: ['kamailio', 'voice-plugin'],
         services: [
           'asterisk',
@@ -196,11 +205,12 @@ export default class DevRm extends Command {
         statefulsets: ['asterisk'],
       }
 
-      deleteApp(voiceApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
-    case 'kamailio':
-      const kamailioApps: Apps = {
+    case 'kamailio': {
+      const appServices: Apps = {
         deployments: ['kamailio'],
         services: [
           'kamailio-loadbalancer-service',
@@ -208,30 +218,33 @@ export default class DevRm extends Command {
         ],
         statefulsets: [],
       }
-      deleteApp(kamailioApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
+    }
 
-    case 'asterisk':
-      const asteriskApps: Apps = {
+    case 'asterisk': {
+      const appServices: Apps = {
         deployments: [],
         services: [
           'asterisk',
         ],
         statefulsets: ['asterisk'],
       }
-      deleteApp(asteriskApps, flags.verbose)
+      deleteApp(appServices, flags.verbose)
       break
-    case 'voice-plugin':
-      const voicePluginApps: Apps = {
+    }
+
+    case 'voice-plugin': {
+      const appServices: Apps = {
         deployments: ['voice-plugin'],
         services: [
           'voice-plugin-service',
         ],
         statefulsets: [],
       }
-      deleteApp(voicePluginApps, flags.verbose)
-      break    
+      deleteApp(appServices, flags.verbose)
+      break
+    }
     }
   }
 }
-
