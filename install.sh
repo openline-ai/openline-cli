@@ -4,7 +4,7 @@
     SUDO=''
     if [ "$(id -u)" != "0" ]; then
       SUDO='sudo'
-      echo "This script requires superuser access."
+      echo "Superuser access is require to install the Openline CLI."
       echo "You will be prompted for your password by sudo."
       # clear any previous sudo permission
       sudo -k
@@ -37,7 +37,7 @@
   elif [[ "\$ARCH" == aarch* ]]; then
     ARCH=arm
   elif [[ "\$ARCH" == arm64 ]]; then
-    ARCH=arm
+    ARCH=arm64
   else
     echoerr "unsupported arch: \$ARCH"
     exit 1
