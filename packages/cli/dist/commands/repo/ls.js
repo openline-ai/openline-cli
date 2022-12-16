@@ -11,7 +11,7 @@ class RepoLs extends core_1.Command {
         const table = new Table({
             head: [colors.cyan.bold('Project'), colors.cyan.bold('Github URL')],
         });
-        table.push(['cli', repos.baseUrl + repos.cli], ['contacts', repos.baseUrl + repos.contacts], ['customer-os', repos.baseUrl + repos.customerOs], ['hubspot-integration', repos.baseUrl + repos.hubspot], ['oasis', repos.baseUrl + repos.oasis], ['ui-kit', repos.baseUrl + repos.uiKit], ['voice', repos.baseUrl + repos.voice], ['webchat', repos.baseUrl + repos.webchat], ['website', repos.baseUrl + repos.website], ['zendesk-integration', repos.baseUrl + repos.zendesk]);
+        table.push(['cli', repos.baseUrl + repos.cli], ['contacts', repos.baseUrl + repos.contacts], ['customer-os', repos.baseUrl + repos.customerOs], ['oasis', repos.baseUrl + repos.oasis], ['ui-kit', repos.baseUrl + repos.uiKit], ['voice', repos.baseUrl + repos.voice], ['webchat', repos.baseUrl + repos.webchat], ['website', repos.baseUrl + repos.website]);
         console.log(table.toString());
     }
 }
