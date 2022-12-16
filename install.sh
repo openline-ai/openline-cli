@@ -47,10 +47,10 @@
   cd /usr/local/lib
   rm -rf openline
   if [ \$(command -v xz) ]; then
-    URL=http://openline.sh/openline-\$OS-\$ARCH.tar.xz
+    URL=http://openline.sh/channels/stable/openline-\$OS-\$ARCH.tar.xz
     TAR_ARGS="xJ"
   else
-    URL=https://openline.sh/openline-\$OS-\$ARCH.tar.gz
+    URL=https://openline.sh/channels/stable/openline-\$OS-\$ARCH.tar.gz
     TAR_ARGS="xz"
   fi
   echo "Installing CLI from \$URL"
