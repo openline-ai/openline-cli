@@ -1,6 +1,6 @@
 {
   "name": "openline",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "description": "Openline CLI",
   "author": "mattbr0wn",
   "bin": "./bin/run",
@@ -58,6 +58,11 @@
     "bin": "openline",
     "dirname": "openline",
     "commands": "./dist/commands",
+    "update": {
+      "s3": {
+        "host": "s3://openline.sh/"
+      }
+    },
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-plugins",
