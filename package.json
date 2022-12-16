@@ -26,6 +26,7 @@
     "@types/colors": "^1.2.1",
     "@types/figlet": "^1.5.5",
     "@types/shelljs": "^0.8.11",
+    "aws-sdk": "^2.1276.0",
     "cli-table": "^0.3.11",
     "colors": "^1.4.0",
     "dotenv": "^16.0.3",
@@ -60,7 +61,8 @@
     "commands": "./dist/commands",
     "update": {
       "s3": {
-        "host": "s3://openline.sh/"
+        "host": "s3://openline.sh/",
+        "bucket": "openline.sh"
       }
     },
     "plugins": [
