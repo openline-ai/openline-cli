@@ -61,7 +61,7 @@
     "commands": "./dist/commands",
     "update": {
       "s3": {
-        "host": "http://openline.sh.s3-website-us-east-1.amazonaws.com",
+        "host": "http://openline.sh",
         "bucket": "openline.sh",
         "folder": "./"
       }
