@@ -46,7 +46,7 @@
   mkdir -p /usr/local/lib
   cd /usr/local/lib
   rm -rf openline
-  URL=https://openline.sh/channels/stable/openline-\$OS-\$ARCH.tar.gz
+  URL=http://openline.sh/channels/stable/openline-\$OS-\$ARCH.tar.gz
   TAR_ARGS="xz"
   echo "Installing CLI from \$URL"
   if [ \$(command -v curl) ]; then
