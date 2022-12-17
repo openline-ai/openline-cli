@@ -40,7 +40,7 @@ export default class DevPing extends Command {
       ['customer-os', 'auth', 'http://localhost:9011', auth],
       ['customer-os', 'customer-os-api', 'http://localhost:10000', customerOsApi],
       ['customer-os', 'message-store-api', 'http://localhost:9009', messageStoreApi],
-      ['contacts', 'contacts-gui', 'http://localhost:3000', contactsGui],
+      ['contacts', 'contacts-gui', 'http://localhost:3001', contactsGui],
       ['oasis', 'channels-api', 'http://localhost:8013', channelsApi],
       ['oasis', 'oasis-api', 'http://localhost:8006', oasisApi],
       ['oasis', 'oasis-gui', 'http://localhost:3006', oasisGui],

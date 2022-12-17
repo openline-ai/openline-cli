@@ -46,5 +46,5 @@ export function installContactsGui(verbose: boolean, location = config.setupDir,
 }
 
 export function pingContactsGui() :boolean {
-  return shell.exec('curl localhost:3000', {silent: true}).code === 0
+  return shell.exec('curl localhost:3001', {silent: true}).code === 0
 }
