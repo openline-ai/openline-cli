@@ -23,7 +23,7 @@ class DevPing extends core_1.Command {
             head: [colors.cyan.bold('App'), colors.cyan.bold('Service'), colors.cyan.bold('Location'), colors.cyan.bold('Up?')],
             colWidths: [15, 20, 25, 5],
         });
-        table.push(['customer-os', 'auth', 'http://localhost:9011', auth], ['customer-os', 'customer-os-api', 'http://localhost:10000', customerOsApi], ['customer-os', 'message-store-api', 'http://localhost:9009', messageStoreApi], ['contacts', 'contacts-gui', 'http://localhost:3000', contactsGui], ['oasis', 'channels-api', 'http://localhost:8013', channelsApi], ['oasis', 'oasis-api', 'http://localhost:8006', oasisApi], ['oasis', 'oasis-gui', 'http://localhost:3006', oasisGui], ['voice', 'kamailio', 'ws://localhost:8080', voiceKamailio]);
+        table.push(['customer-os', 'auth', 'http://localhost:9011', auth], ['customer-os', 'customer-os-api', 'http://localhost:10000', customerOsApi], ['customer-os', 'message-store-api', 'http://localhost:9009', messageStoreApi], ['contacts', 'contacts-gui', 'http://localhost:3001', contactsGui], ['oasis', 'channels-api', 'http://localhost:8013', channelsApi], ['oasis', 'oasis-api', 'http://localhost:8006', oasisApi], ['oasis', 'oasis-gui', 'http://localhost:3006', oasisGui], ['voice', 'kamailio', 'ws://localhost:8080', voiceKamailio]);
         console.log(table.toString());
     }
 }
