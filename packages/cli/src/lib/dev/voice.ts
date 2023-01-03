@@ -124,7 +124,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   const sqlUser = 'openline'
   const sqlDb = 'openline'
   const sqlPw = 'password'
-  const FILES = ['standard-create.sql', 'permissions-create.sql', 'carriers.sql']
+  const FILES = ['standard-create.sql', 'permissions-create.sql', 'carriers.sql', 'usrloc-create.sql', 'dispatcher-create.sql'];
 
   let POSTGRESQL_DB_SETUP = ''
   // eslint-disable-next-line guard-for-in
