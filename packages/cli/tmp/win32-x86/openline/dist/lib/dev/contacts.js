@@ -44,6 +44,6 @@ function installContactsGui(verbose, location = config.setupDir, imageVersion = 
 }
 exports.installContactsGui = installContactsGui;
 function pingContactsGui() {
-    return shell.exec('curl localhost:3000', { silent: true }).code === 0;
+    return shell.exec('curl localhost:3001', { silent: true }).code === 0;
 }
 exports.pingContactsGui = pingContactsGui;
