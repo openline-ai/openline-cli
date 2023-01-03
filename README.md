@@ -83,7 +83,7 @@ Check out our [Guide to Contributing Code][code-guide] for complete step-by-step
 💡 Pro Tip:  If you are going to contribute code to this repo, you'll save yourself a ton of time by aliasing the `node ./bin/run` command.  We suggest adding the following to your `.zshrc` or `.bashrc` file.
 
 ```sh-session
-alias ol="node {path/to/project/dir}/bin/run"
+alias ol="node {path/to/project/dir}/packages/cli/bin/run"
 ```
 
 Once aliased, you'll be able to run your local codebase by typing `ol {command}`.
