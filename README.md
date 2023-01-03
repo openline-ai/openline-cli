@@ -115,7 +115,8 @@ A massive thank you goes out to all these wonderful people ([emoji key][emoji]):
 ## 🪪 License
 
 - This repo is licensed under [Apache 2.0][apache2], with the exception of the ee directory (if applicable).
-- Premium features (contained in the ee directory) require an Openline Enterprise license.  See our [pricing page][pricing] for more details.
+
+<!-- References --->
 
 [apache2]: https://www.apache.org/licenses/LICENSE-2.0
 [call]: https://meetings-eu1.hubspot.com/matt2/customer-demos
