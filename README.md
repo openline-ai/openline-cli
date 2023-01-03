@@ -15,13 +15,13 @@
     </h3>
   </p>
   <p>
-    Openline customerOS is the easiest way to consolidate, warehouse, and build applications with your customer data.
+    The Openline CLI is an integral part of working with the Openline ecosystem.
   </p>
   <p>
 
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen?logo=github)][cli-repo]
 [![license](https://img.shields.io/badge/license-Apache%202-blue)][apache2]
-[![stars](https://img.shields.io/github/stars/openline-ai/openline-customer-os?style=social)][cli-repo]
+[![stars](https://img.shields.io/github/stars/openline-ai/openline-cli?style=social)][cli-repo]
 [![twitter](https://img.shields.io/twitter/follow/openlineAI?style=social)][twitter]
 [![slack](https://img.shields.io/badge/slack-community-blueviolet.svg?logo=slack)][slack]
 
@@ -41,7 +41,7 @@
 
 This guide will get you up and running with Openline in less than 5 minutes.
 
-The Openline CLI is a NodeJS app that makes it easy to setup and manage Openline apps directly from the terminal. It's an essential part of using Openline.  To use the Openline CLI, you'll need [Node.js version 16.14][node] or above installed on your machine.
+The Openline CLI is a NodeJS app that makes it easy to setup and manage Openline apps directly from the terminal. It's an essential part of using Openline.  To develop on the Openline CLI, you'll need [Node.js version 16.14][node] or above installed on your machine.
 
 ## 🚀 Installation
 
@@ -53,6 +53,7 @@ via brew
 brew tap openline-ai/cli
 brew install openline
 ```
+
 via install script
 
 ```sh-session
@@ -67,23 +68,25 @@ openline --version
 
 If everything has been setup correctly, you'll see an output that looks like `openline/x.y.z`.
 
-## 🙌 Features
+## 🧑‍💻 Working locally
 
-```terminal
-USAGE:
-    openline [COMMAND]
-    openline [TOPIC] [COMMAND]
+Check out our [Guide to Contributing Code][code-guide] for complete step-by-step instructions on how to get setup.
 
-TOPICS:
-    dev         Starts and stops local Openline development server
+### Quick Start
 
-COMMANDS:
-    help        Display help for the Openline CLI
-    issues      View or Create issues against the Openline project
+1. Clone the repo
+2. cd into the repo directory
+3. run `yarn` to install any missing dependencies
+4. run `yarn build` to build the local codebase
+5. run `node ./bin/run` to initiate the CLI
+
+💡 Pro Tip:  If you are going to contribute code to this repo, you'll save yourself a ton of time by aliasing the `node ./bin/run` command.  We suggest adding the following to your `.zshrc` or `.bashrc` file.
+
+```sh-session
+alias ol="node {path/to/project/dir}/packages/cli/bin/run"
 ```
 
-- **COMMANDS** execute a routine
-- **TOPICS** are commands that contain sub commands.  For example `openline dev start`
+Once aliased, you'll be able to run your local codebase by typing `ol {command}`.
 
 ## 🤝 Resources
 
@@ -112,11 +115,13 @@ A massive thank you goes out to all these wonderful people ([emoji key][emoji]):
 ## 🪪 License
 
 - This repo is licensed under [Apache 2.0][apache2], with the exception of the ee directory (if applicable).
-- Premium features (contained in the ee directory) require an Openline Enterprise license.  See our [pricing page][pricing] for more details.
+
+<!-- References --->
 
 [apache2]: https://www.apache.org/licenses/LICENSE-2.0
 [call]: https://meetings-eu1.hubspot.com/matt2/customer-demos
 [cli-repo]: https://github.com/openline-ai/openline-cli/
+[code-guide]: https://www.openline.ai/docs/contribute/github-workflow
 [contributions]: https://www.openline.ai/docs/contribute
 [guide]: https://www.openline.ai/docs/
 [emoji]: https://allcontributors.org/docs/en/emoji-key
