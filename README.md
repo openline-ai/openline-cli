@@ -47,10 +47,16 @@ The Openline CLI is a NodeJS app that makes it easy to setup and manage Openline
 
 Download the Openline CLI using the following command
 
-via npm
+via brew
 
 ```sh-session
-npm i openline -g
+brew tap openline-ai/cli
+brew install openline
+```
+via install script
+
+```sh-session
+curl http://openline.sh/install.sh | sh
 ```
 
 via yarn
