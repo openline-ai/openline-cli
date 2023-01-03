@@ -59,12 +59,6 @@ via install script
 curl http://openline.sh/install.sh | sh
 ```
 
-via yarn
-
-```sh-session
-yarn add openline
-```
-
 You can check that the Openline CLI is properly installed by running
 
 ```sh-session
