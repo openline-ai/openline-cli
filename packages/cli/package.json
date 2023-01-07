@@ -31,7 +31,7 @@
     "colors": "^1.4.0",
     "dotenv": "^16.0.3",
     "figlet": "^1.5.2",
-    "octokit": "^2.0.10",
+    "octokit": "^2.0.11",
     "openline": "^0.3.7",
     "replace-in-file": "^6.3.5",
     "shelljs": "^0.8.5",
