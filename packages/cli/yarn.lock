@@ -473,10 +473,10 @@
     node-gyp "^8.2.0"
     read-package-json-fast "^2.0.1"
 
-"@oclif/color@^1.0.1", "@oclif/color@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@oclif/color/-/color-1.0.2.tgz#fbb857251454d737033e1dcd6d19fe5ba1d61350"
-  integrity sha512-HqTFeMjfLOZajxqffSkyDWFUB3YqsSLRcsvnvITGRzhO0Ip4Qwp0VHVwh+qe0TjJYEltmOgzoxsR1LZPQIHNBQ==
+"@oclif/color@^1.0.1", "@oclif/color@^1.0.2", "@oclif/color@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@oclif/color/-/color-1.0.3.tgz#1a303b533a832a0af563006eb9a6883ebe3b77ed"
+  integrity sha512-E+KKAE5CKhXRBZEoZLe5yNR0VHmba1m1fxz8HlpcWjHF5Pdhhf6W/0XMmed6vwQCmyzL/YLwdspCRfu0A1cgGA==
   dependencies:
     ansi-styles "^4.2.1"
     chalk "^4.1.0"
@@ -530,12 +530,12 @@
   dependencies:
     "@oclif/core" "^1.23.1"
 
-"@oclif/plugin-not-found@^2.3.13", "@oclif/plugin-not-found@^2.3.7":
-  version "2.3.13"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-not-found/-/plugin-not-found-2.3.13.tgz#7b2a3d1a6757785727a79d85654116b85700981f"
-  integrity sha512-xadWMsIL9bHdzwdnj8c4q9xE6KZcVETwmFuoVuZkhbAJGA9E7tB67ULhxWMQbm/pYmzzC6h296mjf+fiHq0hqg==
+"@oclif/plugin-not-found@^2.3.14", "@oclif/plugin-not-found@^2.3.7":
+  version "2.3.14"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-not-found/-/plugin-not-found-2.3.14.tgz#a0cdf601a640ba1ba5df5830679751a9d708903b"
+  integrity sha512-XV3r4ds8pVBwD/XbMDvHETc1bV6Ek4jnThoyNtUfBL6noeW2pDAq0WM0wnbnsNmfDoVmma2dCVeYBEq8XOysTA==
   dependencies:
-    "@oclif/color" "^1.0.2"
+    "@oclif/color" "^1.0.3"
     "@oclif/core" "^1.23.1"
     fast-levenshtein "^3.0.0"
     lodash "^4.17.21"
