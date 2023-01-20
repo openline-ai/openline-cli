@@ -43,6 +43,16 @@ This guide will get you up and running with Openline in less than 5 minutes.
 
 The Openline CLI is a NodeJS app that makes it easy to setup and manage Openline apps directly from the terminal. It's an essential part of using Openline.  To use the Openline CLI, you'll need [Node.js version 16.14][node] or above installed on your machine.
 
+## 🚀 Build
+
+```sh-session
+yarn install
+yarn build
+alias ol="node $(pwd)/bin/run"
+```
+
+afterwards you can run the locally build cli by calling "ol"
+
 ## 🚀 Installation
 
 Download the Openline CLI using the following command

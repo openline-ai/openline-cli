@@ -2,8 +2,15 @@ import * as shell from 'shelljs'
 import {logTerminal} from '../logs'
 import {getPlatform} from '../dependencies'
 
-export function buildLocalImage(path: string, context: string, imageName: string, verbose: boolean) :boolean {
-  const dockerBuild = `docker build -t ${imageName} -f ${path}/Dockerfile ${context}`
+export function buildLocalImage({ path, context, imageName, env, verbose }: { path: string; context: string; imageName: string; env?: Map<String, String>, verbose: boolean }) :boolean {
+  let buildArgs = ''
+  if (env) {
+    for (const [key, value] of env) {
+      buildArgs += `--build-arg ${key}=${value} `
+    }
+  }
+  
+  const dockerBuild = `docker build -t ${imageName} ${buildArgs} -f ${path}/Dockerfile ${context}`
   if (verbose) logTerminal('EXEC', dockerBuild)
 
   const buildExecution = shell.exec(dockerBuild, {silent: !verbose})

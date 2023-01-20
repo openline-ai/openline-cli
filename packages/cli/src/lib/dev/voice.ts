@@ -44,7 +44,7 @@ export function installKamailio(verbose: boolean, location = config.setupDir, im
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are standardized
     const buildPath = location + '/packages/server/kamailio'
-    buildLocalImage(buildPath, buildPath, image, verbose)
+    buildLocalImage({ path: buildPath, context: buildPath, imageName: image, verbose })
     image = null
   }
 
@@ -75,7 +75,7 @@ export function installAsterisk(verbose: boolean, location = config.setupDir, im
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are standardized
     const buildPath = location + '/packages/server/asterisk'
-    buildLocalImage(buildPath, buildPath, image, verbose)
+    buildLocalImage({ path: buildPath, context: buildPath, imageName: image, verbose })
     image = null
   }
 
@@ -105,7 +105,7 @@ export function installVoicePlugin(verbose: boolean, location = config.setupDir,
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are standardized
     const buildPath = location + '/packages/apps/voice-plugin'
-    buildLocalImage(buildPath, buildPath, image, verbose)
+    buildLocalImage({ path: buildPath, context: buildPath, imageName: image, verbose })
     image = null
   }
 
