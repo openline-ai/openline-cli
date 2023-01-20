@@ -473,10 +473,10 @@
     node-gyp "^8.2.0"
     read-package-json-fast "^2.0.1"
 
-"@oclif/color@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@oclif/color/-/color-1.0.2.tgz#fbb857251454d737033e1dcd6d19fe5ba1d61350"
-  integrity sha512-HqTFeMjfLOZajxqffSkyDWFUB3YqsSLRcsvnvITGRzhO0Ip4Qwp0VHVwh+qe0TjJYEltmOgzoxsR1LZPQIHNBQ==
+"@oclif/color@^1.0.2", "@oclif/color@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@oclif/color/-/color-1.0.3.tgz#1a303b533a832a0af563006eb9a6883ebe3b77ed"
+  integrity sha512-E+KKAE5CKhXRBZEoZLe5yNR0VHmba1m1fxz8HlpcWjHF5Pdhhf6W/0XMmed6vwQCmyzL/YLwdspCRfu0A1cgGA==
   dependencies:
     ansi-styles "^4.2.1"
     chalk "^4.1.0"
@@ -484,10 +484,10 @@
     supports-color "^8.1.1"
     tslib "^2"
 
-"@oclif/core@^1.19.1", "@oclif/core@^1.20.4", "@oclif/core@^1.23.0", "@oclif/core@^1.23.1", "@oclif/core@^1.24.2":
-  version "1.24.2"
-  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-1.24.2.tgz#1d2e4b8b27db7e98b0c1d7b367934196a2f2c202"
-  integrity sha512-0wfAa6HG4sJ4j5c4/GV4BWZwALtJyw2ZO6titnrWKcowxU1BWd8mBM45ilTPnDhClMowz7+8EtK4kqUGc1rNwA==
+"@oclif/core@^1.19.1", "@oclif/core@^1.20.4", "@oclif/core@^1.23.0", "@oclif/core@^1.23.1", "@oclif/core@^1.24.0", "@oclif/core@^1.24.2":
+  version "1.25.0"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-1.25.0.tgz#a3891f903bf211ce1f3c8a05419b686f02c5bbd6"
+  integrity sha512-vS8L5Uqc5Wuq3zmKVvX5LLcyxhfH2X2q+LG1P6czzkh6k09uLeDaZfwaYPXD7ItM4Vfy+KEctfKiWePeLDnOpg==
   dependencies:
     "@oclif/linewrap" "^1.0.0"
     "@oclif/screen" "^3.0.4"
@@ -530,13 +530,13 @@
   dependencies:
     "@oclif/core" "^1.23.1"
 
-"@oclif/plugin-not-found@^2.3.13", "@oclif/plugin-not-found@^2.3.7":
-  version "2.3.13"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-not-found/-/plugin-not-found-2.3.13.tgz#7b2a3d1a6757785727a79d85654116b85700981f"
-  integrity sha512-xadWMsIL9bHdzwdnj8c4q9xE6KZcVETwmFuoVuZkhbAJGA9E7tB67ULhxWMQbm/pYmzzC6h296mjf+fiHq0hqg==
+"@oclif/plugin-not-found@^2.3.15", "@oclif/plugin-not-found@^2.3.7":
+  version "2.3.15"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-not-found/-/plugin-not-found-2.3.15.tgz#2748116f91776321d6cb6e88c508b512f845fa34"
+  integrity sha512-HA1TvXyWp8IXYGl5zygKv+94UznvGGMwSU1CZmUh0OQxkvlLcR7Yrmp409hnBoQoKjPlKTgrOuZFNHDHuStetw==
   dependencies:
-    "@oclif/color" "^1.0.2"
-    "@oclif/core" "^1.23.1"
+    "@oclif/color" "^1.0.3"
+    "@oclif/core" "^1.24.0"
     fast-levenshtein "^3.0.0"
     lodash "^4.17.21"
 
