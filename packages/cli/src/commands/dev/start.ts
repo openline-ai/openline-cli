@@ -4,7 +4,7 @@ import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
 import {getConfig} from '../../config/dev'
-import {installCustomerOsApi, installMessageStoreApi, installSettingsApi} from '../../lib/dev/customer-os'
+import {installCustomerOsApi, installFileStorageApi, installMessageStoreApi, installSettingsApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
 import * as oasis from '../../lib/dev/oasis'
 import * as voice from '../../lib/dev/voice'
@@ -50,6 +50,7 @@ export default class DevStart extends Command {
         'db',
         'kamailio',
         'message-store-api',
+        'file-storage-api',
         'settings-api',
         'oasis',
         'oasis-api',
@@ -88,6 +89,7 @@ export default class DevStart extends Command {
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installMessageStoreApi(flags.verbose, location, version)
+      installFileStorageApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
@@ -119,6 +121,7 @@ export default class DevStart extends Command {
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installMessageStoreApi(flags.verbose, location, version)
+      installFileStorageApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
@@ -151,6 +154,7 @@ export default class DevStart extends Command {
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installMessageStoreApi(flags.verbose, location, version)
+      installFileStorageApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
@@ -188,6 +192,16 @@ export default class DevStart extends Command {
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
+    case 'file-storage-api':
+      start.dependencyCheck(flags.verbose)
+      start.startDevServer(flags.verbose)
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      installFileStorageApi(flags.verbose, location, version)
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+
     case 'db':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
@@ -210,6 +224,7 @@ export default class DevStart extends Command {
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installMessageStoreApi(flags.verbose, location, version)
+      installFileStorageApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
@@ -273,6 +288,7 @@ export default class DevStart extends Command {
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installMessageStoreApi(flags.verbose, location, version)
+      installFileStorageApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)

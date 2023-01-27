@@ -36,6 +36,7 @@ export default class DevRm extends Command {
         'oasis-api',
         'oasis-gui',
         'message-store-api',
+        'file-storage-api',
         'settings-api',
         'voice',
         'kamailio',
@@ -132,6 +133,16 @@ export default class DevRm extends Command {
       const appServices: Apps = {
         deployments: ['settings-api'],
         services: ['settings-api-service', 'settings-api-loadbalancer'],
+        statefulsets: [],
+      }
+      deleteApp(appServices, flags.verbose)
+      break
+    }
+
+    case 'file-storage-api': {
+      const appServices: Apps = {
+        deployments: ['file-storage-api'],
+        services: ['file-storage-api-service', 'file-storage-api-loadbalancer'],
         statefulsets: [],
       }
       deleteApp(appServices, flags.verbose)

@@ -1,6 +1,6 @@
 import {Command} from '@oclif/core'
 import {pingContactsGui} from '../../lib/dev/contacts'
-import {pingCustomerOsApi, pingMessageStoreApi, pingSettingsApi} from '../../lib/dev/customer-os'
+import {pingCustomerOsApi, pingFileStorageApi, pingMessageStoreApi, pingSettingsApi} from '../../lib/dev/customer-os'
 import {pingOasisGui, pingOasisApi, pingChannelsApi} from '../../lib/dev/oasis'
 import {pingKamailio} from '../../lib/dev/voice'
 
@@ -25,6 +25,7 @@ export default class DevPing extends Command {
     const customerOsApi = pingCustomerOsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const messageStoreApi = pingMessageStoreApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const settingsApi = pingSettingsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
+    const fileStorageApi = pingFileStorageApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const channelsApi = pingChannelsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const oasisApi = pingOasisApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const oasisGui = pingOasisGui() ? colors.bold.green('Yes') : colors.red.bold('No')
@@ -38,6 +39,7 @@ export default class DevPing extends Command {
     table.push(
       ['customer-os', 'customer-os-api', 'http://localhost:10000', customerOsApi],
       ['customer-os', 'message-store-api', 'http://localhost:9009', messageStoreApi],
+      ['customer-os', 'file-storage-api', 'http://localhost:10001', fileStorageApi],
       ['customer-os', 'settings-api', 'http://localhost:10002', settingsApi],
       ['contacts', 'contacts-gui', 'http://localhost:3001', contactsGui],
       ['oasis', 'channels-api', 'http://localhost:8013', channelsApi],
