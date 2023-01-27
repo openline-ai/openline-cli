@@ -1,6 +1,5 @@
 /* eslint-disable complexity */
 import {Command, Flags} from '@oclif/core'
-import {uninstallFusionAuth} from '../../lib/dev/auth'
 import {uninstallNeo4j} from '../../lib/dev/neo4j'
 import {uninstallPostgresql} from '../../lib/dev/postgres'
 import {deleteAll, deleteApp, Apps} from '../../lib/dev/delete'
@@ -27,7 +26,6 @@ export default class DevRm extends Command {
       required: false,
       description: 'the Openline service or group of services you would like to delete',
       options: [
-        'auth',
         'channels-api',
         'contacts',
         'contacts-gui',
@@ -38,6 +36,8 @@ export default class DevRm extends Command {
         'oasis-api',
         'oasis-gui',
         'message-store-api',
+        'file-storage-api',
+        'settings-api',
         'voice',
         'kamailio',
         'asterisk',
@@ -65,17 +65,6 @@ export default class DevRm extends Command {
 
     const service = args.service.toLowerCase()
     switch (service) {
-    case 'auth': {
-      const appServices: Apps = {
-        deployments: [],
-        services: ['auth-fusionauth-loadbalancer'],
-        statefulsets: [],
-      }
-
-      uninstallFusionAuth(flags.verbose)
-      deleteApp(appServices, flags.verbose)
-      break
-    }
 
     case 'contacts': {
       const appServices: Apps = {
@@ -134,6 +123,26 @@ export default class DevRm extends Command {
       const appServices: Apps = {
         deployments: ['message-store-api'],
         services: ['message-store-api-service', 'message-store-api-loadbalancer'],
+        statefulsets: [],
+      }
+      deleteApp(appServices, flags.verbose)
+      break
+    }
+
+    case 'settings-api': {
+      const appServices: Apps = {
+        deployments: ['settings-api'],
+        services: ['settings-api-service', 'settings-api-loadbalancer'],
+        statefulsets: [],
+      }
+      deleteApp(appServices, flags.verbose)
+      break
+    }
+
+    case 'file-storage-api': {
+      const appServices: Apps = {
+        deployments: ['file-storage-api'],
+        services: ['file-storage-api-service', 'file-storage-api-loadbalancer'],
         statefulsets: [],
       }
       deleteApp(appServices, flags.verbose)
