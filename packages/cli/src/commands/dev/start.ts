@@ -3,9 +3,8 @@ import {Command, Flags} from '@oclif/core'
 import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
-import * as fusionauth from '../../lib/dev/auth'
 import {getConfig} from '../../config/dev'
-import {installCustomerOsApi, installMessageStoreApi} from '../../lib/dev/customer-os'
+import {installCustomerOsApi, installMessageStoreApi, installSettingsApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
 import * as oasis from '../../lib/dev/oasis'
 import * as voice from '../../lib/dev/voice'
@@ -43,7 +42,6 @@ export default class DevStart extends Command {
       default: 'customer-os',
       options: [
         'asterisk',
-        'auth',
         'channels-api',
         'contacts',
         'contacts-gui',
@@ -52,6 +50,7 @@ export default class DevStart extends Command {
         'db',
         'kamailio',
         'message-store-api',
+        'settings-api',
         'oasis',
         'oasis-api',
         'oasis-gui',
@@ -87,9 +86,9 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
-      fusionauth.installFusionAuth(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installMessageStoreApi(flags.verbose, location, version)
+      installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -111,16 +110,6 @@ export default class DevStart extends Command {
 
     const app = args.app.toLowerCase()
     switch (app) {
-    case 'auth':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      fusionauth.installFusionAuth(flags.verbose, location)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
     case 'contacts':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
@@ -128,9 +117,9 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
-      fusionauth.installFusionAuth(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installMessageStoreApi(flags.verbose, location, version)
+      installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -160,9 +149,9 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
-      fusionauth.installFusionAuth(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installMessageStoreApi(flags.verbose, location, version)
+      installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -176,6 +165,26 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+
+    case 'message-store-api':
+      start.dependencyCheck(flags.verbose)
+      start.startDevServer(flags.verbose)
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      installMessageStoreApi(flags.verbose, location, version)
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+
+    case 'settings-api':
+      start.dependencyCheck(flags.verbose)
+      start.startDevServer(flags.verbose)
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      installSettingsApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
@@ -199,9 +208,9 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
-      fusionauth.installFusionAuth(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installMessageStoreApi(flags.verbose, location, version)
+      installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -262,9 +271,9 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
-      fusionauth.installFusionAuth(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installMessageStoreApi(flags.verbose, location, version)
+      installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -331,16 +340,6 @@ export default class DevStart extends Command {
       cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
       voice.installVoicePlugin(flags.verbose, location, version)
       start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'message-store-api':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      installMessageStoreApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
     }

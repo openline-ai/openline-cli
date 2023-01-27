@@ -43,6 +43,11 @@ export function getConfig() :any {
   config.customerOs.messageStoreDeployment = '/deployment/infra/k8s/message-store.yaml'
   config.customerOs.messageStoreService = '/deployment/infra/k8s/message-store-k8s-service.yaml'
   config.customerOs.messageStoreLoadbalancer = '/deployment/infra/k8s/message-store-k8s-loadbalancer-service.yaml'
+  // customerOS settings API
+  config.customerOs.settingsImage = 'ghcr.io/openline-ai/openline-customer-os/settings-api:'
+  config.customerOs.settingsDeployment = '/deployment/infra/k8s/settings-api.yaml'
+  config.customerOs.settingsService = '/deployment/infra/k8s/settings-service.yaml'
+  config.customerOs.settingsLoadbalancer = '/deployment/infra/k8s/settings-loadbalancer-service.yaml'
   // customerOS postgreSQL DB
   config.customerOs.postgresqlPersistentVolume = '/deployment/infra/k8s/postgresql-persistent-volume.yaml'
   config.customerOs.postgresqlPersistentVolumeClaim = '/deployment/infra/k8s/postgresql-persistent-volume-claim.yaml'
@@ -52,9 +57,7 @@ export function getConfig() :any {
   config.customerOs.neo4jHelmValues = '/deployment/infra/helm/neo4j/neo4j-values.yaml'
   config.customerOs.neo4jCypher = '/deployment/scripts/neo4j/customer-os.cypher'
   config.customerOs.neo4jProvisioning = '/deployment/scripts/neo4j/provision-neo4j.sh'
-  // customerOS FusionAuth
-  config.customerOs.fusionauthHelmValues = '/deployment/infra/helm/fusionauth/fusionauth-values.yaml'
-  config.customerOs.fusionauthLoadbalancer = '/deployment/infra/k8s/fusion-auth-load-balancer.yaml'
+
   config.customerOs.repo = 'https://github.com/openline-ai/openline-customer-os.git'
 
   // Oasis App config

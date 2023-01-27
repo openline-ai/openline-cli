@@ -8,6 +8,7 @@ const config = getConfig()
 const NAMESPACE = config.namespace.name
 const CUSTOMER_OS_API = 'customer-os-api-service'
 const MESSAGE_STORE_API = 'message-store-api-service'
+const SETTING_API = 'settings-api-service'
 
 function customerOsApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${CUSTOMER_OS_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
@@ -15,6 +16,10 @@ function customerOsApiCheck() :boolean {
 
 function messageStoreApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${MESSAGE_STORE_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+}
+
+function settingsApiCheck() :boolean {
+  return (shell.exec(`kubectl get service ${SETTING_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
 export function installCustomerOsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
@@ -81,10 +86,46 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
   return true
 }
 
+export function installSettingsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+  if (settingsApiCheck()) return true
+  const DEPLOYMENT = location + config.customerOs.settingsDeployment
+  const SERVICE = location + config.customerOs.settingsService
+  const LOADBALANCER = location + config.customerOs.settingsLoadbalancer
+
+  if (imageVersion.toLowerCase() !== 'latest') {
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
+    if (!tag) return false
+  }
+
+  let image: string | null  = config.customerOs.settingsImage + imageVersion
+
+  if (location !== config.setupDir) {
+    // come back to this
+    const buildPath = location + '/packages/server/settings-api'
+    buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    image = null
+  }
+
+  const installConfig: Yaml = {
+    deployYaml: DEPLOYMENT,
+    serviceYaml: SERVICE,
+    loadbalancerYaml: LOADBALANCER,
+  }
+  const deploy = deployImage(image, installConfig, verbose)
+  if (deploy === false) return false
+
+  logTerminal('SUCCESS', 'settings-api successfully installed')
+  return true
+}
+
 export function pingCustomerOsApi() :boolean {
   return shell.exec('curl localhost:10000/health', {silent: true}).code === 0
 }
 
 export function pingMessageStoreApi() :boolean {
   return shell.exec('nc -zv -w5 localhost 9009', {silent: true}).code === 0
+}
+
+export function pingSettingsApi() :boolean {
+  return shell.exec('nc -zv -w5 localhost 10002', {silent: true}).code === 0
 }
