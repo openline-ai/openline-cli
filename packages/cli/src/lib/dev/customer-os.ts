@@ -9,7 +9,7 @@ const NAMESPACE = config.namespace.name
 const CUSTOMER_OS_API = 'customer-os-api-service'
 const MESSAGE_STORE_API = 'message-store-api-service'
 const SETTING_API = 'settings-api-service'
-const FILE_STORAGE_API = 'file-storage-api-service'
+const FILE_STORAGE_API = 'file-store-api-service'
 
 function customerOsApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${CUSTOMER_OS_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
@@ -23,7 +23,7 @@ function settingsApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${SETTING_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
-function fileStorageApiCheck() :boolean {
+function fileStoreApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${FILE_STORAGE_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
@@ -31,9 +31,8 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
   if (customerOsApiCheck()) {
     logTerminal('SUCCESS', 'customer-os-api already running')
     return true
-  } else {
-    logTerminal('SUCCESS', 'customer-os-api NOT running')
   }
+
   const DEPLOYMENT = location + config.customerOs.apiDeployment
   const SERVICE = location + config.customerOs.apiService
   const LOADBALANCER = location + config.customerOs.apiLoadbalancer
@@ -134,14 +133,14 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
   return true
 }
 
-export function installFileStorageApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
-  if (fileStorageApiCheck()) {
-    logTerminal('SUCCESS', 'file-storage-api already running')
+export function installfileStoreApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+  if (fileStoreApiCheck()) {
+    logTerminal('SUCCESS', 'file-store-api already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.fileStorageDeployment
-  const SERVICE = location + config.customerOs.fileStorageService
-  const LOADBALANCER = location + config.customerOs.fileStorageLoadbalancer
+  const DEPLOYMENT = location + config.customerOs.fileStoreDeployment
+  const SERVICE = location + config.customerOs.fileStoreService
+  const LOADBALANCER = location + config.customerOs.fileStoreLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -152,7 +151,7 @@ export function installFileStorageApi(verbose: boolean, location = config.setupD
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = location + '/packages/server/file-storage-api'
+    const buildPath = location + '/packages/server/file-store-api'
     buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     image = null
   }
@@ -165,7 +164,7 @@ export function installFileStorageApi(verbose: boolean, location = config.setupD
   const deploy = deployImage(image, installConfig, verbose)
   if (deploy === false) return false
 
-  logTerminal('SUCCESS', 'file-storage-api successfully installed')
+  logTerminal('SUCCESS', 'file-store-api successfully installed')
   return true
 }
 
@@ -181,6 +180,6 @@ export function pingSettingsApi() :boolean {
   return shell.exec('nc -zv -w5 localhost 10002', {silent: true}).code === 0
 }
 
-export function pingFileStorageApi() :boolean {
+export function pingfileStoreApi() :boolean {
   return shell.exec('nc -zv -w5 localhost 10001', {silent: true}).code === 0
 }
