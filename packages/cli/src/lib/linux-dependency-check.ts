@@ -11,6 +11,7 @@ export function installDependencies(verbose: boolean) :boolean {
   const kubectl = deps.kubeCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const helm = deps.helmCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const netcat = deps.netcatCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const ory = deps.oryCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
 
   const table = new Table({
     head: [colors.cyan.bold('Dependency'), colors.cyan.bold('Installed?')],
@@ -23,6 +24,7 @@ export function installDependencies(verbose: boolean) :boolean {
     ['helm', helm],
     ['kubectl', kubectl],
     ['netcat', netcat],
+    ['ory', ory],
 
   )
 
@@ -40,6 +42,7 @@ export function installDependencies(verbose: boolean) :boolean {
   if (helm === notInstalled) deps.installHelm()
   if (kubectl === notInstalled) deps.installKube()
   if (netcat === notInstalled) deps.installNetcat()
+  if (ory === notInstalled) deps.installOry()
 
   deps.checkDockerGroup()
   return true
