@@ -38,7 +38,8 @@ export function installChannelsApi(verbose: boolean, location = config.setupDir,
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are standardized
     const buildPath = location + '/packages/server/channels-api'
-    buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
     image = null
   }
 
@@ -70,7 +71,8 @@ export function installOasisApi(verbose: boolean, location = config.setupDir, im
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are cleaned up
     const buildPath = location + '/packages/server/oasis-api'
-    buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
     image = null
   }
 
@@ -103,7 +105,8 @@ export function installOasisGui(verbose: boolean, location = config.setupDir, im
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are cleaned up
     const buildPath = location + '/packages/apps/oasis/oasis-frontend'
-    buildLocalImage({ path: buildPath, context: buildPath, imageName: image, verbose })
+    const build = buildLocalImage({ path: buildPath, context: buildPath, imageName: image, verbose })
+    if (build === false) return false
     image = null
   }
 

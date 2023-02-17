@@ -47,7 +47,8 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
   if (location !== config.setupDir) {
     // Need to come back to this after we standardize Dockerfiles
     const buildPath = location + '/packages/server/customer-os-api'
-    buildLocalImage({ path: buildPath, context: buildPath, imageName: image, verbose })
+    const build = buildLocalImage({ path: buildPath, context: buildPath, imageName: image, verbose })
+    if (build === false) return false
     image = null
   }
 
@@ -82,7 +83,8 @@ export function installMessageStoreApi(verbose: boolean, location = config.setup
   if (location !== config.setupDir) {
     // come back to this
     const buildPath = location + '/packages/server/message-store-api'
-    buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
     image = null
   }
 
@@ -117,7 +119,8 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
   if (location !== config.setupDir) {
     // come back to this
     const buildPath = location + '/packages/server/settings-api'
-    buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
     image = null
   }
 
@@ -152,7 +155,8 @@ export function installfileStoreApi(verbose: boolean, location = config.setupDir
   if (location !== config.setupDir) {
     // come back to this
     const buildPath = location + '/packages/server/file-store-api'
-    buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
     image = null
   }
 
