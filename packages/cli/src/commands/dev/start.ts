@@ -83,6 +83,7 @@ export default class DevStart extends Command {
     if (flags.all) {
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -115,6 +116,7 @@ export default class DevStart extends Command {
     case 'contacts':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -136,6 +138,7 @@ export default class DevStart extends Command {
     case 'contacts-gui':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -148,6 +151,7 @@ export default class DevStart extends Command {
     case 'customer-os':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -165,6 +169,7 @@ export default class DevStart extends Command {
     case 'customer-os-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -175,6 +180,7 @@ export default class DevStart extends Command {
     case 'message-store-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -185,6 +191,7 @@ export default class DevStart extends Command {
     case 'settings-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -195,6 +202,7 @@ export default class DevStart extends Command {
     case 'file-store-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -205,6 +213,7 @@ export default class DevStart extends Command {
     case 'db':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -218,6 +227,7 @@ export default class DevStart extends Command {
     case 'oasis':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -241,6 +251,7 @@ export default class DevStart extends Command {
     case 'oasis-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -253,6 +264,7 @@ export default class DevStart extends Command {
     case 'oasis-gui':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -265,6 +277,7 @@ export default class DevStart extends Command {
     case 'channels-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -282,6 +295,7 @@ export default class DevStart extends Command {
       }
 
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       // install customerOS
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
@@ -316,6 +330,7 @@ export default class DevStart extends Command {
       }
 
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -333,6 +348,7 @@ export default class DevStart extends Command {
       }
 
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -350,6 +366,7 @@ export default class DevStart extends Command {
       }
 
       start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.cleanupSetupFiles()

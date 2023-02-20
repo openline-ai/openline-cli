@@ -127,6 +127,8 @@ export function getConfig() :any {
   config.dependencies.mac.kubectl = 'brew install kubectl'
   config.dependencies.mac.xcode = 'xcode-select --install'
   config.dependencies.mac.netcat = 'brew install netcat'
+  config.dependencies.mac.ory = 'brew install ory/tap/cli'
+
 
   config.dependencies.linux = {}
   config.dependencies.linux.k3d = 'curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sudo bash'
@@ -141,6 +143,8 @@ export function getConfig() :any {
   config.dependencies.linux.kubectl = '/bin/bash -c \'curl -Lo ' + config.setupDir + '/kubectl "https://dl.k8s.io/release/v1.25.3/bin/linux/amd64/kubectl" && ' +
                                       'sudo install -o root -g root -m 0755 ' + config.setupDir + '/kubectl /usr/local/bin/kubectl\''
   config.dependencies.linux.netcat = 'sudo apt-get update && sudo apt-get install -y netcat'
+  config.dependencies.linux.ory = '/bin/bash -c \'/bin/bash <(curl https://raw.githubusercontent.com/ory/meta/master/install.sh) -b' + config.setupDir + ' ory && ' +
+                                      'sudo install -o root -g root -m 0755 ' + config.setupDir + '/ory /usr/local/bin/ory\''
 
   return config
 }
