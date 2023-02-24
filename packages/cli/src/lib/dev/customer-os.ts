@@ -47,7 +47,8 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
   if (location !== config.setupDir) {
     // Need to come back to this after we standardize Dockerfiles
     const buildPath = location + '/packages/server/customer-os-api'
-    const build = buildLocalImage({ path: buildPath, context: buildPath, imageName: image, verbose })
+
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
   }
