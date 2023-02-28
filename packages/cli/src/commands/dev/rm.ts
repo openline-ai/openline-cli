@@ -42,6 +42,7 @@ export default class DevRm extends Command {
         'kamailio',
         'asterisk',
         'voice-plugin',
+        'ory-tunnel',
       ],
     },
   ]
@@ -242,7 +243,18 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
-
+    case 'ory-tunnel': {
+      const appServices: Apps = {
+        deployments: [],
+        services: [
+          'ory-tunnel-service',
+          'ory-tunnel-loadbalancer',
+        ],
+        statefulsets: ['ory-tunnel'],
+      }
+      deleteApp(appServices, flags.verbose)
+      break
+    }
     case 'voice-plugin': {
       const appServices: Apps = {
         deployments: ['voice-plugin'],

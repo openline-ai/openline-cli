@@ -65,6 +65,12 @@ export function getConfig() :any {
 
   config.customerOs.repo = 'https://github.com/openline-ai/openline-customer-os.git'
 
+  //Ory Tunnel
+  config.customerOs.oryTunnelImage = 'ghcr.io/openline-ai/openline-customer-os/ory-tunnel:'
+  config.customerOs.oryTunnelStatefulset = '/deployment/infra/k8s/ory-tunnel.yaml'
+  config.customerOs.oryTunnelService = '/deployment/infra/k8s/ory-tunnel-service.yaml'
+  config.customerOs.oryTunnelLoadbalancer = '/deployment/infra/k8s/ory-tunnel-loadbalancer.yaml'
+
   // Oasis App config
   config.oasis = {}
   // Oasis API
