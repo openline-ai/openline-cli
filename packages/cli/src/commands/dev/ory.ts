@@ -1,6 +1,4 @@
 import {Command, Flags} from '@oclif/core'
-import {namespaceCheck} from '../../lib/dev/namespace'
-import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {installOryTunnel} from '../../lib/dev/customer-os'
 const { spawn } = require('child_process')
