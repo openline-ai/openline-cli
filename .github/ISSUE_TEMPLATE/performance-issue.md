@@ -3,7 +3,6 @@ name: Performance issue
 about: Are you experiencing long response times?  High resource usage?  Let us help.
 title: ''
 labels: performance
-assignees: alexopenline, edifirut, xvasi
 
 ---
 
