@@ -86,17 +86,6 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   let ms = ''
   let retry = 1
   const maxAttempts = config.server.timeOuts / 5
-  while (ms === '') {
-    if (retry < maxAttempts) {
-      if (verbose) logTerminal('INFO', `postgreSQL database starting up, please wait... ${retry}/${maxAttempts}`)
-      shell.exec('sleep 2')
-      ms = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep message-store-api|grep Running| cut -f1 -d ' '`, {silent: true}).stdout
-      retry++
-    } else {
-      logTerminal('ERROR', 'Provisioning postgreSQL timed out', 'dev:postgres:provisionPostresql')
-      return false
-    }
-  }
 
   let cosDb = ''
   while (cosDb === '') {
