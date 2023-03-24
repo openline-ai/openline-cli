@@ -7,17 +7,14 @@ import {logTerminal} from '../logs'
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 const CUSTOMER_OS_API = 'customer-os-api-service'
-const MESSAGE_STORE_API = 'message-store-api-service'
 const SETTING_API = 'settings-api-service'
 const FILE_STORAGE_API = 'file-store-api-service'
 const ORY_TUNNEL = 'ory-tunnel-service'
+const COMMS_API = 'comms-api-service'
+
 
 function customerOsApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${CUSTOMER_OS_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
-}
-
-function messageStoreApiCheck() :boolean {
-  return (shell.exec(`kubectl get service ${MESSAGE_STORE_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
 function settingsApiCheck() :boolean {
@@ -32,6 +29,9 @@ function oryTunnelCheck() :boolean {
   return (shell.exec(`kubectl get service ${ORY_TUNNEL} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
+function commsApiCheck() :boolean {
+  return (shell.exec(`kubectl get service ${COMMS_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+}
 
 export function installCustomerOsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (customerOsApiCheck()) {
@@ -68,42 +68,6 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
   if (deploy === false) return false
 
   logTerminal('SUCCESS', 'customer-os-api successfully installed')
-  return true
-}
-
-export function installMessageStoreApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
-  if (messageStoreApiCheck()) {
-    logTerminal('SUCCESS', 'message-store-api already running')
-    return true
-  }
-  const DEPLOYMENT = location + config.customerOs.messageStoreDeployment
-  const SERVICE = location + config.customerOs.messageStoreService
-  const LOADBALANCER = location + config.customerOs.messageStoreLoadbalancer
-
-  if (imageVersion.toLowerCase() !== 'latest') {
-    const tag = updateImageTag([DEPLOYMENT], imageVersion)
-    if (!tag) return false
-  }
-
-  let image: string | null  = config.customerOs.messageStoreImage + imageVersion
-
-  if (location !== config.setupDir) {
-    // come back to this
-    const buildPath = location + '/packages/server/message-store-api'
-    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
-    if (build === false) return false
-    image = null
-  }
-
-  const installConfig: Yaml = {
-    deployYaml: DEPLOYMENT,
-    serviceYaml: SERVICE,
-    loadbalancerYaml: LOADBALANCER,
-  }
-  const deploy = deployImage(image, installConfig, verbose)
-  if (deploy === false) return false
-
-  logTerminal('SUCCESS', 'message-store-api successfully installed')
   return true
 }
 
@@ -215,12 +179,41 @@ export function installOryTunnel(verbose: boolean, location = config.setupDir, i
   return true
 }
 
-export function pingCustomerOsApi() :boolean {
-  return shell.exec('curl localhost:10000/health', {silent: true}).code === 0
+export function installCommsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+  if (commsApiCheck()) return true
+  const DEPLOYMENT = location + config.customerOs.commsApiDeployment
+  const SERVICE = location + config.customerOs.commsApiService
+  const LOADBALANCER = location + config.customerOs.commsApiLoadbalancer
+
+  if (imageVersion.toLowerCase() !== 'latest') {
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
+    if (!tag) return false
+  }
+
+  let image: string | null = config.customerOs.commsApiImage + imageVersion
+
+  if (location !== config.setupDir) {
+    // come back to this when Dockerfiles are standardized
+    const buildPath = location + '/packages/server/comms-api'
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
+    image = null
+  }
+
+  const installConfig: Yaml = {
+    deployYaml: DEPLOYMENT,
+    serviceYaml: SERVICE,
+    loadbalancerYaml: LOADBALANCER,
+  }
+  const deploy = deployImage(image, installConfig, verbose)
+  if (deploy === false) return false
+
+  logTerminal('SUCCESS', 'comms-api successfully installed')
+  return true
 }
 
-export function pingMessageStoreApi() :boolean {
-  return shell.exec('nc -zv -w5 localhost 9009', {silent: true}).code === 0
+export function pingCustomerOsApi() :boolean {
+  return shell.exec('curl localhost:10000/health', {silent: true}).code === 0
 }
 
 export function pingSettingsApi() :boolean {
@@ -229,4 +222,8 @@ export function pingSettingsApi() :boolean {
 
 export function pingfileStoreApi() :boolean {
   return shell.exec('nc -zv -w5 localhost 10001', {silent: true}).code === 0
+}
+
+export function pingCommsApi() :boolean {
+  return shell.exec('curl localhost:8013/health', {silent: true}).code === 0
 }

@@ -71,6 +71,12 @@ export function getConfig() :any {
   config.customerOs.oryTunnelService = '/deployment/infra/k8s/ory-tunnel-service.yaml'
   config.customerOs.oryTunnelLoadbalancer = '/deployment/infra/k8s/ory-tunnel-loadbalancer.yaml'
 
+  // Comms API
+  config.customerOs.commsApiImage = 'ghcr.io/openline-ai/openline-customer-os/comms-api:'
+  config.customerOs.commsApiDeployment = '/deployment/infra/k8s/comms-api.yaml'
+  config.customerOs.commsApiService = '/deployment/infra/k8s/comms-api-k8s-service.yaml'
+  config.customerOs.commsApiLoadbalancer = '/deployment/infra/k8s/comms-api-k8s-loadbalancer-service.yaml'
+   
   // Oasis App config
   config.oasis = {}
   // Oasis API
