@@ -20,7 +20,6 @@ export default class Repo extends Command {
         'contacts',
         'customer-os',
         'hubspot-integration',
-        'oasis',
         'ui-kit',
         'voice',
         'web-chat',
@@ -64,13 +63,6 @@ export default class Repo extends Command {
     case 'hubspot-integration':
       table.push(
         ['hubspot-integration', repos.baseUrl + repos.hubspot],
-      )
-      console.log(table.toString())
-      break
-
-    case 'oasis':
-      table.push(
-        ['oasis', repos.baseUrl + repos.oasis],
       )
       console.log(table.toString())
       break
