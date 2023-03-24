@@ -27,15 +27,12 @@ export default class DevRm extends Command {
       description: 'the Openline service or group of services you would like to delete',
       options: [
         'channels-api',
+        'comms-api',
         'contacts',
         'contacts-gui',
         'customer-os',
         'customer-os-api',
         'db',
-        'oasis',
-        'oasis-api',
-        'oasis-gui',
-        'message-store-api',
         'file-store-api',
         'settings-api',
         'voice',
@@ -90,12 +87,14 @@ export default class DevRm extends Command {
 
     case 'customer-os': {
       const appServices: Apps = {
-        deployments: ['customer-os-api', 'message-store-api'],
+        deployments: ['customer-os-api', 'message-store-api','comms-api'],
         services: [
           'customer-os-api-service',
           'customer-os-api-loadbalancer',
           'message-store-api-service',
           'message-store-api-loadbalancer',
+          'comms-api-service',
+          'comms-api-service-loadbalancer',
         ],
         statefulsets: [],
       }
@@ -150,51 +149,10 @@ export default class DevRm extends Command {
       break
     }
 
-    // Oasis Services
-    case 'oasis': {
+    case 'comms-api': {
       const appServices: Apps = {
-        deployments: ['oasis-api', 'channels-api', 'oasis-gui'],
-        services: [
-          'oasis-api-service',
-          'oasis-api-loadbalancer',
-          'channels-api-service',
-          'channels-api-loadbalancer',
-          'oasis-gui-service',
-          'oasis-gui-loadbalancer',
-        ],
-        statefulsets: [],
-      }
-
-      deleteApp(appServices, flags.verbose)
-      break
-    }
-
-    case 'oasis-api': {
-      const appServices: Apps = {
-        deployments: ['oasis-api'],
-        services: ['oasis-api-service', 'oasis-api-loadbalancer'],
-        statefulsets: [],
-      }
-
-      deleteApp(appServices, flags.verbose)
-      break
-    }
-
-    case 'oasis-gui': {
-      const appServices: Apps = {
-        deployments: ['oasis-gui'],
-        services: ['oasis-gui-service', 'oasis-gui-loadbalancer'],
-        statefulsets: [],
-      }
-
-      deleteApp(appServices, flags.verbose)
-      break
-    }
-
-    case 'channels-api': {
-      const appServices: Apps = {
-        deployments: ['channels-api'],
-        services: ['channels-api-service', 'channels-api-loadbalancer'],
+        deployments: ['comms-api'],
+        services: ['comms-api-service', 'comms-api-loadbalancer'],
         statefulsets: [],
       }
 

@@ -30,7 +30,6 @@ export default class DevClone extends Command {
         'contacts',
         'cli',
         'customer-os',
-        'oasis',
         'voice',
         'webchat',
         'website',
@@ -56,9 +55,6 @@ export default class DevClone extends Command {
       break
     case 'customer-os':
       cloneRepo(config.customerOs.repo, flags.verbose, args.location, flags.branch)
-      break
-    case 'oasis':
-      cloneRepo(config.oasis.repo, flags.verbose, args.location, flags.branch)
       break
     case 'voice':
       cloneRepo(config.voice.repo, flags.verbose, args.location, flags.branch)

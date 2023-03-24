@@ -22,7 +22,7 @@ export default class Issues extends Command {
     milestone: Flags.boolean({char: 'm', description: 'return all issues tageed to a milestone assigned to me'}),
     new: Flags.boolean({char: 'n', summary: 'create new github issue', description: 'create a new github issue against an openline repo'}),
     token: Flags.string({char: 't', summary: 'github auth token', description: 'overrides the token set in config'}),
-    //repo: Flags.string({char: 'r', summary: 'openline-ai repo', description: 'the openline repo that cooresponds with the openline product', options: ['cli', 'customer-os', 'contacts', 'oasis', 'website']}),
+    //repo: Flags.string({char: 'r', summary: 'openline-ai repo', description: 'the openline repo that cooresponds with the openline product', options: ['cli', 'customer-os', 'contacts', 'website']}),
   }
   
   static args = []

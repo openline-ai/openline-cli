@@ -1,7 +1,6 @@
 import {Command} from '@oclif/core'
 import {pingContactsGui} from '../../lib/dev/contacts'
-import {pingCustomerOsApi, pingfileStoreApi, pingMessageStoreApi, pingSettingsApi} from '../../lib/dev/customer-os'
-import {pingOasisGui, pingOasisApi, pingChannelsApi} from '../../lib/dev/oasis'
+import {pingCustomerOsApi, pingfileStoreApi, pingSettingsApi, pingCommsApi} from '../../lib/dev/customer-os'
 import {pingKamailio} from '../../lib/dev/voice'
 
 import * as colors from 'colors' // eslint-disable-line no-restricted-imports
@@ -23,12 +22,9 @@ export default class DevPing extends Command {
 
     const contactsGui = pingContactsGui() ? colors.bold.green('Yes') : colors.red.bold('No')
     const customerOsApi = pingCustomerOsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
-    const messageStoreApi = pingMessageStoreApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const settingsApi = pingSettingsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const fileStoreApi = pingfileStoreApi() ? colors.bold.green('Yes') : colors.red.bold('No')
-    const channelsApi = pingChannelsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
-    const oasisApi = pingOasisApi() ? colors.bold.green('Yes') : colors.red.bold('No')
-    const oasisGui = pingOasisGui() ? colors.bold.green('Yes') : colors.red.bold('No')
+    const commsApi = pingCommsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const voiceKamailio = pingKamailio() ? colors.bold.green('Yes') : colors.red.bold('No')
 
     const table = new Table({
@@ -38,13 +34,10 @@ export default class DevPing extends Command {
 
     table.push(
       ['customer-os', 'customer-os-api', 'http://localhost:10000', customerOsApi],
-      ['customer-os', 'message-store-api', 'http://localhost:9009', messageStoreApi],
       ['customer-os', 'file-store-api', 'http://localhost:10001', fileStoreApi],
       ['customer-os', 'settings-api', 'http://localhost:10002', settingsApi],
+      ['customer-os', 'comms-api', 'http://localhost:8013', commsApi],
       ['contacts', 'contacts-gui', 'http://localhost:3001', contactsGui],
-      ['oasis', 'channels-api', 'http://localhost:8013', channelsApi],
-      ['oasis', 'oasis-api', 'http://localhost:8006', oasisApi],
-      ['oasis', 'oasis-gui', 'http://localhost:3006', oasisGui],
       ['voice', 'kamailio', 'ws://localhost:8080', voiceKamailio],
 
     )

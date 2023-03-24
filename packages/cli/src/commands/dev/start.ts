@@ -4,9 +4,8 @@ import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
 import {getConfig} from '../../config/dev'
-import {installCustomerOsApi, installfileStoreApi, installMessageStoreApi, installOryTunnel, installSettingsApi} from '../../lib/dev/customer-os'
+import {installCustomerOsApi, installfileStoreApi, installOryTunnel, installSettingsApi, installCommsApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
-import * as oasis from '../../lib/dev/oasis'
 import * as voice from '../../lib/dev/voice'
 import * as start from '../../lib/dev/start'
 import {cloneRepo} from '../../lib/clone/clone-repo'
@@ -43,18 +42,15 @@ export default class DevStart extends Command {
       options: [
         'asterisk',
         'channels-api',
+        'comms-api',
         'contacts',
         'contacts-gui',
         'customer-os',
         'customer-os-api',
         'db',
         'kamailio',
-        'message-store-api',
         'file-store-api',
         'settings-api',
-        'oasis',
-        'oasis-api',
-        'oasis-gui',
         'voice',
         'voice-plugin',
         'ory-tunnel'
@@ -90,22 +86,16 @@ export default class DevStart extends Command {
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
-      installMessageStoreApi(flags.verbose, location, version)
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
       installOryTunnel(flags.verbose, location, version)
+      installCommsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
       // install contacts
       cloneRepo(config.contacts.repo, flags.verbose, config.setupDir, undefined, true)
       installContactsGui(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      // install oasis
-      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir, undefined, true)
-      oasis.installChannelsApi(flags.verbose, location, version)
-      oasis.installOasisApi(flags.verbose, location, version)
-      oasis.installOasisGui(flags.verbose, location, version)
       start.cleanupSetupFiles()
 
       logTerminal('SUCCESS', 'Openline dev server has been started')
@@ -124,7 +114,6 @@ export default class DevStart extends Command {
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
-      installMessageStoreApi(flags.verbose, location, version)
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
@@ -159,9 +148,9 @@ export default class DevStart extends Command {
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
-      installMessageStoreApi(flags.verbose, location, version)
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
+      installCommsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -176,17 +165,6 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'message-store-api':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      installMessageStoreApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
@@ -223,6 +201,17 @@ export default class DevStart extends Command {
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
+    case 'comms-api':
+      start.dependencyCheck(flags.verbose)
+      start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      installCommsApi(flags.verbose, location, version)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+
     case 'db':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
@@ -233,69 +222,6 @@ export default class DevStart extends Command {
       start.installDatabases(flags.verbose, location)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'oasis':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.installDatabases(flags.verbose, location)
-      installCustomerOsApi(flags.verbose, location, version)
-      installMessageStoreApi(flags.verbose, location, version)
-      installfileStoreApi(flags.verbose, location, version)
-      installSettingsApi(flags.verbose, location, version)
-      sql.provisionPostgresql(flags.verbose, location)
-      neo.provisionNeo4j(flags.verbose, location)
-      start.cleanupSetupFiles()
-      // install oasis
-      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir, undefined, true)
-      oasis.installChannelsApi(flags.verbose, location, version)
-      oasis.installOasisApi(flags.verbose, location, version)
-      oasis.installOasisGui(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'oasis-api':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir, undefined, true)
-      oasis.installOasisApi(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'oasis-gui':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir, undefined, true)
-      oasis.installOasisGui(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'channels-api':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir, undefined, true)
-      oasis.installChannelsApi(flags.verbose, location, version)
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
@@ -314,17 +240,11 @@ export default class DevStart extends Command {
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
-      installMessageStoreApi(flags.verbose, location, version)
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
+      installCommsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
-      start.cleanupSetupFiles()
-      // install oasis
-      cloneRepo(config.oasis.repo, flags.verbose, config.setupDir, undefined, true)
-      oasis.installChannelsApi(flags.verbose, location, version)
-      oasis.installOasisApi(flags.verbose, location, version)
-      oasis.installOasisGui(flags.verbose, location, version)
       start.cleanupSetupFiles()
       // install voice
       cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
