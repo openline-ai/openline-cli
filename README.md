@@ -88,6 +88,12 @@ alias ol="node {path/to/project/dir}/packages/cli/bin/run"
 
 Once aliased, you'll be able to run your local codebase by typing `ol {command}`.
 
+For Ory Tunnel just :
+
+1. ory auth
+2. ory project ls - select project to tunnel to
+3. ory tunnel --project kind-blabla-blablabla http://localhost:3001 --dev
+
 ## 🤝 Resources
 
 - Full reference docs for the CLI can be found via our [CLI guide][guide]
@@ -129,3 +135,4 @@ A massive thank you goes out to all these wonderful people ([emoji key][emoji]):
 [pricing]: https://openline.ai/pricing
 [slack]: https://join.slack.com/t/openline-ai/shared_invite/zt-1i6umaw6c-aaap4VwvGHeoJ1zz~ngCKQ
 [twitter]: https://twitter.com/OpenlineAI
+
