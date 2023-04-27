@@ -65,6 +65,12 @@ export function getConfig() :any {
 
   config.customerOs.repo = 'https://github.com/openline-ai/openline-customer-os.git'
 
+  // customerOS EventStore DB
+  config.customerOs.eventStoreDbImage = 'eventstore/eventstore:22.10.1-alpha-arm64v8'
+  config.customerOs.eventStoreDbDeployment = '/deployment/infra/k8s/event-store.yaml'
+  config.customerOs.eventStoreDbService = '/deployment/infra/k8s/event-store-service.yaml'
+  config.customerOs.eventStoreDbLoadbalancer = '/deployment/infra/k8s/event-store-loadbalancer.yaml'
+
   //Ory Tunnel
   config.customerOs.oryTunnelImage = 'ghcr.io/openline-ai/openline-customer-os/ory-tunnel:'
   config.customerOs.oryTunnelStatefulset = '/deployment/infra/k8s/ory-tunnel.yaml'

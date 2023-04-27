@@ -40,6 +40,7 @@ export default class DevRm extends Command {
         'asterisk',
         'voice-plugin',
         'ory-tunnel',
+        'event-store-db',
       ],
     },
   ]
