@@ -225,6 +225,19 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
+      case 'event-store-db': {
+        const appServices: Apps = {
+          deployments: [],
+          services: [
+            'event-store-db-service',
+            'event-store-db-loadbalancer',
+          ],
+          statefulsets: ['event-store-db'],
+        }
+        deleteApp(appServices, flags.verbose)
+        break
+      }
+
     }
   }
 }
