@@ -6,6 +6,7 @@ import * as sql from '../../lib/dev/postgres'
 import {getConfig} from '../../config/dev'
 import {installCustomerOsApi, installfileStoreApi, installOryTunnel, installSettingsApi, installCommsApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
+import {installEventStoreDB} from '../../lib/dev/eventstore'
 import * as voice from '../../lib/dev/voice'
 import * as start from '../../lib/dev/start'
 import {cloneRepo} from '../../lib/clone/clone-repo'
@@ -53,7 +54,8 @@ export default class DevStart extends Command {
         'settings-api',
         'voice',
         'voice-plugin',
-        'ory-tunnel'
+        'ory-tunnel',
+        'event-store-db'
       ],
     },
   ]
@@ -147,6 +149,7 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
+      installEventStoreDB(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
@@ -308,6 +311,18 @@ export default class DevStart extends Command {
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
+
+      case 'event-store-db':
+        start.dependencyCheck(flags.verbose)
+        start.startDevServer(flags.verbose)
+        start.cleanupSetupFiles()
+        // install customerOS
+        cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+        ns.installNamespace(flags.verbose, location)
+        installEventStoreDB(flags.verbose, location)
+        start.cleanupSetupFiles()
+        logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+        break
     }
   }
 }
