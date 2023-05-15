@@ -9,6 +9,7 @@ const NAMESPACE = config.namespace.name
 const CUSTOMER_OS_API = 'customer-os-api-service'
 const SETTING_API = 'settings-api-service'
 const FILE_STORAGE_API = 'file-store-api-service'
+const EVENTS_PROCESSING_PLATFORM = 'events-processing-platform-service'
 const ORY_TUNNEL = 'ory-tunnel-service'
 const COMMS_API = 'comms-api-service'
 
@@ -23,6 +24,10 @@ function settingsApiCheck() :boolean {
 
 function fileStoreApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${FILE_STORAGE_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+}
+
+function eventsProcessingPlatformCheck() :boolean {
+  return (shell.exec(`kubectl get service ${EVENTS_PROCESSING_PLATFORM} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
 function oryTunnelCheck() :boolean {
@@ -143,6 +148,42 @@ export function installfileStoreApi(verbose: boolean, location = config.setupDir
   return true
 }
 
+export function installEventsProcessingPlatform(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+  if (eventsProcessingPlatformCheck()) {
+    logTerminal('SUCCESS', 'events-processing-platform already running')
+    return true
+  }
+  const DEPLOYMENT = location + config.customerOs.eventsProcessingPlatformDeployment
+  const SERVICE = location + config.customerOs.eventsProcessingPlatformService
+  const LOADBALANCER = location + config.customerOs.eventsProcessingPlatformLoadbalancer
+
+  if (imageVersion.toLowerCase() !== 'latest') {
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
+    if (!tag) return false
+  }
+
+  let image: string | null  = config.customerOs.eventsProcessingPlatformImage + imageVersion
+
+  if (location !== config.setupDir) {
+    // come back to this
+    const buildPath = location + '/packages/server/events-processing-platform'
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
+    image = null
+  }
+
+  const installConfig: Yaml = {
+    deployYaml: DEPLOYMENT,
+    serviceYaml: SERVICE,
+    loadbalancerYaml: LOADBALANCER,
+  }
+  const deploy = deployImage(image, installConfig, verbose)
+  if (deploy === false) return false
+
+  logTerminal('SUCCESS', 'events-processing-platform successfully installed')
+  return true
+}
+
 export function installOryTunnel(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (oryTunnelCheck()) {
     logTerminal('SUCCESS', 'ory-tunnel already running')
@@ -222,6 +263,10 @@ export function pingSettingsApi() :boolean {
 
 export function pingfileStoreApi() :boolean {
   return shell.exec('nc -zv -w5 localhost 10001', {silent: true}).code === 0
+}
+
+export function pingEventsStoreDb() :boolean {
+  return shell.exec('nc -zv -w5 localhost 2113', {silent: true}).code === 0
 }
 
 export function pingCommsApi() :boolean {

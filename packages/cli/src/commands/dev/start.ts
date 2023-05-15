@@ -4,7 +4,7 @@ import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
 import {getConfig} from '../../config/dev'
-import {installCustomerOsApi, installfileStoreApi, installOryTunnel, installSettingsApi, installCommsApi} from '../../lib/dev/customer-os'
+import {installCustomerOsApi, installfileStoreApi, installOryTunnel, installSettingsApi, installCommsApi, installEventsProcessingPlatform} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
 import {installEventStoreDB} from '../../lib/dev/eventstore'
 import * as voice from '../../lib/dev/voice'
@@ -55,7 +55,8 @@ export default class DevStart extends Command {
         'voice',
         'voice-plugin',
         'ory-tunnel',
-        'event-store-db'
+        'event-store-db',
+        'events-processing-platform'
       ],
     },
   ]
@@ -92,6 +93,7 @@ export default class DevStart extends Command {
       installSettingsApi(flags.verbose, location, version)
       installOryTunnel(flags.verbose, location, version)
       installCommsApi(flags.verbose, location, version)
+      installEventsProcessingPlatform(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -154,6 +156,7 @@ export default class DevStart extends Command {
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
       installCommsApi(flags.verbose, location, version)
+      installEventsProcessingPlatform(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
