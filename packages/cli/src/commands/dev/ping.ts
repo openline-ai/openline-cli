@@ -24,7 +24,7 @@ export default class DevPing extends Command {
     const customerOsApi = pingCustomerOsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const settingsApi = pingSettingsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const fileStoreApi = pingfileStoreApi() ? colors.bold.green('Yes') : colors.red.bold('No')
-    const eventsProcessingPlatform = pingEventsStoreDb() ? colors.bold.green('Yes') : colors.red.bold('No')
+    const eventStoreDb = pingEventsStoreDb() ? colors.bold.green('Yes') : colors.red.bold('No')
     const commsApi = pingCommsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const voiceKamailio = pingKamailio() ? colors.bold.green('Yes') : colors.red.bold('No')
 
@@ -38,7 +38,7 @@ export default class DevPing extends Command {
       ['customer-os', 'file-store-api', 'http://localhost:10001', fileStoreApi],
       ['customer-os', 'settings-api', 'http://localhost:10002', settingsApi],
       ['customer-os', 'comms-api', 'http://localhost:8013', commsApi],
-      ['customer-os', 'events-processing-platform', 'http://localhost:2113', eventsProcessingPlatform],
+      ['customer-os', 'event-store-db', 'http://localhost:2113', eventStoreDb],
       ['contacts', 'contacts-gui', 'http://localhost:3001', contactsGui],
       ['voice', 'kamailio', 'ws://localhost:8080', voiceKamailio],
 
