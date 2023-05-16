@@ -151,11 +151,11 @@ export default class DevStart extends Command {
       cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
-      installEventStoreDB(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
       installCommsApi(flags.verbose, location, version)
+      installEventStoreDB(flags.verbose, location)
       installEventsProcessingPlatform(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
@@ -315,17 +315,29 @@ export default class DevStart extends Command {
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
-      case 'event-store-db':
-        start.dependencyCheck(flags.verbose)
-        start.startDevServer(flags.verbose)
-        start.cleanupSetupFiles()
-        // install customerOS
-        cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-        ns.installNamespace(flags.verbose, location)
-        installEventStoreDB(flags.verbose, location)
-        start.cleanupSetupFiles()
-        logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-        break
+    case 'event-store-db':
+      start.dependencyCheck(flags.verbose)
+      start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      installEventStoreDB(flags.verbose, location)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+
+    case 'events-processing-platform':
+      start.dependencyCheck(flags.verbose)
+      start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      installEventsProcessingPlatform(flags.verbose, location)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
     }
   }
 }
