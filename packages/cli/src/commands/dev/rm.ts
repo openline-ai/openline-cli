@@ -41,6 +41,7 @@ export default class DevRm extends Command {
         'voice-plugin',
         'ory-tunnel',
         'event-store-db',
+        'events-processing-platform'
       ],
     },
   ]
@@ -225,18 +226,27 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
-      case 'event-store-db': {
-        const appServices: Apps = {
-          deployments: [],
-          services: [
-            'event-store-db-service',
-            'event-store-db-loadbalancer',
-          ],
-          statefulsets: ['event-store-db'],
-        }
-        deleteApp(appServices, flags.verbose)
-        break
+    case 'event-store-db': {
+      const appServices: Apps = {
+        deployments: [],
+        services: [
+          'event-store-db-service',
+          'event-store-db-loadbalancer',
+        ],
+        statefulsets: ['event-store-db'],
       }
+      deleteApp(appServices, flags.verbose)
+      break
+    }
+    case 'events-processing-platform': {
+      const appServices: Apps = {
+        deployments: ['events-processing-platform'],
+        services: ['events-processing-platform-service', 'events-processing-platform-loadbalancer'],
+        statefulsets: [],
+      }
+      deleteApp(appServices, flags.verbose)
+      break
+    }
 
     }
   }

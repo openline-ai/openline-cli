@@ -53,6 +53,11 @@ export function getConfig() :any {
   config.customerOs.fileStoreDeployment = '/deployment/infra/k8s/file-store-api.yaml'
   config.customerOs.fileStoreService = '/deployment/infra/k8s/file-store-api-service.yaml'
   config.customerOs.fileStoreLoadbalancer = '/deployment/infra/k8s/file-store-api-loadbalancer.yaml'
+  //customerOs Events Processing Platform
+  config.customerOs.eventsProcessingPlatformImage = 'ghcr.io/openline-ai/openline-customer-os/events-processing-platform:'
+  config.customerOs.eventsProcessingPlatformDeployment = '/deployment/infra/k8s/events-processing-platform.yaml'
+  config.customerOs.eventsProcessingPlatformService = '/deployment/infra/k8s/events-processing-platform-service.yaml'
+  config.customerOs.eventsProcessingPlatformLoadbalancer = '/deployment/infra/k8s/events-processing-platform-loadbalancer.yaml'
   // customerOS postgreSQL DB
   config.customerOs.postgresqlPersistentVolume = '/deployment/infra/k8s/postgresql-persistent-volume.yaml'
   config.customerOs.postgresqlPersistentVolumeClaim = '/deployment/infra/k8s/postgresql-persistent-volume-claim.yaml'
