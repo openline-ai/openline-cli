@@ -26,6 +26,7 @@ export default class DevRm extends Command {
       required: false,
       description: 'the Openline service or group of services you would like to delete',
       options: [
+        'asterisk',
         'channels-api',
         'comms-api',
         'contacts',
@@ -33,15 +34,15 @@ export default class DevRm extends Command {
         'customer-os',
         'customer-os-api',
         'db',
-        'file-store-api',
-        'settings-api',
-        'voice',
-        'kamailio',
-        'asterisk',
-        'voice-plugin',
-        'ory-tunnel',
+        'events-processing-platform',
         'event-store-db',
-        'events-processing-platform'
+        'file-store-api',
+        'kamailio',
+        'ory-tunnel',
+        'settings-api',
+        'validation-api',
+        'voice',
+        'voice-plugin'
       ],
     },
   ]
@@ -150,7 +151,6 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
-
     case 'comms-api': {
       const appServices: Apps = {
         deployments: ['comms-api'],
@@ -163,7 +163,8 @@ export default class DevRm extends Command {
     }
 
     // Voice Services
-    case 'voice': {
+
+      case 'voice': {
       const appServices: Apps = {
         deployments: ['kamailio', 'voice-plugin'],
         services: [
@@ -178,7 +179,6 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
-
     case 'kamailio': {
       const appServices: Apps = {
         deployments: ['kamailio'],
@@ -203,7 +203,8 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
-    case 'ory-tunnel': {
+
+      case 'ory-tunnel': {
       const appServices: Apps = {
         deployments: [],
         services: [
@@ -215,7 +216,7 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
-    case 'voice-plugin': {
+      case 'voice-plugin': {
       const appServices: Apps = {
         deployments: ['voice-plugin'],
         services: [
@@ -226,7 +227,7 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
-    case 'event-store-db': {
+      case 'event-store-db': {
       const appServices: Apps = {
         deployments: [],
         services: [
@@ -238,7 +239,7 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
-    case 'events-processing-platform': {
+      case 'events-processing-platform': {
       const appServices: Apps = {
         deployments: ['events-processing-platform'],
         services: ['events-processing-platform-service', 'events-processing-platform-loadbalancer'],
@@ -247,7 +248,15 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
-
+      case 'validation-api': {
+        const appServices: Apps = {
+          deployments: ['validation-api'],
+          services: ['validation-service', 'validation-loadbalancer'],
+          statefulsets: [],
+        }
+        deleteApp(appServices, flags.verbose)
+        break
+      }
     }
   }
 }

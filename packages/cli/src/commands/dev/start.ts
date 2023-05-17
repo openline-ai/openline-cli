@@ -4,7 +4,7 @@ import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
 import {getConfig} from '../../config/dev'
-import {installCustomerOsApi, installfileStoreApi, installOryTunnel, installSettingsApi, installCommsApi, installEventsProcessingPlatform} from '../../lib/dev/customer-os'
+import {installCustomerOsApi, installfileStoreApi, installOryTunnel, installSettingsApi, installCommsApi, installEventsProcessingPlatform, installValidationApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
 import {installEventStoreDB} from '../../lib/dev/eventstore'
 import * as voice from '../../lib/dev/voice'
@@ -49,14 +49,15 @@ export default class DevStart extends Command {
         'customer-os',
         'customer-os-api',
         'db',
-        'kamailio',
-        'file-store-api',
-        'settings-api',
-        'voice',
-        'voice-plugin',
-        'ory-tunnel',
+        'events-processing-platform',
         'event-store-db',
-        'events-processing-platform'
+        'file-store-api',
+        'kamailio',
+        'ory-tunnel',
+        'settings-api',
+        'validation-api',
+        'voice',
+        'voice-plugin'
       ],
     },
   ]
@@ -93,7 +94,9 @@ export default class DevStart extends Command {
       installSettingsApi(flags.verbose, location, version)
       installOryTunnel(flags.verbose, location, version)
       installCommsApi(flags.verbose, location, version)
+      installEventStoreDB(flags.verbose, location)
       installEventsProcessingPlatform(flags.verbose, location, version)
+      installValidationApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -157,6 +160,7 @@ export default class DevStart extends Command {
       installCommsApi(flags.verbose, location, version)
       installEventStoreDB(flags.verbose, location)
       installEventsProcessingPlatform(flags.verbose, location, version)
+      installValidationApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -206,7 +210,6 @@ export default class DevStart extends Command {
       installfileStoreApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
-
     case 'comms-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
@@ -338,6 +341,17 @@ export default class DevStart extends Command {
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
+
+      case 'validation-api':
+        start.dependencyCheck(flags.verbose)
+        start.startDevServer(flags.verbose)
+        start.cleanupSetupFiles()
+        // install customerOS
+        cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+        ns.installNamespace(flags.verbose, location)
+        installValidationApi(flags.verbose, location, version)
+        logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+        break
     }
   }
 }
