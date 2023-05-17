@@ -313,5 +313,5 @@ export function pingCommsApi() :boolean {
 }
 
 export function pingValidationApi() :boolean {
-  return shell.exec('nc -zv -w5 localhost 10003', {silent: true}).code === 0
+  return shell.exec('curl localhost:10003/health', {silent: true}).code === 0
 }

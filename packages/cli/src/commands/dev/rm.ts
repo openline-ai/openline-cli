@@ -26,6 +26,7 @@ export default class DevRm extends Command {
       required: false,
       description: 'the Openline service or group of services you would like to delete',
       options: [
+        'asterisk',
         'channels-api',
         'comms-api',
         'contacts',
@@ -33,15 +34,15 @@ export default class DevRm extends Command {
         'customer-os',
         'customer-os-api',
         'db',
-        'file-store-api',
-        'settings-api',
-        'voice',
-        'kamailio',
-        'asterisk',
-        'voice-plugin',
-        'ory-tunnel',
+        'events-processing-platform',
         'event-store-db',
-        'events-processing-platform'
+        'file-store-api',
+        'kamailio',
+        'ory-tunnel',
+        'settings-api',
+        'validation-api',
+        'voice',
+        'voice-plugin'
       ],
     },
   ]

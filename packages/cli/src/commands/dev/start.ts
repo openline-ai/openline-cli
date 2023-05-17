@@ -49,14 +49,15 @@ export default class DevStart extends Command {
         'customer-os',
         'customer-os-api',
         'db',
-        'kamailio',
-        'file-store-api',
-        'settings-api',
-        'voice',
-        'voice-plugin',
-        'ory-tunnel',
+        'events-processing-platform',
         'event-store-db',
-        'events-processing-platform'
+        'file-store-api',
+        'kamailio',
+        'ory-tunnel',
+        'settings-api',
+        'validation-api',
+        'voice',
+        'voice-plugin'
       ],
     },
   ]
