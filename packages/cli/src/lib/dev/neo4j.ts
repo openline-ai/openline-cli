@@ -5,11 +5,12 @@ import {exit} from 'node:process'
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
-const NEO4J_SERVICE = 'customer-db-neo4j'
+const NEO4J_RELEASE_NAME = 'customer-db-neo4j'
 const NEO4J_POD = 'customer-db-neo4j-0'
+const NEO4J_NAME = 'openline-neo4j-db'
 
 function neo4jCheck() :boolean {
-  return (shell.exec(`kubectl get service ${NEO4J_SERVICE} -n ${NAMESPACE}`, {silent: true}).code === 0)
+  return (shell.exec(`kubectl get service ${NEO4J_RELEASE_NAME} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
 export function installNeo4j(verbose :boolean, location = config.setupDir) :boolean {
@@ -20,7 +21,7 @@ export function installNeo4j(verbose :boolean, location = config.setupDir) :bool
   if (verbose) logTerminal('EXEC', helmAdd)
   shell.exec(helmAdd, {silent: true})
 
-  const helmInstall = `helm install ${NEO4J_SERVICE} neo4j/neo4j-standalone --set volumes.data.mode=defaultStorageClass -f ${HELM_VALUES_PATH} --namespace ${NAMESPACE}`
+  const helmInstall = `helm install ${NEO4J_RELEASE_NAME} neo4j/neo4j --set volumes.data.mode=defaultStorageClass --set "neo4j.name=${NEO4J_NAME}" -f ${HELM_VALUES_PATH} --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', helmInstall)
   const neoInstall = shell.exec(helmInstall, {silent: !verbose})
   if (neoInstall.code !== 0) {
@@ -41,7 +42,7 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `Neo4j starting up, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      neo = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${NEO4J_SERVICE}|grep Running|cut -f1 -d ' '`, {silent: true}).stdout
+      neo = shell.exec(`kubectl get pods -n ${NAMESPACE}|grep ${NEO4J_RELEASE_NAME}|grep Running|cut -f1 -d ' '`, {silent: true}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning Neo4j timed out', 'dev:neo4j:provionNeo4j')
@@ -67,7 +68,7 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
 
   let neoOutput = []
   do {
-    const neoOutputFull = shell.exec(`cat ${NEO4J_CYPHER} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_SERVICE}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
+    const neoOutputFull = shell.exec(`cat ${NEO4J_CYPHER} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_RELEASE_NAME}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
     neoOutput = neoOutputFull.filter(function (line) {
       return !(line.includes('see a command prompt') || line === '')
     })
@@ -84,7 +85,7 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
 }
 
 export function uninstallNeo4j(verbose:boolean) :boolean {
-  const helmUninstall = `helm uninstall ${NEO4J_SERVICE} --namespace ${NAMESPACE}`
+  const helmUninstall = `helm uninstall ${NEO4J_RELEASE_NAME} --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', helmUninstall)
   const result = shell.exec(helmUninstall, {silent: true})
   if (result.code === 0) {
