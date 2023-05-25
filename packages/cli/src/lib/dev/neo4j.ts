@@ -17,11 +17,11 @@ export function installNeo4j(verbose :boolean, location = config.setupDir) :bool
   if (neo4jCheck()) return true
   const HELM_VALUES_PATH = location + config.customerOs.neo4jHelmValues
 
-  const helmAdd = 'helm repo add neo4j https://helm.neo4j.com/neo4j'
+  const helmAdd = 'helm repo add neo4j https://helm.neo4j.com/neo4j --force-update'
   if (verbose) logTerminal('EXEC', helmAdd)
   shell.exec(helmAdd, {silent: true})
 
-  const helmInstall = `helm install ${NEO4J_RELEASE_NAME} neo4j/neo4j --set volumes.data.mode=defaultStorageClass --set "neo4j.name=${NEO4J_NAME}" -f ${HELM_VALUES_PATH} --namespace ${NAMESPACE}`
+  const helmInstall = `helm upgrade --install ${NEO4J_RELEASE_NAME} neo4j/neo4j --set volumes.data.mode=defaultStorageClass --set "neo4j.name=${NEO4J_NAME}" -f ${HELM_VALUES_PATH} --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', helmInstall)
   const neoInstall = shell.exec(helmInstall, {silent: !verbose})
   if (neoInstall.code !== 0) {
