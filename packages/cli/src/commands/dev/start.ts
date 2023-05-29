@@ -11,6 +11,7 @@ import * as voice from '../../lib/dev/voice'
 import * as start from '../../lib/dev/start'
 import {cloneRepo} from '../../lib/clone/clone-repo'
 import {logTerminal} from '../../lib/logs'
+import {installJaeger} from "../../lib/dev/jaeger";
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -52,6 +53,7 @@ export default class DevStart extends Command {
         'events-processing-platform',
         'event-store-db',
         'file-store-api',
+        'jaeger',
         'kamailio',
         'ory-tunnel',
         'settings-api',
@@ -97,6 +99,7 @@ export default class DevStart extends Command {
       installEventStoreDB(flags.verbose, location)
       installEventsProcessingPlatform(flags.verbose, location, version)
       installValidationApi(flags.verbose, location, version)
+      installJaeger(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -161,6 +164,7 @@ export default class DevStart extends Command {
       installEventStoreDB(flags.verbose, location)
       installEventsProcessingPlatform(flags.verbose, location, version)
       installValidationApi(flags.verbose, location, version)
+      installJaeger(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       start.cleanupSetupFiles()
