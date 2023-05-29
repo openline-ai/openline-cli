@@ -136,6 +136,7 @@ export function getConfig() :any {
   config.dependencies.mac.xcode = 'xcode-select --install'
   config.dependencies.mac.netcat = 'brew install netcat'
   config.dependencies.mac.ory = 'brew install ory/tap/cli'
+  config.dependencies.mac.jq = 'brew install jq'
 
 
   config.dependencies.linux = {}
