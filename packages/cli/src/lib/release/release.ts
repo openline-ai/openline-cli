@@ -3,9 +3,10 @@ import {installDependencies as installMacDependencies} from "../mac-dependency-c
 import {installDependencies as installLinuxDependencies} from "../linux-dependency-check";
 import {logTerminal} from "../logs";
 import * as colors from "colors";
+import * as Listr from 'listr'
 
 const inquirer = require('inquirer');
-
+const ghp = "";
 export function dependencyCheck(verbose: boolean) :boolean {
   // macOS check
   switch (process.platform) {
@@ -116,6 +117,55 @@ export async function getReleaseEnvironment() {
   return env;
 }
 
+function createNewTag(repo: any, newTag: string) {
+  const newTaggedRelease = `curl -L -X POST -H "Authorization: Bearer ${ghp}" -H "Accept: application/vnd.github+json" https://api.github.com/repos/openline-ai/${repo}/releases -d '{"tag_name":"${newTag}","name": "${newTag}","body": "","draft": false,"prerelease": false, "make_latest": "true"}'`;
+  shell.exec(newTaggedRelease, {silent: true});
+}
+
+function getPackagesForRepo(repo: any){
+  const repoList = `curl -s -L -H "Authorization: Bearer ${ghp}" -H "Accept: application/vnd.github+json" 'https://api.github.com/orgs/openline-ai/packages?package_type=container' | jq '.[] | select(.repository.name == "${repo}").name'`;
+  // const repoList = `curl -s -L -H "Authorization: Bearer ${ghp}" -H "Accept: application/vnd.github+json" 'https://api.github.com/orgs/openline-ai/packages?package_type=container' | jq '.[] | select(.repository.name == "${repo}") | .name, .url}'`;
+  const { stdout, stderr } = shell.exec(repoList, { silent: true });
+  if (stderr) {
+    console.error('An error occurred:', stderr);
+    return [];
+  }
+
+  const packageNames = stdout.trim().split('\n').map((name) => name.replace(/"/g, ''));
+// console.log(packageNames)
+  return packageNames;
+}
+
+async function getPackageVersions(packageNames: string[], newTag: string): Promise<Map<string, string>> {
+  const versionMap = new Map<string, string>();
+  const tasks = new Listr(
+    packageNames.map((packageName) => ({
+      title: `Checking version for ${packageName}`,
+      task: async (ctx, task) => {
+        let packageVersion;
+        while (true) {
+          packageVersion = `curl -s -L -H "Authorization: Bearer ${ghp}" -H "Accept: application/vnd.github+json" 'https://api.github.com/orgs/openline-ai/packages/container/`+ packageName.replace("/", "%2F") + `/versions' | jq '.[] | select(.metadata.container.tags | contains(["latest"])) | .metadata.container.tags[] | select(. != "latest")'`
+          try {
+            const version = shell.exec(packageVersion, {silent: true})
+            if (versionMap.get(packageName) !== newTag) {
+              // versionMap.set(packageName, version);
+              console.log(versionMap.get(packageName), ` - `, newTag);
+              break;
+            }
+          } catch (error) {
+            console.error(`Error checking version for ${packageName}:`);
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for 1 second before polling again
+        }
+      },
+    }))
+  );
+
+  await tasks.run();
+  return versionMap;
+}
+
 export async function getReleaseConfirmation(repo: any, releaseType: any, newTag: string, stylizedNewTag: string) {
   const environments = ['Yes', 'No'];
   const { releaseConfirmation } = await inquirer.prompt([
@@ -127,12 +177,19 @@ export async function getReleaseConfirmation(repo: any, releaseType: any, newTag
     },
   ]);
 
-  function createNewTag(repo: any, newTag: string) {
-    const newTaggedRelease = `curl -L -X POST -H "Authorization: Bearer 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" -H "Accept: application/vnd.github+json" https://api.github.com/repos/openline-ai/${repo}/releases -d '{"tag_name":"${newTag}","name": "${newTag}","body": "","draft": false,"prerelease": false, "make_latest": "true"}'`;
-    shell.exec(newTaggedRelease, {silent: true});
-  }
-
   if (releaseConfirmation == 'Yes'){
-    createNewTag(repo, newTag);
+    // createNewTag(repo, newTag);
+    let packageNames = getPackagesForRepo(repo);
+    console.log(packageNames);
+
+    try {
+      const versionMap = await getPackageVersions(packageNames, newTag);
+      console.log('Updated Versions:');
+      versionMap.forEach((version, packageName) => {
+        console.log(`${packageName}: ${version}`);
+      });
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
   }
 }
