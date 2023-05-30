@@ -124,7 +124,7 @@ export function getConfig() :any {
   config.website.repo = 'https://github.com/openline-ai/openline.ai.git'
 
   // Jaeger
-  config.customerOs.jaegerImage = 'jaegertracing/all-in-one:1.45'
+  config.customerOs.jaegerImage = 'jaegertracing/all-in-one:'
   config.customerOs.jaegerDeployment = '/deployment/infra/k8s/jaeger.yaml'
   config.customerOs.jaegerService = '/deployment/infra/k8s/jaeger-service.yaml'
   config.customerOs.jaegerLoadbalancer = '/deployment/infra/k8s/jaeger-loadbalancer.yaml'

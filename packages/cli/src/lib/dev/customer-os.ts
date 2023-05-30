@@ -308,6 +308,10 @@ export function pingEventsStoreDb() :boolean {
   return shell.exec('nc -zv -w5 localhost 2113', {silent: true}).code === 0
 }
 
+export function pingJaeger() :boolean {
+  return shell.exec('curl http://localhost:16686/health', {silent: true}).code === 0
+}
+
 export function pingCommsApi() :boolean {
   return shell.exec('curl localhost:8013/health', {silent: true}).code === 0
 }

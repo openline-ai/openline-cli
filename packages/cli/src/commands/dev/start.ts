@@ -346,6 +346,18 @@ export default class DevStart extends Command {
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
 
+    case 'jaeger':
+      start.dependencyCheck(flags.verbose)
+      start.startDevServer(flags.verbose)
+      start.cleanupSetupFiles()
+      // install customerOS
+      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+      ns.installNamespace(flags.verbose, location)
+      installJaeger(flags.verbose, location)
+      start.cleanupSetupFiles()
+      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+      break
+
       case 'validation-api':
         start.dependencyCheck(flags.verbose)
         start.startDevServer(flags.verbose)

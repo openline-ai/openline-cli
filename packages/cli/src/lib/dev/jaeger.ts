@@ -17,7 +17,7 @@ export function installJaeger(verbose: boolean, location = config.setupDir, imag
   const SERVICE = location + config.customerOs.jaegerService
   const LOADBALANCER = location + config.customerOs.jaegerLoadbalancer
 
-  let image: string | null = config.customerOs.apiImage + imageVersion
+  let image: string | null = config.customerOs.jaegerImage + 'latest'
 
   const installConfig: Yaml = {
     deployYaml: DEPLOYMENT,

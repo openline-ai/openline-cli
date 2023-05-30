@@ -17,7 +17,7 @@ export function installEventStoreDB(verbose: boolean, location = config.setupDir
   const SERVICE = location + config.customerOs.eventStoreDbService
   const LOADBALANCER = location + config.customerOs.eventStoreDbLoadbalancer
 
-  let image: string | null = config.customerOs.apiImage + imageVersion
+  let image: string | null = config.customerOs.eventStoreDbImage
 
   const installConfig: Yaml = {
     deployYaml: DEPLOYMENT,

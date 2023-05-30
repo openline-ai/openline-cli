@@ -248,6 +248,15 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
+    case 'jaeger': {
+      const appServices: Apps = {
+        deployments: ['jaeger'],
+        services: ['jaeger-service', 'jaeger-loadbalancer'],
+        statefulsets: [],
+      }
+      deleteApp(appServices, flags.verbose)
+      break
+    }
       case 'validation-api': {
         const appServices: Apps = {
           deployments: ['validation-api'],
