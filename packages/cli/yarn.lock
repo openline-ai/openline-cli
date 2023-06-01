@@ -473,10 +473,10 @@
     node-gyp "^8.2.0"
     read-package-json-fast "^2.0.1"
 
-"@oclif/color@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.npmjs.org/@oclif/color/-/color-1.0.2.tgz"
-  integrity sha512-HqTFeMjfLOZajxqffSkyDWFUB3YqsSLRcsvnvITGRzhO0Ip4Qwp0VHVwh+qe0TjJYEltmOgzoxsR1LZPQIHNBQ==
+"@oclif/color@^1.0.2", "@oclif/color@^1.0.4":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@oclif/color/-/color-1.0.5.tgz#09da86db0cdda7601f77038d3c573e3d041a19f9"
+  integrity sha512-CeUDnzGOt3G7k6KJolTueTMYfJnU/zc6MouwF3sgL+7lnrwTiLaLwQ384EVFtUaIlRHNA0WifGh6FHKc8jqw2g==
   dependencies:
     ansi-styles "^4.2.1"
     chalk "^4.1.0"
@@ -484,7 +484,7 @@
     supports-color "^8.1.1"
     tslib "^2"
 
-"@oclif/core@^1.1.1":
+"@oclif/core@^1.1.1", "@oclif/core@^1.19.1", "@oclif/core@^1.20.4", "@oclif/core@^1.23.0", "@oclif/core@^1.23.1", "@oclif/core@^1.24.2":
   version "1.26.2"
   resolved "https://registry.npmjs.org/@oclif/core/-/core-1.26.2.tgz"
   integrity sha512-6jYuZgXvHfOIc9GIaS4T3CIKGTjPmfAxuMcbCbMRKJJl4aq/4xeRlEz0E8/hz8HxvxZBGvN2GwAUHlrGWQVrVw==
@@ -518,21 +518,20 @@
     widest-line "^3.1.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/core@^1.19.1", "@oclif/core@^1.20.4", "@oclif/core@^1.23.0", "@oclif/core@^1.23.1", "@oclif/core@^1.24.2":
-  version "1.24.2"
-  resolved "https://registry.npmjs.org/@oclif/core/-/core-1.24.2.tgz"
-  integrity sha512-0wfAa6HG4sJ4j5c4/GV4BWZwALtJyw2ZO6titnrWKcowxU1BWd8mBM45ilTPnDhClMowz7+8EtK4kqUGc1rNwA==
+"@oclif/core@^2.8.0":
+  version "2.8.5"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.8.5.tgz#7964057bbee5e91dae8b35e030e767f38e50a19e"
+  integrity sha512-316DLfrHQDYmWDriI4Woxk9y1wVUrPN1sZdbQLHdOdlTA9v/twe7TdHpWOriEypfl6C85NWEJKc1870yuLtjrQ==
   dependencies:
-    "@oclif/linewrap" "^1.0.0"
-    "@oclif/screen" "^3.0.4"
+    "@types/cli-progress" "^3.11.0"
     ansi-escapes "^4.3.2"
     ansi-styles "^4.3.0"
     cardinal "^2.1.1"
     chalk "^4.1.2"
     clean-stack "^3.0.1"
-    cli-progress "^3.10.0"
+    cli-progress "^3.12.0"
     debug "^4.3.4"
-    ejs "^3.1.6"
+    ejs "^3.1.8"
     fs-extra "^9.1.0"
     get-package-type "^0.1.0"
     globby "^11.1.0"
@@ -548,8 +547,10 @@
     strip-ansi "^6.0.1"
     supports-color "^8.1.1"
     supports-hyperlinks "^2.2.0"
-    tslib "^2.4.1"
+    ts-node "^10.9.1"
+    tslib "^2.5.0"
     widest-line "^3.1.0"
+    wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
 "@oclif/linewrap@^1.0.0":
@@ -564,15 +565,14 @@
   dependencies:
     "@oclif/core" "^1.23.1"
 
-"@oclif/plugin-not-found@^2.3.13", "@oclif/plugin-not-found@^2.3.7":
-  version "2.3.13"
-  resolved "https://registry.npmjs.org/@oclif/plugin-not-found/-/plugin-not-found-2.3.13.tgz"
-  integrity sha512-xadWMsIL9bHdzwdnj8c4q9xE6KZcVETwmFuoVuZkhbAJGA9E7tB67ULhxWMQbm/pYmzzC6h296mjf+fiHq0hqg==
+"@oclif/plugin-not-found@^2.3.24", "@oclif/plugin-not-found@^2.3.7":
+  version "2.3.24"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-not-found/-/plugin-not-found-2.3.24.tgz#1dede3dbfe3f0094f2d5d1d985837f0603d1fc9e"
+  integrity sha512-N3fOr7OlpwGSNjo4Tf0LFLClHfj/zrcQSn23Paw0apovmwI46QMiOvk2JWOpf1xvGZL5e7izejWd7tK1fUxGEQ==
   dependencies:
-    "@oclif/color" "^1.0.2"
-    "@oclif/core" "^1.23.1"
+    "@oclif/color" "^1.0.4"
+    "@oclif/core" "^2.8.0"
     fast-levenshtein "^3.0.0"
-    lodash "^4.17.21"
 
 "@oclif/plugin-plugins@^2.1.12", "@oclif/plugin-plugins@^2.1.6":
   version "2.1.12"
@@ -1039,6 +1039,13 @@
   version "4.3.4"
   resolved "https://registry.npmjs.org/@types/chai/-/chai-4.3.4.tgz"
   integrity sha512-KnRanxnpfpjUTqTCXslZSEdLfXExwgNxYPdiO2WGUj8+HDjFi8R3k5RVKPeSCzLjCcshCAtVO2QBbVuAV4kTnw==
+
+"@types/cli-progress@^3.11.0":
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/@types/cli-progress/-/cli-progress-3.11.0.tgz#ec79df99b26757c3d1c7170af8422e0fc95eef7e"
+  integrity sha512-XhXhBv1R/q2ahF3BM7qT5HLzJNlIL0wbcGyZVjqOTqAybAnsLisd7gy1UCyIqpL+5Iv6XhlSyzjLCnI2sIdbCg==
+  dependencies:
+    "@types/node" "*"
 
 "@types/cli-table@^0.3.1":
   version "0.3.1"
@@ -1868,6 +1875,13 @@ cli-progress@^3.10.0:
   version "3.11.2"
   resolved "https://registry.npmjs.org/cli-progress/-/cli-progress-3.11.2.tgz"
   integrity sha512-lCPoS6ncgX4+rJu5bS3F/iCz17kZ9MPZ6dpuTtI0KXKABkhyXIdYB3Inby1OpaGti3YlI3EeEkM9AuWpelJrVA==
+  dependencies:
+    string-width "^4.2.3"
+
+cli-progress@^3.12.0:
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/cli-progress/-/cli-progress-3.12.0.tgz#807ee14b66bcc086258e444ad0f19e7d42577942"
+  integrity sha512-tRkV3HJ1ASwm19THiiLIXLO7Im7wlTuKnvkYaTkyoAPefqjNg7W7DHKUlGRxy9vxDvbyCYQkQozvptuMkGCg8A==
   dependencies:
     string-width "^4.2.3"
 
@@ -5515,7 +5529,7 @@ tslib@^2, tslib@^2.1.0, tslib@^2.3.1, tslib@^2.4.1:
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.4.1.tgz"
   integrity sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==
 
-tslib@^2.0.0:
+tslib@^2.0.0, tslib@^2.5.0:
   version "2.5.2"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.5.2.tgz"
   integrity sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==
@@ -5811,6 +5825,11 @@ word-wrap@^1.2.3:
   version "1.2.3"
   resolved "https://registry.npmjs.org/word-wrap/-/word-wrap-1.2.3.tgz"
   integrity sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==
+
+wordwrap@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
+  integrity sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==
 
 workerpool@6.2.0:
   version "6.2.0"
