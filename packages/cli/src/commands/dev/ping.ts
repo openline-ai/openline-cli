@@ -1,6 +1,14 @@
 import {Command} from '@oclif/core'
 import {pingContactsGui} from '../../lib/dev/contacts'
-import {pingCustomerOsApi, pingfileStoreApi, pingSettingsApi, pingCommsApi, pingEventsStoreDb, pingValidationApi} from '../../lib/dev/customer-os'
+import {
+  pingCustomerOsApi,
+  pingfileStoreApi,
+  pingSettingsApi,
+  pingCommsApi,
+  pingEventsStoreDb,
+  pingValidationApi,
+  pingJaeger
+} from '../../lib/dev/customer-os'
 import {pingKamailio} from '../../lib/dev/voice'
 
 import * as colors from 'colors' // eslint-disable-line no-restricted-imports
@@ -25,6 +33,7 @@ export default class DevPing extends Command {
     const settingsApi = pingSettingsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const fileStoreApi = pingfileStoreApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const eventStoreDb = pingEventsStoreDb() ? colors.bold.green('Yes') : colors.red.bold('No')
+    const jaeger = pingJaeger() ? colors.bold.green('Yes') : colors.red.bold('No')
     const commsApi = pingCommsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const voiceKamailio = pingKamailio() ? colors.bold.green('Yes') : colors.red.bold('No')
     const validationApi = pingValidationApi() ? colors.bold.green('Yes') : colors.red.bold('No')
@@ -41,6 +50,7 @@ export default class DevPing extends Command {
       ['customer-os', 'comms-api', 'http://localhost:8013', commsApi],
       ['customer-os', 'validation-api', 'http://localhost:10003', validationApi],
       ['customer-os', 'event-store-db', 'http://localhost:2113', eventStoreDb],
+      ['customer-os', 'jaeger', 'http://localhost:16686', jaeger],
       ['contacts', 'contacts-gui', 'http://localhost:3001', contactsGui],
       ['voice', 'kamailio', 'ws://localhost:8080', voiceKamailio],
 
