@@ -1,5 +1,5 @@
 import * as mac from './dependencies'
-import * as colors from 'colors' // eslint-disable-line no-restricted-imports
+import * as colors from 'colors'
 const Table = require('cli-table') // eslint-disable-line unicorn/prefer-module
 
 export function installDependencies(verbose: boolean) :boolean {
@@ -13,6 +13,7 @@ export function installDependencies(verbose: boolean) :boolean {
   const helm = mac.helmCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const netcat = mac.netcatCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const ory = mac.oryCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const jq = mac.jqCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
 
   const table = new Table({
     head: [colors.cyan.bold('Dependency'), colors.cyan.bold('Installed?')],
@@ -28,6 +29,7 @@ export function installDependencies(verbose: boolean) :boolean {
     ['kubectl', kubectl],
     ['netcat', netcat],
     ['ory', ory],
+    ['jq', jq],
   )
 
   if (verbose) {
@@ -46,6 +48,7 @@ export function installDependencies(verbose: boolean) :boolean {
   if (kubectl === notInstalled) mac.installKube()
   if (netcat === notInstalled) mac.installNetcat()
   if (ory === notInstalled) mac.installOry()
+  if (jq === notInstalled) mac.installJq()
 
 
   return true

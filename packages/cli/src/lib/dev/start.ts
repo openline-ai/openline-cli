@@ -16,18 +16,18 @@ export function cleanupSetupFiles() :void {
   if (dirCheck) shell.exec(`rm -r ${config.setupDir}`, {silent: true})
 }
 
-export function dependencyCheck(verbose: boolean) :boolean {
-  // macOS check
-  switch (process.platform) {
-  case 'darwin':
-    return installMacDependencies(verbose)
-  case 'linux':
-    return installLinuxDependencies(verbose)
-  default:
-    logTerminal('ERROR', 'Operating system unsupported at this time')
-    return false
+  export function dependencyCheck(verbose: boolean) :boolean {
+    // macOS check
+    switch (process.platform) {
+    case 'darwin':
+      return installMacDependencies(verbose)
+    case 'linux':
+      return installLinuxDependencies(verbose)
+    default:
+      logTerminal('ERROR', 'Operating system unsupported at this time')
+      return false
+    }
   }
-}
 
 export function startDevServer(verbose: boolean) :boolean {
   const isRunning = colima.runningCheck()

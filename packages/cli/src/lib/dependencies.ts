@@ -204,7 +204,6 @@ export function installKube() :void {
 export function xcodeCheck() :boolean {
   return (shell.exec('which xcode-select', {silent: true}).code === 0)
 }
-
 export function installXcode() :void {
   logTerminal('INFO', 'We need to install xcode before continuing')
   const results = shell.exec(config.dependencies.mac.xcode).code === 0
@@ -212,6 +211,22 @@ export function installXcode() :void {
     logTerminal('SUCCESS', 'xcode successfully installed')
   } else {
     logTerminal('ERROR', 'xcode installation failed', 'Please install xcode before retrying the command.')
+    exit(1)
+  }
+}
+
+//jq
+export function jqCheck() :boolean {
+  return (shell.exec('which jq', {silent: true}).code === 0)
+}
+
+export function installJq() :void {
+  logTerminal('INFO', 'We need to install jq before continuing')
+  const results = shell.exec(config.dependencies[getPlatform()].jq).code === 0
+  if (results) {
+    logTerminal('SUCCESS', 'jq successfully installed')
+  } else {
+    logTerminal('ERROR', 'jq installation failed', 'Please install jq before retrying the command.')
     exit(1)
   }
 }

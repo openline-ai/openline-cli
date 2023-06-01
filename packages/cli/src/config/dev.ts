@@ -142,6 +142,7 @@ export function getConfig() :any {
   config.dependencies.mac.xcode = 'xcode-select --install'
   config.dependencies.mac.netcat = 'brew install netcat'
   config.dependencies.mac.ory = 'brew install ory/tap/cli'
+  config.dependencies.mac.jq = 'brew install jq'
 
 
   config.dependencies.linux = {}
@@ -159,6 +160,7 @@ export function getConfig() :any {
   config.dependencies.linux.netcat = 'sudo apt-get update && sudo apt-get install -y netcat'
   config.dependencies.linux.ory = '/bin/bash -c \'/bin/bash <(curl https://raw.githubusercontent.com/ory/meta/master/install.sh) -b' + config.setupDir + ' ory && ' +
                                       'sudo install -o root -g root -m 0755 ' + config.setupDir + '/ory /usr/local/bin/ory\''
+  config.dependencies.linux.jq = 'sudo apt-get update && sudo apt-get install -y jq'
 
   return config
 }
