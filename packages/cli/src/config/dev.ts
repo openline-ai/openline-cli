@@ -154,7 +154,7 @@ export function getConfig() :any {
   config.dependencies.linux.netcat = 'sudo apt-get update && sudo apt-get install -y netcat'
   config.dependencies.linux.ory = '/bin/bash -c \'/bin/bash <(curl https://raw.githubusercontent.com/ory/meta/master/install.sh) -b' + config.setupDir + ' ory && ' +
                                       'sudo install -o root -g root -m 0755 ' + config.setupDir + '/ory /usr/local/bin/ory\''
-  config.dependencies.linux.jq = 'apt-get install jq'
+  config.dependencies.linux.jq = 'sudo apt-get update && sudo apt-get install -y jq'
 
   return config
 }
