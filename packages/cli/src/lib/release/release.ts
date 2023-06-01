@@ -8,7 +8,19 @@ import pTimeout from 'p-timeout';
 
 const inquirer = require('inquirer');
 const ghp = process.env.GITHUB_PACKAGE_TOKEN;
+let tokenIsSet:boolean;
 
+export function checkToken(): boolean{
+  if (ghp==undefined || !ghp.startsWith("ghp_")){
+    console.log("The "+ colors.bold.red("GITHUB_PACKAGE_TOKEN")+" environment variable is not set - packages' version can not be queried")
+    tokenIsSet = false
+  }
+  else{
+    console.log("The "+ colors.bold.green("GITHUB_PACKAGE_TOKEN")+" environment variable is set - packages' version can be queried")
+    tokenIsSet = true
+  }
+  return tokenIsSet
+}
 
 export function dependencyCheck(verbose: boolean) :boolean {
   // macOS check
@@ -143,18 +155,13 @@ function getPackagesForRepo(repo: any){
     mapPackageList[name] = url;
   });
 
-  // console.log(mapPackageList);
-
   const packageNames = stdout.trim().split('\n').map((name) => name.replace(/"/g, ''));
-// console.log(packageNames)
   return [packageNames, mapPackageList];
 }
 
 async function getPackageVersions(packageNames: string[], newTag: string, mapPackageList: Record<string, string>) {
   let packageTask: any = [];
-  // const initialResponse = shell.exec(`curl -s -L -H "Authorization: Bearer ${ghp}" -H "Accept: application/vnd.github+json" 'https://api.github.com/orgs/openline-ai/packages/container/openline-customer-os%2Fevents-processing-platform/versions' | jq '.[] | select(.metadata.container.tags | contains(["latest"])) | .metadata.container.tags[] | select(. != "latest")'`, { silent: true });
-  // const initialValue = initialResponse.replace(/['"]+/g, '');
-  const pollInterval = 2000;
+  const pollInterval = 10000;
   const timeoutDuration = 600000;
 
   console.log(colors.bold.bgRed("Waiting for new package version to be published..."))
@@ -162,7 +169,7 @@ async function getPackageVersions(packageNames: string[], newTag: string, mapPac
   Object.entries(mapPackageList).forEach(([key, value]) => {
     packageTask.push({
       title: key,
-      task: async (_: any, task: any) => {
+      task: async (_: any) => {
         let laterValue: string = '';
         await pTimeout(
           new Promise<void>(async (resolve, reject) => {
@@ -171,7 +178,7 @@ async function getPackageVersions(packageNames: string[], newTag: string, mapPac
             while (elapsedTime < timeoutDuration) {
               try {
                 let laterResponse = shell.exec(`curl -s -L -H "Authorization: Bearer ${ghp}" -H "Accept: application/vnd.github+json" '${value}/versions' | jq '.[] | select(.metadata.container.tags | contains(["latest"])) | .metadata.container.tags[] | select(. != "latest")'`, { silent: true });
-                laterValue = (laterResponse).replace(/['"]+/g, '');
+                laterValue = (laterResponse).replace(/['"\n]+/g, '');
 
                 if (laterValue === newTag) {
                   resolve();
@@ -185,10 +192,10 @@ async function getPackageVersions(packageNames: string[], newTag: string, mapPac
               elapsedTime += pollInterval;
             }
 
-            reject(new Error(`The package was not be updated from ${laterValue} to ${newTag} within ${timeoutDuration}ms`)); // Task failed, timeout reached
+            reject(new Error(`The package was not updated from ${laterValue} to ${newTag} within ${timeoutDuration}ms`)); // Task failed, timeout reached
           }),
           timeoutDuration,
-          `The package was not be updated from ${laterValue} to ${newTag} within ${timeoutDuration}ms`
+          `The package was not updated from ${laterValue} to ${newTag} within ${timeoutDuration}ms`
         );
       },
       options: {
@@ -214,20 +221,22 @@ async function getPackageVersions(packageNames: string[], newTag: string, mapPac
   });
 }
 
-export async function getReleaseConfirmation(repo: any, releaseType: any, newTag: string, stylizedNewTag: string) {
+export async function getReleaseConfirmation(repo: any, releaseType: any, newTag: string, stylizedNewTag: string, tokenIsSet: boolean) {
   const environments = ['Yes', 'No'];
   const { releaseConfirmation } = await inquirer.prompt([
     {
       type: 'list',
       name: 'releaseConfirmation',
-      message: `\nAre you sure you want to create the new ` + colors.bold.red(releaseType) + ` release ${stylizedNewTag} for ` + colors.bold.red(repo) + `?:`,
+      message: `Are you sure you want to create the new ` + colors.bold.red(releaseType) + ` release ${stylizedNewTag} for ` + colors.bold.red(repo) + `?:`,
       choices: environments,
     },
   ]);
 
   if (releaseConfirmation == 'Yes'){
-    // createNewTag(repo, newTag);
-    const [packageNames, mapPackageList]   = getPackagesForRepo(repo);
-    await getPackageVersions(<string[]>packageNames, newTag, <Record<string, string>>mapPackageList);
+    createNewTag(repo, newTag);
+    if(tokenIsSet) {
+      const [packageNames, mapPackageList] = getPackagesForRepo(repo);
+      await getPackageVersions(<string[]>packageNames, newTag, <Record<string, string>>mapPackageList);
+    }
   }
 }
