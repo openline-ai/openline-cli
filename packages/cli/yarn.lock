@@ -5532,6 +5532,11 @@ ttab@^0.7.3:
   resolved "https://registry.npmjs.org/ttab/-/ttab-0.7.3.tgz"
   integrity sha512-R3vtCd+C11wgA+qAoyxDNuRItVPrgP04PMbAKD2nvs3lSCgPFRpSmu0Rlb8yOhxU3Q6n8GZUHMd5txrzfBTceg==
 
+ttab@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/ttab/-/ttab-0.8.0.tgz#59e3b7c1b5bd69eba117e8d75903331925491602"
+  integrity sha512-ZsvrLuAJf52Joqo9aiLg1iygGz2l/hC5dKRrQ7W+k0LI7SN6m9bdF5hbpFm7WxEO4xE/pMMjFizd/5fdpNhoTA==
+
 tunnel-agent@^0.6.0:
   version "0.6.0"
   resolved "https://registry.npmjs.org/tunnel-agent/-/tunnel-agent-0.6.0.tgz"
