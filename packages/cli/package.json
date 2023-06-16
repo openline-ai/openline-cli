@@ -38,7 +38,7 @@
     "replace-in-file": "^6.3.5",
     "shelljs": "^0.8.5",
     "ttab": "^0.7.3",
-    "yaml": "^2.2.1",
+    "yaml": "^2.2.2",
     "yarn": "^1.22.19"
   },
   "devDependencies": {
@@ -100,5 +100,8 @@
   "keywords": [
     "oclif"
   ],
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "resolutions": {
+    "http-cache-semantics": "^4.1.1"
+  }
 }
