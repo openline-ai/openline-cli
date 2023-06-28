@@ -103,6 +103,7 @@
   "types": "dist/index.d.ts",
   "resolutions": {
     "http-cache-semantics": "^4.1.1",
-    "xml2js": "^0.5.0"
+    "xml2js": "^0.5.0",
+    "semver": "^7.5.2"
   }
 }
