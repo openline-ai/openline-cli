@@ -42,7 +42,7 @@ export default class DevPing extends Command {
 
     const table = new Table({
       head: [colors.cyan.bold('App'), colors.cyan.bold('Service'), colors.cyan.bold('Location'), colors.cyan.bold('Up?')],
-      colWidths: [15, 20, 25, 5],
+      colWidths: [15, 30, 25, 5],
     })
 
     table.push(
