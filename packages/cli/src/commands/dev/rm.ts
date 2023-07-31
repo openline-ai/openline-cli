@@ -36,6 +36,7 @@ export default class DevRm extends Command {
         'db',
         'events-processing-platform',
         'event-store-db',
+        'events-processing-platform',
         'file-store-api',
         'kamailio',
         'ory-tunnel',
