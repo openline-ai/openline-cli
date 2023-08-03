@@ -3,6 +3,7 @@ import {Command, Flags} from '@oclif/core'
 import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
+import * as redis from '../../lib/dev/redis'
 import {getConfig} from '../../config/dev'
 import {installCustomerOsApi, installfileStoreApi, installOryTunnel, installSettingsApi, installCommsApi, installEventsProcessingPlatform, installValidationApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
@@ -102,6 +103,7 @@ export default class DevStart extends Command {
       installJaeger(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
+      redis.provisionRedis(flags.verbose, location)
       start.cleanupSetupFiles()
       // install contacts
       cloneRepo(config.contacts.repo, flags.verbose, config.setupDir, undefined, true)
@@ -128,6 +130,7 @@ export default class DevStart extends Command {
       installSettingsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
+      redis.provisionRedis(flags.verbose, location)
       start.cleanupSetupFiles()
       // install contacts
       cloneRepo(config.contacts.repo, flags.verbose, config.setupDir, undefined, true)
@@ -167,6 +170,7 @@ export default class DevStart extends Command {
       installJaeger(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
+      redis.provisionRedis(flags.verbose, location)
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
@@ -235,6 +239,7 @@ export default class DevStart extends Command {
       start.installDatabases(flags.verbose, location)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
+      redis.provisionRedis(flags.verbose, location)
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
@@ -258,6 +263,7 @@ export default class DevStart extends Command {
       installCommsApi(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
+      redis.provisionRedis(flags.verbose, location)
       start.cleanupSetupFiles()
       // install voice
       cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)

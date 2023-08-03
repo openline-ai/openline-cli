@@ -7,6 +7,7 @@ import * as colima from '../../lib/dev/colima'
 import * as k3d from '../../lib/dev/k3d'
 
 import {getPlatform} from '../../lib/dependencies'
+import { uninstallRedis } from '../../lib/dev/redis'
 
 export default class DevRm extends Command {
   static description = 'Delete Openline services'
@@ -121,6 +122,7 @@ export default class DevRm extends Command {
     case 'db':
       uninstallNeo4j(flags.verbose)
       uninstallPostgresql(flags.verbose)
+      uninstallRedis(flags.verbose)
       break
 
     case 'message-store-api': {

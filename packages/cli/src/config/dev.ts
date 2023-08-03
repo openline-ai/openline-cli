@@ -68,6 +68,8 @@ export function getConfig() :any {
   config.customerOs.postgresqlPersistentVolumeClaim = '/deployment/infra/k8s/postgresql-persistent-volume-claim.yaml'
   config.customerOs.postgresqlHelmValues = '/deployment/infra/helm/postgresql/postgresql-values.yaml'
   config.customerOs.postgresqlSetup = '/deployment/scripts/postgresql/setup.sql'
+  // customerOS Redis DB
+  config.customerOs.redisSetup = '/deployment/scripts/redis/tenants.redis'
   // customerOS Neo4j DB
   config.customerOs.neo4jHelmValues = '/deployment/infra/helm/neo4j/neo4j-values.yaml'
   config.customerOs.neo4jCypher = '/deployment/scripts/neo4j/customer-os.cypher'
