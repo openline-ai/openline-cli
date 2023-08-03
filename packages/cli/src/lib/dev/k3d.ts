@@ -93,6 +93,19 @@ export function stopK3d(verbose: boolean) :void {
   }
 }
 
+export function removeK3d(verbose: boolean) {
+  logTerminal('INFO', '🦦 Removing current configuration...')
+  const stopCommand = 'k3d cluster delete development'
+  if (verbose)
+    logTerminal('EXEC', stopCommand)
+  const reset = shell.exec(stopCommand, {silent: true})
+  if (reset.code === 0) {
+    logTerminal('SUCCESS', 'Openline dev server removed')
+  } else {
+    logTerminal('ERROR', reset.stderr, 'dev:remove')
+  }
+}
+
 export function createPortForward(verbose: boolean, port: number,  protocol: string|undefined) :boolean {
   const forwardString: string = protocol ? `${port}:${port}/${protocol}@loadbalancer` : `${port}:${port}@loadbalancer`
   const filterString: string = protocol ? `:${port}->${port}/${protocol}` : `:${port}->${port}/tcp`

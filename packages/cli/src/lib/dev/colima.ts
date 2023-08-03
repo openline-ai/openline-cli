@@ -85,3 +85,16 @@ export function stopColima(verbose: boolean) {
     logTerminal('ERROR', reset.stderr, 'dev:stop')
   }
 }
+
+
+export function removeColima(verbose: boolean) {
+  logTerminal('INFO', '🦦 Removing current configuration...')
+  if (verbose)
+    logTerminal('EXEC', 'colima delete -f')
+  const reset = shell.exec('colima delete -f', { silent: true })
+  if (reset.code === 0) {
+    logTerminal('SUCCESS', 'Openline dev server removed')
+  } else {
+    logTerminal('ERROR', reset.stderr, 'dev:remove')
+  }
+}
