@@ -109,7 +109,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      provision = shell.exec(`echo ${POSTGRESQL_DB_SETUP}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: true}).stdout
+      provision = shell.exec(`echo ${POSTGRESQL_DB_SETUP}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: false}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning message store DB timed out', 'dev:postgres:provisionPostresql')
@@ -123,7 +123,6 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
 
 export function uninstallPostgresql(verbose:boolean) :boolean {
   const helmUninstall = `helm uninstall ${POSTGRESQL_SERVICE} --namespace ${NAMESPACE}`
-  if (verbose) logTerminal('EXEC', helmUninstall)
   const result = shell.exec(helmUninstall, {silent: !verbose})
   if (result.code === 0) {
     logTerminal('SUCCESS', 'PostgreSQL successfully uninstalled')
@@ -131,6 +130,26 @@ export function uninstallPostgresql(verbose:boolean) :boolean {
     logTerminal('ERROR', result.stderr, 'dev:postgres:uninstallPostgresql')
     return false
   }
+  if (verbose) logTerminal('EXEC', helmUninstall)
+  const deletePVC = `kubectl delete pvc ${PERSISTENT_VOLUME_CLAIM} --namespace ${NAMESPACE}`
+  if (verbose) logTerminal('EXEC', deletePVC)
+  const resultPVC = shell.exec(deletePVC, {silent: !verbose})
+  if (resultPVC.code === 0) {
+    logTerminal('SUCCESS', 'PostgreSQL Permanent Volume Claim successfully uninstalled ')
+  } else {
+    logTerminal('ERROR', result.stderr, 'dev:postgres:uninstallPostgresql')
+    return false
+  }
+  const deletePV = `kubectl delete pv ${PERSISTENT_VOLUME} --namespace ${NAMESPACE}`
+  if (verbose) logTerminal('EXEC', deletePV)
+  const resultPV = shell.exec(deletePV, {silent: !verbose})
+  if (resultPV.code === 0) {
+    logTerminal('SUCCESS', 'PostgreSQL Permanent Volume successfully uninstalled ')
+  } else {
+    logTerminal('ERROR', result.stderr, 'dev:postgres:uninstallPostgresql')
+    return false
+  }
+
 
   return true
 }

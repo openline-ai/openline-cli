@@ -8,6 +8,7 @@ import {getConfig} from '../../config/dev'
 import {installNeo4j} from './neo4j'
 import {installPostgresql} from './postgres'
 import {getPlatform} from '../dependencies'
+import { installRedis } from './redis'
 
 export function cleanupSetupFiles() :void {
   // cleanup old setup files
@@ -55,6 +56,7 @@ export function installDatabases(verbose: boolean, location: string | undefined)
   if (verbose) logTerminal('INFO', 'installing customerOS databases...')
   installNeo4j(verbose, location)
   installPostgresql(verbose, location)
+  installRedis(verbose, location)
 
   logTerminal('SUCCESS', 'customerOS databases succesfully installed')
   return true
