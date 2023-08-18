@@ -12,12 +12,12 @@ function postgresqlServiceCheck() :boolean {
   return (shell.exec(`kubectl get service ${JAEGER_SERVICE} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
-export function installJaeger(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+export function installJaeger(verbose: boolean, location = config.setupDir, imageVersion = '1.47.0') :boolean {
   const DEPLOYMENT = location + config.customerOs.jaegerDeployment
   const SERVICE = location + config.customerOs.jaegerService
   const LOADBALANCER = location + config.customerOs.jaegerLoadbalancer
 
-  let image: string | null = config.customerOs.jaegerImage + 'latest'
+  let image: string | null = config.customerOs.jaegerImage + imageVersion
 
   const installConfig: Yaml = {
     deployYaml: DEPLOYMENT,
