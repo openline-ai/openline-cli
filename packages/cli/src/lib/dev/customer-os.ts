@@ -13,6 +13,7 @@ const EVENTS_PROCESSING_PLATFORM = 'events-processing-platform-service'
 const ORY_TUNNEL = 'ory-tunnel-service'
 const COMMS_API = 'comms-api-service'
 const VALIDATION_API = 'validation-api-service'
+const USER_ADMIN_API = 'user-admin-api-service'
 
 
 function customerOsApiCheck() :boolean {
@@ -40,6 +41,10 @@ function commsApiCheck() :boolean {
 
 function validationApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${VALIDATION_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+}
+
+function userAdminApiCheck() :boolean {
+  return (shell.exec(`kubectl get service ${USER_ADMIN_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
 export function installCustomerOsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
@@ -292,6 +297,42 @@ export function installValidationApi(verbose: boolean, location = config.setupDi
   return true
 }
 
+export function installUserAdminApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+  if (userAdminApiCheck()) {
+    logTerminal('SUCCESS', 'user-admin-api already running')
+    return true
+  }
+  const DEPLOYMENT = location + config.customerOs.userAdminApiDeployment
+  const SERVICE = location + config.customerOs.userAdminApiService
+  const LOADBALANCER = location + config.customerOs.userAdminApiLoadbalancer
+
+  if (imageVersion.toLowerCase() !== 'latest') {
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
+    if (!tag) return false
+  }
+
+  let image: string | null  = config.customerOs.userAdminApiImage + imageVersion
+
+  if (location !== config.setupDir) {
+    // come back to this
+    const buildPath = location + '/packages/server/user-admin-api'
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
+    image = null
+  }
+
+  const installConfig: Yaml = {
+    deployYaml: DEPLOYMENT,
+    serviceYaml: SERVICE,
+    loadbalancerYaml: LOADBALANCER,
+  }
+  const deploy = deployImage(image, installConfig, verbose)
+  if (deploy === false) return false
+
+  logTerminal('SUCCESS', 'user-admin-api successfully installed')
+  return true
+}
+
 export function pingCustomerOsApi() :boolean {
   return shell.exec('curl localhost:10000/health', {silent: true}).code === 0
 }
@@ -322,4 +363,8 @@ export function pingCommsApi() :boolean {
 
 export function pingValidationApi() :boolean {
   return shell.exec('curl localhost:10003/health', {silent: true}).code === 0
+}
+
+export function pingUserAdminApi() :boolean {
+  return shell.exec('curl localhost:4001/health', {silent: true}).code === 0
 }

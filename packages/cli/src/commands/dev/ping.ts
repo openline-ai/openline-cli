@@ -8,7 +8,8 @@ import {
   pingEventsStoreDb,
   pingValidationApi,
   pingJaeger,
-  pingEventsProcessingPlatform
+  pingEventsProcessingPlatform,
+  pingUserAdminApi
 } from '../../lib/dev/customer-os'
 import {pingKamailio} from '../../lib/dev/voice'
 
@@ -39,6 +40,7 @@ export default class DevPing extends Command {
     const commsApi = pingCommsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const voiceKamailio = pingKamailio() ? colors.bold.green('Yes') : colors.red.bold('No')
     const validationApi = pingValidationApi() ? colors.bold.green('Yes') : colors.red.bold('No')
+    const userAdminApi = pingUserAdminApi() ? colors.bold.green('Yes') : colors.red.bold('No')
 
     const table = new Table({
       head: [colors.cyan.bold('App'), colors.cyan.bold('Service'), colors.cyan.bold('Location'), colors.cyan.bold('Up?')],
@@ -51,6 +53,7 @@ export default class DevPing extends Command {
       ['customer-os', 'settings-api', 'http://localhost:10002', settingsApi],
       ['customer-os', 'comms-api', 'http://localhost:8013', commsApi],
       ['customer-os', 'validation-api', 'http://localhost:10003', validationApi],
+      ['customer-os', 'user-admin-api', 'http://localhost:4001', userAdminApi],
       ['customer-os', 'event-store-db', 'http://localhost:2113', eventStoreDb],
       ['customer-os', 'events-processing-platform', 'grpc://localhost:5001', eventsProcessingPlatform],
       ['customer-os', 'jaeger', 'http://localhost:16686', jaeger],

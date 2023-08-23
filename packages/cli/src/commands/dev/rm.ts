@@ -263,7 +263,16 @@ export default class DevRm extends Command {
       case 'validation-api': {
         const appServices: Apps = {
           deployments: ['validation-api'],
-          services: ['validation-service', 'validation-loadbalancer'],
+          services: ['validation-api-service', 'validation-api-loadbalancer'],
+          statefulsets: [],
+        }
+        deleteApp(appServices, flags.verbose)
+        break
+      }
+      case 'user-admin-api': {
+        const appServices: Apps = {
+          deployments: ['user-admin-api'],
+          services: ['user-admin-api-service', 'user-admin-api-loadbalancer'],
           statefulsets: [],
         }
         deleteApp(appServices, flags.verbose)
