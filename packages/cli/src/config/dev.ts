@@ -63,6 +63,12 @@ export function getConfig() :any {
   config.customerOs.validationApiDeployment = '/deployment/infra/k8s/validation-api/validation-api.yaml'
   config.customerOs.validationApiService = '/deployment/infra/k8s/validation-api/validation-api-service.yaml'
   config.customerOs.validationApiLoadbalancer = '/deployment/infra/k8s/validation-api/validation-api-loadbalancer.yaml'
+  // user admin API
+  config.customerOs.userAdminApiImage = 'ghcr.io/openline-ai/openline-customer-os/user-admin-api:'
+  config.customerOs.userAdminApiDeployment = '/deployment/infra/k8s/user-admin-api.yaml'
+  config.customerOs.userAdminApiService = '/deployment/infra/k8s/user-admin-api-service.yaml'
+  config.customerOs.userAdminApiLoadbalancer = '/deployment/infra/k8s/user-admin-api-loadbalancer.yaml'
+  config.customerOs.userAdminApiSecrets = '/deployment/infra/k8s/user-admin-api-secrets.sh'
   // customerOS postgreSQL DB
   config.customerOs.postgresqlPersistentVolume = '/deployment/infra/k8s/postgresql-persistent-volume.yaml'
   config.customerOs.postgresqlPersistentVolumeClaim = '/deployment/infra/k8s/postgresql-persistent-volume-claim.yaml'
