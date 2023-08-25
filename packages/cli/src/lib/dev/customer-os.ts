@@ -305,6 +305,7 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
   const DEPLOYMENT = location + config.customerOs.userAdminApiDeployment
   const SERVICE = location + config.customerOs.userAdminApiService
   const LOADBALANCER = location + config.customerOs.userAdminApiLoadbalancer
+  const SECRETS = location + config.customerOs.userAdminApiSecrets
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -326,8 +327,14 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     serviceYaml: SERVICE,
     loadbalancerYaml: LOADBALANCER,
   }
+
   const deploy = deployImage(image, installConfig, verbose)
   if (deploy === false) return false
+
+  shell.exec(`bash ${SECRETS}`, {silent: false})
+  const kubeApplySecretsConfig = `kubectl apply -f user-admin-api-secret.yaml --namespace ${NAMESPACE}`
+  if (verbose) logTerminal('EXEC', kubeApplySecretsConfig)
+  shell.exec(kubeApplySecretsConfig, {silent: !verbose})
 
   logTerminal('SUCCESS', 'user-admin-api successfully installed')
   return true

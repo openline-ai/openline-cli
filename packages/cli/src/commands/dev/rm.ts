@@ -8,6 +8,7 @@ import * as k3d from '../../lib/dev/k3d'
 
 import {getPlatform} from '../../lib/dependencies'
 import { uninstallRedis } from '../../lib/dev/redis'
+import * as shell from "shelljs";
 
 export default class DevRm extends Command {
   static description = 'Delete Openline services'
@@ -43,6 +44,7 @@ export default class DevRm extends Command {
         'ory-tunnel',
         'settings-api',
         'validation-api',
+        'user-admin-api',
         'voice',
         'voice-plugin'
       ],
@@ -276,6 +278,7 @@ export default class DevRm extends Command {
           statefulsets: [],
         }
         deleteApp(appServices, flags.verbose)
+        shell.exec("kubectl -n openline delete secret user-admin-api-secret", {silent: true})
         break
       }
     }
