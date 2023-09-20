@@ -80,19 +80,33 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
     }
   } while (neoOutput.length > 0)
 
-  const demoTenant = `curl -s --location --request GET '127.0.0.1:4001/demo-tenant' \
-  --header 'X-Openline-Api-Key: cad7ccb6-d8ff-4bae-a048-a42db33a217e' \
-  --header 'TENANT_NAME: openline' \
-  --header 'MASTER_USERNAME: development@openline.ai' \
-  --form 'file=@"https://github.com/openline-ai/openline-cli/blob/otter/resources/demo-tenant.json"'`;
+  const axios = require('axios');
+  const FormData = require('form-data');
+  const fs = require('fs');
 
-  const { code, stdout, stderr } = shell.exec(demoTenant);
+  const url = 'http://127.0.0.1:4001/demo-tenant';
+  const headers = {
+    'X-Openline-Api-Key': 'cad7ccb6-d8ff-4bae-a048-a42db33a217e',
+    'TENANT_NAME': 'openline',
+    'MASTER_USERNAME': 'development@openline.ai',
+  };
 
-  if (code !== 0) {
-    console.error(`Error: ${stderr}`);
-  } else {
-    console.log(`Response: ${stdout}`);
-  }
+  const form = new FormData();
+  form.append('file', fs.createReadStream('demo-tenant.json'));
+
+  axios({
+    method: 'get',
+    url,
+    headers,
+    data: form,
+    maxRedirects: 0, // Disables automatic redirection if needed
+  })
+    .then((response: any) => {
+      console.log('Response:', response.data);
+    })
+    .catch((error: any) => {
+      console.error('Error:', error.message);
+    });
 
   logTerminal('SUCCESS', 'neo4j database successfully provisioned')
   return true
