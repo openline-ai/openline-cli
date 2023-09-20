@@ -80,6 +80,20 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
     }
   } while (neoOutput.length > 0)
 
+  const demoTenant = `curl -s --location --request GET '127.0.0.1:4001/demo-tenant' \
+  --header 'X-Openline-Api-Key: cad7ccb6-d8ff-4bae-a048-a42db33a217e' \
+  --header 'TENANT_NAME: openline' \
+  --header 'MASTER_USERNAME: development@openline.ai' \
+  --form 'file=@"https://github.com/openline-ai/openline-cli/blob/otter/resources/demo-tenant.json"'`;
+
+  const { code, stdout, stderr } = shell.exec(demoTenant);
+
+  if (code !== 0) {
+    console.error(`Error: ${stderr}`);
+  } else {
+    console.log(`Response: ${stdout}`);
+  }
+
   logTerminal('SUCCESS', 'neo4j database successfully provisioned')
   return true
 }

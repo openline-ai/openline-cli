@@ -1,0 +1,212 @@
+{
+  "users": [
+    {
+      "firstName": "Silviu",
+      "lastName": "Basu",
+      "email": "silviu@openline.ai"
+    },
+    {
+      "firstName": "Jonty",
+      "lastName": "Knox",
+      "email": "jonty@openline.ai"
+    },
+    {
+      "firstName": "Matt",
+      "lastName": "Brown",
+      "email": "matt@openline.ai"
+    },
+    {
+      "firstName": "Antoine",
+      "lastName": "Valot",
+      "email": "antoine@openline.ai"
+    },
+    {
+      "firstName": "Vasilica",
+      "lastName": "Coscotin",
+      "email": "vasi@openline.ai"
+    },
+    {
+      "firstName": "Kasia",
+      "lastName": "Marciniszyn",
+      "email": "kasia@openline.ai"
+    },
+    {
+      "firstName": "Steyn",
+      "lastName": "Viljoen",
+      "email": "steyn@openline.ai"
+    },
+    {
+      "firstName": "Alex",
+      "lastName": "Calinica",
+      "email": "acalinica@openline.ai"
+    },
+    {
+      "firstName": "Alex",
+      "lastName": "Basarab",
+      "email": "alex@openline.ai"
+    },
+    {
+      "firstName": "Eduard",
+      "lastName": "Firut",
+      "email": "edi@openline.ai"
+    },
+    {
+      "firstName": "Sarah",
+      "lastName": "Green",
+      "email": "sarah@openline.ai"
+    },
+    {
+      "firstName": "Lucas",
+      "lastName": "Ford",
+      "email": "lucas@openline.ai"
+    }
+  ],
+  "contacts": [
+    {
+      "firstName": "Eduard",
+      "lastName": "Burasky",
+      "email": "eduard.burasky@flexport.com"
+    },
+    {
+      "firstName": "Adam",
+      "lastName": "Miller",
+      "email": "adam.miller@flexport.com"
+    },
+    {
+      "firstName": "Emily",
+      "lastName": "Johnson",
+      "email": "emily.johnson@airbnb.com"
+    },
+    {
+      "firstName": "David",
+      "lastName": "Thompson",
+      "email": "david.thompson@airbnb.com"
+    },
+    {
+      "firstName": "Rachel",
+      "lastName": "Smith",
+      "email": "rachel.smith@airbnb.com"
+    }
+  ],
+  "organizations": [
+    {
+      "name": "Flexport",
+      "domain": "flexport.com",
+      "people": [
+        {
+          "email": "eduard.burasky@flexport.com"
+        },
+        {
+          "email": "adam.miller@flexport.com"
+        }
+      ],
+      "emails": [
+        {
+          "from": "jonty@openline.ai",
+          "to": ["eduard.burasky@flexport.com"],
+          "cc": ["adam.miller@flexport.com"],
+          "bcc": ["firut.eduard@gmail.com"],
+          "subject": "Hey Brian, I'm a big fan of Flexport",
+          "body": "Hey Brian, I'm a big fan of Flexport. I've been using it for years and I love it. I'm a software engineer and I'd love to work for you guys. I'm attaching my resume. Thanks, Jonty",
+          "contentType": "text/plain",
+          "date": "2017-01-01T00:00:00Z"
+        }
+      ],
+      "meetings": [
+        {
+          "createdBy": "jonty@openline.ai",
+          "attendees": [
+            "eduard.burasky@flexport.com",
+            "adam.miller@flexport.com"
+          ],
+          "subject": "Flexport Meeting",
+          "agenda": "Discussing the future of Flexport",
+          "startedAt": "2015-01-01T12:00:00Z",
+          "endedAt": "2015-01-01T13:00:00Z"
+        }
+      ]
+    },
+    {
+      "name": "Airbnb",
+      "domain": "airbnb.com",
+      "people": [
+        {"email": "emily.johnson@airbnb.com"},
+        {"email": "david.thompson@airbnb.com"},
+        {"email": "rachel.smith@airbnb.com"}
+      ],
+      "emails": [
+        {
+          "from": "matt@openline.ai",
+          "to": ["emily.johnson@airbnb.com"],
+          "cc": ["david.thompson@airbnb.com"],
+          "bcc": ["private.mail@airbnb.com"],
+          "subject": "Potential Collaboration with Airbnb",
+          "body": "Hello Emily, We've been impressed with Airbnb's approach...",
+          "contentType": "text/plain",
+          "date": "2023-06-10T10:30:00Z"
+        },
+        {
+          "from": "sarah@openline.ai",
+          "to": ["rachel.smith@airbnb.com"],
+          "cc": [],
+          "bcc": [],
+          "subject": "Inquiry about Airbnb's New Initiatives",
+          "body": "Hi Rachel, I'm interested in understanding more about Airbnb's new initiatives...",
+          "contentType": "text/plain",
+          "date": "2023-06-11T14:00:00Z"
+        },
+        {
+          "from": "lucas@openline.ai",
+          "to": ["david.thompson@airbnb.com"],
+          "cc": [],
+          "bcc": [],
+          "subject": "Question about Airbnb Listing Features",
+          "body": "David, I had a question regarding the new features on Airbnb listings...",
+          "contentType": "text/plain",
+          "date": "2023-06-12T09:00:00Z"
+        },
+        {
+          "from": "antoine@openline.ai",
+          "to": ["emily.johnson@airbnb.com"],
+          "cc": ["rachel.smith@airbnb.com"],
+          "bcc": [],
+          "subject": "Suggestions for Airbnb's Platform",
+          "body": "Dear Emily, I've been an Airbnb user for years and had some suggestions...",
+          "contentType": "text/plain",
+          "date": "2023-06-13T16:00:00Z"
+        },
+        {
+          "from": "jonty@openline.ai",
+          "to": ["david.thompson@airbnb.com"],
+          "cc": ["rachel.smith@airbnb.com"],
+          "bcc": [],
+          "subject": "Partnership Opportunities",
+          "body": "David, Let's explore potential partnership opportunities between our companies...",
+          "contentType": "text/plain",
+          "date": "2023-06-14T11:00:00Z"
+        },
+        {
+          "from": "sarah@openline.ai",
+          "to": ["emily.johnson@airbnb.com"],
+          "cc": ["rachel.smith@airbnb.com"],
+          "bcc": [],
+          "subject": "Follow-up on Previous Conversation",
+          "body": "Hi Emily, Following up on our discussion about Airbnb's initiatives...",
+          "contentType": "text/plain",
+          "date": "2023-06-15T10:00:00Z"
+        }
+      ],
+      "meetings": [
+        {
+          "createdBy": "lucas@openline.ai",
+          "attendees": ["emily.johnson@airbnb.com", "david.thompson@airbnb.com"],
+          "subject": "Partnership Discussion with Airbnb",
+          "agenda": "Exploring potential areas of partnership.",
+          "startedAt": "2023-06-15T15:00:00Z",
+          "endedAt": "2023-06-15T16:30:00Z"
+        }
+      ]
+    }
+
+  ]
+}
