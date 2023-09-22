@@ -92,19 +92,27 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
   };
 
   const form = new FormData();
-  form.append('file', fs.createReadStream('demo-tenant.json'));
 
-  axios({
-    method: 'get',
-    url,
-    headers,
-    data: form,
-    maxRedirects: 0, // Disables automatic redirection if needed
-  })
-    .then((response: any) => {
+// Fetch the JSON data from the URL
+  axios.get('https://raw.githubusercontent.com/openline-ai/openline-cli/otter/resources/demo-tenant.json')
+    .then((response: import('axios').AxiosResponse) => {
+      // Append the fetched data to the form
+      form.append('file', Buffer.from(JSON.stringify(response.data)), {
+        filename: 'demo-tenant.json',
+        contentType: 'application/json',
+      });
+      return axios({
+        method: 'get',
+        url,
+        headers,
+        data: form,
+        maxRedirects: 0,
+      });
+    })
+    .then((response: import('axios').AxiosResponse) => {
       console.log('Response:', response.data);
     })
-    .catch((error: any) => {
+    .catch((error: Error) => {
       console.error('Error:', error.message);
     });
 
