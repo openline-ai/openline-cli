@@ -43,7 +43,7 @@
     "yarn": "^1.22.19"
   },
   "devDependencies": {
-    "@oclif/test": "^2.2.20",
+    "@oclif/test": "^2.5.5",
     "@types/chai": "^4",
     "@types/listr": "^0.14.4",
     "@types/mocha": "^9.0.0",
