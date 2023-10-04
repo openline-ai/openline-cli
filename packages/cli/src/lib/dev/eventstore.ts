@@ -28,7 +28,7 @@ export function installEventStoreDB(verbose: boolean, location = config.setupDir
       IMAGE_VERSION = "22.10.3-bionic"
       break
   }
-  let image: string | null = config.customerOs.eventStoreDbImage
+  let image: string | null = config.customerOs.eventStoreDbImage+IMAGE_VERSION
 
   const installConfig: Yaml = {
     deployYaml: DEPLOYMENT,
