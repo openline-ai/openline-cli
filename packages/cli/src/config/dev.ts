@@ -85,6 +85,8 @@ export function getConfig() :any {
 
   // customerOS EventStore DB
   config.customerOs.eventStoreDbImage = 'eventstore/eventstore:'
+  config.customerOs.eventStoreMacImageVersion = '22.10.3-alpha-arm64v8'
+  config.customerOs.eventStoreLinuxImageVersion = '22.10.3-bionic'
   config.customerOs.eventStoreDbDeployment = '/deployment/infra/k8s/event-store.yaml'
   config.customerOs.eventStoreDbService = '/deployment/infra/k8s/event-store-service.yaml'
   config.customerOs.eventStoreDbLoadbalancer = '/deployment/infra/k8s/event-store-loadbalancer.yaml'
