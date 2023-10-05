@@ -20,19 +20,20 @@ export function installEventStoreDB(verbose: boolean, location = config.setupDir
   const SERVICE = location + config.customerOs.eventStoreDbService
   const LOADBALANCER = location + config.customerOs.eventStoreDbLoadbalancer
   let IMAGE_VERSION
-  // let IMAGE_VERSION_LOCATION
   let ImageUpdate
   switch (getPlatform()) {
     case 'mac':
       IMAGE_VERSION = config.customerOs.eventStoreMacImageVersion
-      // IMAGE_VERSION_LOCATION = location + IMAGE_VERSION
-      ImageUpdate = 'sed "s/\$IMAGE_VERSION/' + IMAGE_VERSION + `/"`+ DEPLOYMENT + ` > event-store-temp.yaml && mv event-store-temp.yaml ` + DEPLOYMENT
+      ImageUpdate = 'sed "s/\\$IMAGE_VERSION/' + IMAGE_VERSION + `/" `+ DEPLOYMENT + ` > event-store-temp.yaml && mv event-store-temp.yaml ` + DEPLOYMENT
+      logTerminal('INFO', 'deploying image', ImageUpdate?.toString())
+
       shell.exec(ImageUpdate, {silent: !verbose})
       break
     case 'linux':
       IMAGE_VERSION = config.customerOs.eventStoreLinuxImageVersion
-      // IMAGE_VERSION_LOCATION = location + IMAGE_VERSION
-      ImageUpdate = 'sed "s/\$IMAGE_VERSION/' + IMAGE_VERSION + `/"`+ DEPLOYMENT + ` > event-store-temp.yaml && mv event-store-temp.yaml ` + DEPLOYMENT
+      ImageUpdate = 'sed "s/\\$IMAGE_VERSION/' + IMAGE_VERSION + `/" `+ DEPLOYMENT + ` > event-store-temp.yaml && mv event-store-temp.yaml ` + DEPLOYMENT
+      logTerminal('INFO', 'deploying image', ImageUpdate?.toString())
+
       shell.exec(ImageUpdate, {silent: !verbose})
       break
   }
