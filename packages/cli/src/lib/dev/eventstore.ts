@@ -20,14 +20,19 @@ export function installEventStoreDB(verbose: boolean, location = config.setupDir
   const SERVICE = location + config.customerOs.eventStoreDbService
   const LOADBALANCER = location + config.customerOs.eventStoreDbLoadbalancer
   let IMAGE_VERSION
+  let ImageUpdate
   switch (getPlatform()) {
     case 'mac':
-      IMAGE_VERSION = "22.10.3-alpha-arm64v8"
+      IMAGE_VERSION = config.customerOs.eventStoreMacImageVersion
       break
     case 'linux':
-      IMAGE_VERSION = "22.10.3-bionic"
+      IMAGE_VERSION = config.customerOs.eventStoreLinuxImageVersion
       break
   }
+
+  ImageUpdate = 'sed "s/\\$IMAGE_VERSION/' + IMAGE_VERSION + `/" `+ DEPLOYMENT + ` > event-store-temp.yaml && mv event-store-temp.yaml ` + DEPLOYMENT
+  shell.exec(ImageUpdate, {silent: !verbose})
+
   let image: string | null = config.customerOs.eventStoreDbImage+IMAGE_VERSION
 
   const installConfig: Yaml = {
