@@ -43,8 +43,9 @@ export default class DevRm extends Command {
         'kamailio',
         'ory-tunnel',
         'settings-api',
-        'validation-api',
+        'test-env',
         'user-admin-api',
+        'validation-api',
         'voice',
         'voice-plugin'
       ],
