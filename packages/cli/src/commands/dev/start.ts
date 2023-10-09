@@ -399,6 +399,8 @@ export default class DevStart extends Command {
         ns.installNamespace(flags.verbose, location)
         start.installDatabases(flags.verbose, location)
         installCustomerOsApi(flags.verbose, location, version)
+        installfileStoreApi(flags.verbose, location, version)
+        installCommsApi(flags.verbose, location, version)
         installEventStoreDB(flags.verbose, location)
         installEventsProcessingPlatform(flags.verbose, location, version)
         installUserAdminApi(flags.verbose, location, version)
