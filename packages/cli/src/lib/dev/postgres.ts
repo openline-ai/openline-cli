@@ -78,9 +78,9 @@ function deployPostgresql(verbose: boolean, location = config.setupDir) {
 }
 
 export function provisionPostgresql(verbose: boolean, location = config.setupDir) :boolean {
-  const sqlUser = 'openline'
-  const sqlDb = 'openline'
-  const sqlPw = 'password'
+  const sqlUser = config.customerOs.sqlUser
+  const sqlPw = config.customerOs.sqlPw
+  const sqlDb = config.customerOs.sqlDb
   const POSTGRESQL_DB_SETUP = location + config.customerOs.postgresqlSetup
 
   let ms = ''
