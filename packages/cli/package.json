@@ -1,6 +1,6 @@
 {
   "name": "openline",
-  "version": "0.6.11",
+  "version": "0.6.12",
   "description": "Openline CLI",
   "author": "mattbr0wn",
   "bin": "./bin/run",
@@ -56,6 +56,7 @@
     "listr": "^0.14.3",
     "mocha": "^9",
     "oclif": "^3.4.3",
+    "rimraf": "^5.0.5",
     "shx": "^0.3.3",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",
@@ -92,7 +93,8 @@
     "posttest": "yarn lint",
     "prepack": "yarn build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif readme && git add README.md"
+    "version": "oclif readme && git add README.md",
+    "clean:junk": "rimraf dist/* tmp/*"
   },
   "engines": {
     "node": ">=12.0.0"

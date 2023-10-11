@@ -124,9 +124,9 @@ export function installVoicePlugin(verbose: boolean, location = config.setupDir,
 }
 
 export function provisionPostgresql(verbose: boolean, location = config.setupDir) :boolean {
-  const sqlUser = 'openline'
-  const sqlDb = 'openline'
-  const sqlPw = 'password'
+  const sqlUser = config.customerOs.sqlUser
+  const sqlPw = config.customerOs.sqlPw
+  const sqlDb = config.customerOs.sqlDb
   const FILES = ['standard-create.sql', 'permissions-create.sql', 'carriers.sql', 'usrloc-create.sql', 'dispatcher-create.sql'];
 
   let POSTGRESQL_DB_SETUP = ''
