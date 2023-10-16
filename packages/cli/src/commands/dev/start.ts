@@ -57,6 +57,7 @@ export default class DevStart extends Command {
         'jaeger',
         'kamailio',
         'settings-api',
+        'test-contract',
         'test-env',
         `user-admin-api`,
         'validation-api',

@@ -42,6 +42,7 @@ export default class DevRm extends Command {
         'file-store-api',
         'kamailio',
         'settings-api',
+        'test-contract',
         'test-env',
         'user-admin-api',
         'validation-api',
