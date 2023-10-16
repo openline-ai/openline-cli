@@ -168,22 +168,6 @@ export function installNetcat() :void {
   }
 }
 
-// netcat
-export function oryCheck() :boolean {
-  return (shell.exec('which ory', {silent: true}).code === 0)
-}
-
-export function installOry() :void {
-  logTerminal('INFO', 'We need to install ory before continuing')
-  const results = shell.exec(config.dependencies[getPlatform()].ory).code === 0
-  if (results) {
-    logTerminal('SUCCESS', 'ory successfully installed')
-  } else {
-    logTerminal('ERROR', 'ory installation failed', 'Please install ory before retrying the command.')
-    exit(1)
-  }
-}
-
 // kubectl
 export function kubeCheck() :boolean {
   return (shell.exec('which kubectl', {silent: true}).code === 0)

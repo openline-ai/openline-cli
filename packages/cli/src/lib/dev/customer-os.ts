@@ -10,7 +10,6 @@ const CUSTOMER_OS_API = 'customer-os-api-service'
 const SETTING_API = 'settings-api-service'
 const FILE_STORAGE_API = 'file-store-api-service'
 const EVENTS_PROCESSING_PLATFORM = 'events-processing-platform-service'
-const ORY_TUNNEL = 'ory-tunnel-service'
 const COMMS_API = 'comms-api-service'
 const VALIDATION_API = 'validation-api-service'
 const USER_ADMIN_API = 'user-admin-api-service'
@@ -29,10 +28,6 @@ function fileStoreApiCheck() :boolean {
 }
 function eventsProcessingPlatformCheck() :boolean {
   return (shell.exec(`kubectl get service ${EVENTS_PROCESSING_PLATFORM} -n ${NAMESPACE}`, {silent: true}).code === 0)
-}
-
-function oryTunnelCheck() :boolean {
-  return (shell.exec(`kubectl get service ${ORY_TUNNEL} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
 function commsApiCheck() :boolean {
@@ -189,42 +184,6 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
   if (deploy === false) return false
 
   logTerminal('SUCCESS', 'events-processing-platform successfully installed')
-  return true
-}
-
-export function installOryTunnel(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
-  if (oryTunnelCheck()) {
-    logTerminal('SUCCESS', 'ory-tunnel already running')
-    return true
-  }
-  const STATEFUL_SET = location + config.customerOs.oryTunnelStatefulset
-  const SERVICE = location + config.customerOs.oryTunnelService
-  const LOADBALANCER = location + config.customerOs.oryTunnelLoadbalancer
-
-  if (imageVersion.toLowerCase() !== 'latest') {
-    const tag = updateImageTag([STATEFUL_SET], imageVersion)
-    if (!tag) return false
-  }
-
-  let image: string | null  = config.customerOs.oryTunnelImage + imageVersion
-
-  if (location !== config.setupDir) {
-    // come back to this
-    const buildPath = location + '/packages/server/ory-tunnel'
-    const build = buildLocalImage({ path: buildPath, context: buildPath, imageName: image, verbose })
-    if (build === false) return false
-    image = null
-  }
-
-  const installConfig: Yaml = {
-    deployYaml: STATEFUL_SET,
-    serviceYaml: SERVICE,
-    loadbalancerYaml: LOADBALANCER,
-  }
-  const deploy = deployImage(image, installConfig, verbose)
-  if (deploy === false) return false
-
-  logTerminal('SUCCESS', 'ory-tunnel successfully installed')
   return true
 }
 

@@ -94,12 +94,6 @@ export function getConfig() :any {
   config.customerOs.eventStoreDbService = '/deployment/infra/k8s/event-store-service.yaml'
   config.customerOs.eventStoreDbLoadbalancer = '/deployment/infra/k8s/event-store-loadbalancer.yaml'
 
-  //Ory Tunnel
-  config.customerOs.oryTunnelImage = 'ghcr.io/openline-ai/openline-customer-os/ory-tunnel:'
-  config.customerOs.oryTunnelStatefulset = '/deployment/infra/k8s/ory-tunnel.yaml'
-  config.customerOs.oryTunnelService = '/deployment/infra/k8s/ory-tunnel-service.yaml'
-  config.customerOs.oryTunnelLoadbalancer = '/deployment/infra/k8s/ory-tunnel-loadbalancer.yaml'
-
   // Comms API
   config.customerOs.commsApiImage = 'ghcr.io/openline-ai/openline-customer-os/comms-api:'
   config.customerOs.commsApiDeployment = '/deployment/infra/k8s/comms-api.yaml'
@@ -154,7 +148,6 @@ export function getConfig() :any {
   config.dependencies.mac.kubectl = 'brew install kubectl'
   config.dependencies.mac.xcode = 'xcode-select --install'
   config.dependencies.mac.netcat = 'brew install netcat'
-  config.dependencies.mac.ory = 'brew install ory/tap/cli'
   config.dependencies.mac.jq = 'brew install jq'
 
 
@@ -171,8 +164,6 @@ export function getConfig() :any {
   config.dependencies.linux.kubectl = '/bin/bash -c \'curl -Lo ' + config.setupDir + '/kubectl "https://dl.k8s.io/release/v1.25.3/bin/linux/amd64/kubectl" && ' +
                                       'sudo install -o root -g root -m 0755 ' + config.setupDir + '/kubectl /usr/local/bin/kubectl\''
   config.dependencies.linux.netcat = 'sudo apt-get update && sudo apt-get install -y netcat'
-  config.dependencies.linux.ory = '/bin/bash -c \'/bin/bash <(curl https://raw.githubusercontent.com/ory/meta/master/install.sh) -b' + config.setupDir + ' ory && ' +
-                                      'sudo install -o root -g root -m 0755 ' + config.setupDir + '/ory /usr/local/bin/ory\''
   config.dependencies.linux.jq = 'sudo apt-get update && sudo apt-get install -y jq'
 
   return config

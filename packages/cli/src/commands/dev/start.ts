@@ -5,7 +5,7 @@ import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
 import * as redis from '../../lib/dev/redis'
 import {getConfig} from '../../config/dev'
-import {installCustomerOsApi, installfileStoreApi, installOryTunnel, installSettingsApi, installCommsApi, installEventsProcessingPlatform, installValidationApi, installUserAdminApi} from '../../lib/dev/customer-os'
+import {installCustomerOsApi, installfileStoreApi, installSettingsApi, installCommsApi, installEventsProcessingPlatform, installValidationApi, installUserAdminApi} from '../../lib/dev/customer-os'
 import {installContactsGui} from '../../lib/dev/contacts'
 import {installEventStoreDB} from '../../lib/dev/eventstore'
 import * as voice from '../../lib/dev/voice'
@@ -56,7 +56,6 @@ export default class DevStart extends Command {
         'file-store-api',
         'jaeger',
         'kamailio',
-        'ory-tunnel',
         'settings-api',
         'test-env',
         `user-admin-api`,
@@ -97,7 +96,6 @@ export default class DevStart extends Command {
       installCustomerOsApi(flags.verbose, location, version)
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
-      installOryTunnel(flags.verbose, location, version)
       installCommsApi(flags.verbose, location, version)
       installEventStoreDB(flags.verbose, location)
       installEventsProcessingPlatform(flags.verbose, location, version)
@@ -200,17 +198,6 @@ export default class DevStart extends Command {
       installSettingsApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
-
-    case 'ory-tunnel':
-        start.dependencyCheck(flags.verbose)
-        start.startDevServer(flags.verbose)
-        start.cleanupSetupFiles()
-        // install customerOS
-        cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-        ns.installNamespace(flags.verbose, location)
-        installOryTunnel(flags.verbose, location, version)
-        logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-        break
 
     case 'file-store-api':
       start.dependencyCheck(flags.verbose)
@@ -401,6 +388,23 @@ export default class DevStart extends Command {
         installCustomerOsApi(flags.verbose, location, version)
         installEventStoreDB(flags.verbose, location)
         installEventsProcessingPlatform(flags.verbose, location, version)
+        installUserAdminApi(flags.verbose, location, version)
+        sql.provisionPostgresql(flags.verbose, location)
+        neo.provisionNeo4j(flags.verbose, location)
+        redis.provisionRedis(flags.verbose, location)
+        start.cleanupSetupFiles()
+        logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+        break
+
+      case 'test-contract':
+        start.dependencyCheck(flags.verbose)
+        start.startDevServer(flags.verbose)
+        start.cleanupSetupFiles()
+        // install customerOS
+        cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
+        ns.installNamespace(flags.verbose, location)
+        start.installDatabases(flags.verbose, location)
+        installCustomerOsApi(flags.verbose, location, version)
         installUserAdminApi(flags.verbose, location, version)
         sql.provisionPostgresql(flags.verbose, location)
         neo.provisionNeo4j(flags.verbose, location)
