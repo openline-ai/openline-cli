@@ -29,7 +29,6 @@ export default class DevRm extends Command {
       description: 'the Openline service or group of services you would like to delete',
       options: [
         'asterisk',
-        'channels-api',
         'comms-api',
         'contacts',
         'contacts-gui',
