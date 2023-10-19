@@ -25,7 +25,6 @@ export default class RepoLs extends Command {
 
     table.push(
       ['cli', repos.baseUrl + repos.cli],
-      ['contacts', repos.baseUrl + repos.contacts],
       ['customer-os', repos.baseUrl + repos.customerOs],
       ['ui-kit', repos.baseUrl + repos.uiKit],
       ['voice', repos.baseUrl + repos.voice],

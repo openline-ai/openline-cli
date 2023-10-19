@@ -27,7 +27,6 @@ export default class DevClone extends Command {
       required: true,
       description: 'the openline codebase you want to copy locally',
       options: [
-        'contacts',
         'cli',
         'customer-os',
         'voice',
@@ -47,9 +46,6 @@ export default class DevClone extends Command {
 
     const app = args.app
     switch (app) {
-    case 'contacts':
-      cloneRepo(config.contacts.repo, flags.verbose, args.location, flags.branch)
-      break
     case 'cli':
       cloneRepo(config.cli.repo, flags.verbose, args.location, flags.branch)
       break

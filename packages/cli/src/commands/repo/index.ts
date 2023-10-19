@@ -17,7 +17,6 @@ export default class Repo extends Command {
       description: 'the Openline project you would like to view',
       options: [
         'cli',
-        'contacts',
         'customer-os',
         'hubspot-integration',
         'ui-kit',
@@ -42,13 +41,6 @@ export default class Repo extends Command {
     case 'cli':
       table.push(
         ['cli', repos.baseUrl + repos.cli],
-      )
-      console.log(table.toString())
-      break
-
-    case 'contacts':
-      table.push(
-        ['contacts', repos.baseUrl + repos.contacts],
       )
       console.log(table.toString())
       break

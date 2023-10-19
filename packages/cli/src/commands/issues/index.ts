@@ -15,16 +15,16 @@ export default class Issues extends Command {
     'openline issues -b',
     'openline issues -new',
   ]
-  
+
   static flags = {
     all: Flags.boolean({char: 'a', description: 'return all issues assigned to me'}),
     bug: Flags.boolean({char: 'b', description: 'return all bugs assigned to me'}),
     milestone: Flags.boolean({char: 'm', description: 'return all issues tageed to a milestone assigned to me'}),
     new: Flags.boolean({char: 'n', summary: 'create new github issue', description: 'create a new github issue against an openline repo'}),
     token: Flags.string({char: 't', summary: 'github auth token', description: 'overrides the token set in config'}),
-    //repo: Flags.string({char: 'r', summary: 'openline-ai repo', description: 'the openline repo that cooresponds with the openline product', options: ['cli', 'customer-os', 'contacts', 'website']}),
+    //repo: Flags.string({char: 'r', summary: 'openline-ai repo', description: 'the openline repo that cooresponds with the openline product', options: ['cli', 'customer-os', 'website']}),
   }
-  
+
   static args = []
 
   public async run(): Promise<void> {
@@ -51,14 +51,14 @@ export default class Issues extends Command {
     let issueCount = 0
 
     resp.data.forEach(issue => {
-      
+
       let labels: any[] = []
       if (issue.labels) {
         issue.labels.forEach((l: any) => {
           labels.push(l.name)
         })
       }
-  
+
       if (Object.keys(flags).length == 0) {
         if (issue.milestone?.title || labels.includes('bug')) {
           printIssue(issue, labels)
@@ -79,20 +79,20 @@ export default class Issues extends Command {
       }
     })
     console.log('Your open issues: ', issueCount)
-    
+
 
     // create a new issue
     if (flags.new) {
       console.log('')
-      console.log(figlet.textSync('Log a new issue...'))  
-      console.log('New issue against ', flags.repo) 
+      console.log(figlet.textSync('Log a new issue...'))
+      console.log('New issue against ', flags.repo)
     }
   }
 }
 
 // Print issues
 function printIssue(issue: any, labels: string[]) {
-  
+
   let url = issue.html_url
   let issueNumber = issue.number
   let issueId = issue.id

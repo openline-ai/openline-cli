@@ -6,7 +6,6 @@ import * as sql from '../../lib/dev/postgres'
 import * as redis from '../../lib/dev/redis'
 import {getConfig} from '../../config/dev'
 import {installCustomerOsApi, installfileStoreApi, installSettingsApi, installCommsApi, installEventsProcessingPlatform, installValidationApi, installUserAdminApi} from '../../lib/dev/customer-os'
-import {installContactsGui} from '../../lib/dev/contacts'
 import {installEventStoreDB} from '../../lib/dev/eventstore'
 import * as voice from '../../lib/dev/voice'
 import * as start from '../../lib/dev/start'
@@ -45,8 +44,6 @@ export default class DevStart extends Command {
       options: [
         'asterisk',
         'comms-api',
-        //'contacts',
-        //'contacts-gui',
         'customer-os',
         'customer-os-api',
         'db',
@@ -105,9 +102,6 @@ export default class DevStart extends Command {
       neo.provisionNeo4j(flags.verbose, location)
       redis.provisionRedis(flags.verbose, location)
       start.cleanupSetupFiles()
-      // install contacts
-      //cloneRepo(config.contacts.repo, flags.verbose, config.setupDir, undefined, true)
-      installContactsGui(flags.verbose, location, version)
       start.cleanupSetupFiles()
 
       logTerminal('SUCCESS', 'Openline dev server has been started')
@@ -117,41 +111,6 @@ export default class DevStart extends Command {
 
     const app = args.app.toLowerCase()
     switch (app) {
-    case 'contacts':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.installDatabases(flags.verbose, location)
-      installCustomerOsApi(flags.verbose, location, version)
-      installfileStoreApi(flags.verbose, location, version)
-      installSettingsApi(flags.verbose, location, version)
-      sql.provisionPostgresql(flags.verbose, location)
-      neo.provisionNeo4j(flags.verbose, location)
-      redis.provisionRedis(flags.verbose, location)
-      start.cleanupSetupFiles()
-      // install contacts
-      //cloneRepo(config.contacts.repo, flags.verbose, config.setupDir, undefined, true)
-      installContactsGui(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'contacts-gui':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      //cloneRepo(config.contacts.repo, flags.verbose, config.setupDir, undefined, true)
-      installContactsGui(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
     case 'customer-os':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)

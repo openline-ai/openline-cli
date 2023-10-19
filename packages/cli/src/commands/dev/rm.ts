@@ -30,8 +30,6 @@ export default class DevRm extends Command {
       options: [
         'asterisk',
         'comms-api',
-        'contacts',
-        'contacts-gui',
         'customer-os',
         'customer-os-api',
         'db',
@@ -69,27 +67,6 @@ export default class DevRm extends Command {
 
     const service = args.service.toLowerCase()
     switch (service) {
-
-    case 'contacts': {
-      const appServices: Apps = {
-        deployments: ['contacts-gui'],
-        services: ['contacts-gui-service', 'contacts-gui-loadbalancer'],
-        statefulsets: [],
-      }
-
-      deleteApp(appServices, flags.verbose)
-      break
-    }
-
-    case 'contacts-gui': {
-      const appServices: Apps = {
-        deployments: ['contacts-gui'],
-        services: ['contacts-gui-service', 'contacts-gui-loadbalancer'],
-        statefulsets: [],
-      }
-      deleteApp(appServices, flags.verbose)
-      break
-    }
 
     case 'customer-os': {
       const appServices: Apps = {

@@ -1,5 +1,4 @@
 import {Command} from '@oclif/core'
-import {pingContactsGui} from '../../lib/dev/contacts'
 import {
   pingCustomerOsApi,
   pingfileStoreApi,
@@ -30,7 +29,6 @@ export default class DevPing extends Command {
   public async run(): Promise<void> {
     // const {flags} = await this.parse(DevPing)
 
-    const contactsGui = pingContactsGui() ? colors.bold.green('Yes') : colors.red.bold('No')
     const customerOsApi = pingCustomerOsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const settingsApi = pingSettingsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const fileStoreApi = pingfileStoreApi() ? colors.bold.green('Yes') : colors.red.bold('No')
@@ -57,7 +55,6 @@ export default class DevPing extends Command {
       ['customer-os', 'event-store-db', 'http://localhost:2113', eventStoreDb],
       ['customer-os', 'events-processing-platform', 'grpc://localhost:5001', eventsProcessingPlatform],
       ['customer-os', 'jaeger', 'http://localhost:16686', jaeger],
-      ['contacts', 'contacts-gui', 'http://localhost:3001', contactsGui],
       ['voice', 'kamailio', 'ws://localhost:8080', voiceKamailio],
 
     )

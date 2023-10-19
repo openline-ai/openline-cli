@@ -4,7 +4,6 @@ export function getRepos() :any {
   repos.baseUrl = 'https://github.com/openline-ai/'
 
   repos.cli = 'openline-cli'
-  repos.contacts = 'openline-contacts'
   repos.customerOs = 'openline-customer-os'
   repos.uiKit = 'openline-ui-kit'
   repos.voice = 'openline-voice'

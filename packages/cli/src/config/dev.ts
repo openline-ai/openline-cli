@@ -15,16 +15,6 @@ export function getConfig() :any {
   config.namespace.name = 'openline'
   config.namespace.file = 'deployment/infra/k8s/openline-namespace.json'
 
-  // Contacts App config
-  config.contacts = {}
-  // Contacts GUI
-  config.contacts.guiImage = 'ghcr.io/openline-ai/openline-contacts:'
-  config.contacts.githubPath = 'https://raw.githubusercontent.com/openline-ai/openline-contacts/otter'
-  config.contacts.guiDeployment = 'deployment/infra/k8s/contacts-gui-deployment.yaml'
-  config.contacts.guiService = 'deployment/infra/k8s/contacts-gui-service.yaml'
-  config.contacts.guiLoadbalancer = 'deployment/infra/k8s/contacts-gui-loadbalancer.yaml'
-  config.contacts.repo = 'https://github.com/openline-ai/openline-contacts.git'
-
   config.cli = {}
   config.cli.repo = 'https://github.com/openline-ai/openline-cli.git'
 
