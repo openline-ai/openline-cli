@@ -3,10 +3,19 @@ import * as shell from 'shelljs'
 
 // eslint-disable-next-line max-params
 export function cloneRepo(repo: string, verbose: boolean, location?: string, branch?: string, quiet?: boolean) :void {
-  let cmd = `git clone ${repo}`
+  let defaultLocation = process.cwd(); // Get the current working directory as the default location
+  let cmd = `git clone ${repo}`;
   if (location) {
-    cmd += ' ' + location
+    cmd += ' ' + location;
+  } else {
+    cmd += ' ' + defaultLocation;
   }
+
+  logTerminal('INFO', `The location looks like this        >>>>>>>>>> ${location}`); // Log the target directory
+  logTerminal('INFO', `The defaultLocation looks like this >>>>>>>>>> ${defaultLocation}`); // Log the target directory
+  logTerminal('INFO', `The repo looks like this            >>>>>>>>>> ${repo}`); // Log the target directory
+  logTerminal('INFO', `The cmd command looks like this     >>>>>>>>>> ${cmd}`); // Log the target directory
+  logTerminal('INFO', `Cloning into                        >>>>>>>>>> ${defaultLocation}`); // Log the target directory
 
   if (branch) {
     cmd += ` -b ${branch}`

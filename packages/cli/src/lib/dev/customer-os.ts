@@ -53,7 +53,7 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
     return true
   }
 
-  const DEPLOYMENT = location + config.customerOs.apiDeployment
+  const DEPLOYMENT = config.customerOs.apiDeployment
   const SERVICE = location + config.customerOs.apiService
   const LOADBALANCER = location + config.customerOs.apiLoadbalancer
 
@@ -90,7 +90,7 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
     logTerminal('SUCCESS', 'settings-api already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.settingsDeployment
+  const DEPLOYMENT = config.customerOs.settingsDeployment
   const SERVICE = location + config.customerOs.settingsService
   const LOADBALANCER = location + config.customerOs.settingsLoadbalancer
 
@@ -126,7 +126,7 @@ export function installfileStoreApi(verbose: boolean, location = config.setupDir
     logTerminal('SUCCESS', 'file-store-api already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.fileStoreDeployment
+  const DEPLOYMENT = config.customerOs.fileStoreDeployment
   const SERVICE = location + config.customerOs.fileStoreService
   const LOADBALANCER = location + config.customerOs.fileStoreLoadbalancer
 
@@ -161,7 +161,7 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
     logTerminal('SUCCESS', 'events-processing-platform already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.eventsProcessingPlatformDeployment
+  const DEPLOYMENT = config.customerOs.eventsProcessingPlatformDeployment
   const SERVICE = location + config.customerOs.eventsProcessingPlatformService
   const LOADBALANCER = location + config.customerOs.eventsProcessingPlatformLoadbalancer
 
@@ -230,7 +230,7 @@ export function installOryTunnel(verbose: boolean, location = config.setupDir, i
 
 export function installCommsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (commsApiCheck()) return true
-  const DEPLOYMENT = location + config.customerOs.commsApiDeployment
+  const DEPLOYMENT = config.customerOs.commsApiDeployment
   const SERVICE = location + config.customerOs.commsApiService
   const LOADBALANCER = location + config.customerOs.commsApiLoadbalancer
 
@@ -266,7 +266,7 @@ export function installValidationApi(verbose: boolean, location = config.setupDi
     logTerminal('SUCCESS', 'validation-api already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.validationApiDeployment
+  const DEPLOYMENT = config.customerOs.validationApiDeployment
   const SERVICE = location + config.customerOs.validationApiService
   const LOADBALANCER = location + config.customerOs.validationApiLoadbalancer
 
@@ -302,7 +302,7 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     logTerminal('SUCCESS', 'user-admin-api already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.userAdminApiDeployment
+  const DEPLOYMENT = config.customerOs.userAdminApiDeployment
   const SERVICE = location + config.customerOs.userAdminApiService
   const LOADBALANCER = location + config.customerOs.userAdminApiLoadbalancer
   const SECRETS = location + config.customerOs.userAdminApiSecrets
