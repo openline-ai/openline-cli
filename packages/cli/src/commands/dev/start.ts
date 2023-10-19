@@ -8,7 +8,6 @@ import {getConfig} from '../../config/dev'
 import {installCustomerOsApi, installfileStoreApi, installSettingsApi, installCommsApi, installEventsProcessingPlatform, installValidationApi, installUserAdminApi} from '../../lib/dev/customer-os'
 import {installEventStoreDB} from '../../lib/dev/eventstore'
 import * as start from '../../lib/dev/start'
-import {cloneRepo} from '../../lib/clone/clone-repo'
 import {logTerminal} from '../../lib/logs'
 import {installJaeger} from "../../lib/dev/jaeger";
 
@@ -81,7 +80,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
@@ -111,7 +109,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
@@ -135,7 +132,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -146,7 +142,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installSettingsApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -157,7 +152,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installfileStoreApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -166,7 +160,6 @@ export default class DevStart extends Command {
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installCommsApi(flags.verbose, location, version)
       start.cleanupSetupFiles()
@@ -178,7 +171,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       sql.provisionPostgresql(flags.verbose, location)
@@ -193,7 +185,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installEventStoreDB(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -205,7 +196,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installEventsProcessingPlatform(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -217,7 +207,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installJaeger(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -229,7 +218,6 @@ export default class DevStart extends Command {
         start.startDevServer(flags.verbose)
         start.cleanupSetupFiles()
         // install customerOS
-        //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
         ns.installNamespace(flags.verbose, location)
         installValidationApi(flags.verbose, location, version)
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -240,7 +228,6 @@ export default class DevStart extends Command {
         start.startDevServer(flags.verbose)
         start.cleanupSetupFiles()
         // install customerOS
-        //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
         ns.installNamespace(flags.verbose, location)
         installUserAdminApi(flags.verbose, location, version)
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -251,7 +238,6 @@ export default class DevStart extends Command {
         start.startDevServer(flags.verbose)
         start.cleanupSetupFiles()
         // install customerOS
-        //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
         ns.installNamespace(flags.verbose, location)
         start.installDatabases(flags.verbose, location)
         installCustomerOsApi(flags.verbose, location, version)
