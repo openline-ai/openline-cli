@@ -7,7 +7,6 @@ import * as redis from '../../lib/dev/redis'
 import {getConfig} from '../../config/dev'
 import {installCustomerOsApi, installfileStoreApi, installSettingsApi, installCommsApi, installEventsProcessingPlatform, installValidationApi, installUserAdminApi} from '../../lib/dev/customer-os'
 import {installEventStoreDB} from '../../lib/dev/eventstore'
-import * as voice from '../../lib/dev/voice'
 import * as start from '../../lib/dev/start'
 import {cloneRepo} from '../../lib/clone/clone-repo'
 import {logTerminal} from '../../lib/logs'
@@ -42,7 +41,6 @@ export default class DevStart extends Command {
       description: 'the Openline application you would like to start',
       default: 'customer-os',
       options: [
-        'asterisk',
         'comms-api',
         'customer-os',
         'customer-os-api',
@@ -51,13 +49,10 @@ export default class DevStart extends Command {
         'event-store-db',
         'file-store-api',
         'jaeger',
-        //'kamailio',
         'settings-api',
         'test-env',
         `user-admin-api`,
         'validation-api',
-        //'voice',
-        //'voice-plugin'
       ],
     },
   ]
@@ -189,90 +184,6 @@ export default class DevStart extends Command {
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       redis.provisionRedis(flags.verbose, location)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'voice':
-      start.dependencyCheck(flags.verbose)
-      if (process.arch !== 'x64') {
-        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
-        return
-      }
-
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      // install customerOS
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.installDatabases(flags.verbose, location)
-      installCustomerOsApi(flags.verbose, location, version)
-      installfileStoreApi(flags.verbose, location, version)
-      installSettingsApi(flags.verbose, location, version)
-      installCommsApi(flags.verbose, location, version)
-      sql.provisionPostgresql(flags.verbose, location)
-      neo.provisionNeo4j(flags.verbose, location)
-      redis.provisionRedis(flags.verbose, location)
-      start.cleanupSetupFiles()
-      // install voice
-      //cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
-      voice.installKamailio(flags.verbose, location, version)
-      voice.installAsterisk(flags.verbose, location, version)
-      voice.installVoicePlugin(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'kamailio':
-      start.dependencyCheck(flags.verbose)
-      if (process.arch !== 'x64') {
-        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
-        return
-      }
-
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      //cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
-      voice.installKamailio(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'asterisk':
-      start.dependencyCheck(flags.verbose)
-      if (process.arch !== 'x64') {
-        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
-        return
-      }
-
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      //cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
-      voice.installAsterisk(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'voice-plugin':
-      start.dependencyCheck(flags.verbose)
-      if (process.arch !== 'x64') {
-        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
-        return
-      }
-
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      //cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      //cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
-      voice.installVoicePlugin(flags.verbose, location, version)
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break

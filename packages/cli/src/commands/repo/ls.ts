@@ -27,7 +27,6 @@ export default class RepoLs extends Command {
       ['cli', repos.baseUrl + repos.cli],
       ['customer-os', repos.baseUrl + repos.customerOs],
       ['ui-kit', repos.baseUrl + repos.uiKit],
-      ['voice', repos.baseUrl + repos.voice],
       ['webchat', repos.baseUrl + repos.webchat],
       ['website', repos.baseUrl + repos.website],
     )

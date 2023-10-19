@@ -29,7 +29,6 @@ export default class DevClone extends Command {
       options: [
         'cli',
         'customer-os',
-        'voice',
         'webchat',
         'website',
       ],
@@ -51,9 +50,6 @@ export default class DevClone extends Command {
       break
     case 'customer-os':
       cloneRepo(config.customerOs.repo, flags.verbose, args.location, flags.branch)
-      break
-    case 'voice':
-      cloneRepo(config.voice.repo, flags.verbose, args.location, flags.branch)
       break
     case 'webchat':
       cloneRepo(config.webchat.repo, flags.verbose, args.location, flags.branch)

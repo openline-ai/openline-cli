@@ -20,7 +20,6 @@ export default class Repo extends Command {
         'customer-os',
         'hubspot-integration',
         'ui-kit',
-        'voice',
         'web-chat',
         'website',
         'zendesk-integration',
@@ -62,13 +61,6 @@ export default class Repo extends Command {
     case 'ui-kit':
       table.push(
         ['ui-kit', repos.baseUrl + repos.uiKit],
-      )
-      console.log(table.toString())
-      break
-
-    case 'voice':
-      table.push(
-        ['voice', repos.baseUrl + repos.voice],
       )
       console.log(table.toString())
       break

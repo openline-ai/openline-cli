@@ -28,7 +28,6 @@ export default class DevRm extends Command {
       required: false,
       description: 'the Openline service or group of services you would like to delete',
       options: [
-        'asterisk',
         'comms-api',
         'customer-os',
         'customer-os-api',
@@ -37,13 +36,10 @@ export default class DevRm extends Command {
         'event-store-db',
         'events-processing-platform',
         'file-store-api',
-        'kamailio',
         'settings-api',
         'test-env',
         'user-admin-api',
         'validation-api',
-        'voice',
-        'voice-plugin'
       ],
     },
   ]
@@ -143,59 +139,6 @@ export default class DevRm extends Command {
       break
     }
 
-    // Voice Services
-
-      case 'voice': {
-      const appServices: Apps = {
-        deployments: ['kamailio', 'voice-plugin'],
-        services: [
-          'asterisk',
-          'kamailio-loadbalancer-service',
-          'kamailio-service',
-          'voice-plugin-service',
-        ],
-        statefulsets: ['asterisk'],
-      }
-
-      deleteApp(appServices, flags.verbose)
-      break
-    }
-    case 'kamailio': {
-      const appServices: Apps = {
-        deployments: ['kamailio'],
-        services: [
-          'kamailio-loadbalancer-service',
-          'kamailio-service',
-        ],
-        statefulsets: [],
-      }
-      deleteApp(appServices, flags.verbose)
-      break
-    }
-
-    case 'asterisk': {
-      const appServices: Apps = {
-        deployments: [],
-        services: [
-          'asterisk',
-        ],
-        statefulsets: ['asterisk'],
-      }
-      deleteApp(appServices, flags.verbose)
-      break
-    }
-
-      case 'voice-plugin': {
-      const appServices: Apps = {
-        deployments: ['voice-plugin'],
-        services: [
-          'voice-plugin-service',
-        ],
-        statefulsets: [],
-      }
-      deleteApp(appServices, flags.verbose)
-      break
-    }
       case 'event-store-db': {
       const appServices: Apps = {
         deployments: [],

@@ -10,7 +10,6 @@ import {
   pingEventsProcessingPlatform,
   pingUserAdminApi
 } from '../../lib/dev/customer-os'
-import {pingKamailio} from '../../lib/dev/voice'
 
 import * as colors from 'colors' // eslint-disable-line no-restricted-imports
 const Table = require('cli-table') // eslint-disable-line unicorn/prefer-module
@@ -36,7 +35,6 @@ export default class DevPing extends Command {
     const eventsProcessingPlatform = pingEventsProcessingPlatform() ? colors.bold.green('Yes') : colors.red.bold('No')
     const jaeger = pingJaeger() ? colors.bold.green('Yes') : colors.red.bold('No')
     const commsApi = pingCommsApi() ? colors.bold.green('Yes') : colors.red.bold('No')
-    const voiceKamailio = pingKamailio() ? colors.bold.green('Yes') : colors.red.bold('No')
     const validationApi = pingValidationApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const userAdminApi = pingUserAdminApi() ? colors.bold.green('Yes') : colors.red.bold('No')
 
@@ -55,7 +53,6 @@ export default class DevPing extends Command {
       ['customer-os', 'event-store-db', 'http://localhost:2113', eventStoreDb],
       ['customer-os', 'events-processing-platform', 'grpc://localhost:5001', eventsProcessingPlatform],
       ['customer-os', 'jaeger', 'http://localhost:16686', jaeger],
-      ['voice', 'kamailio', 'ws://localhost:8080', voiceKamailio],
 
     )
 

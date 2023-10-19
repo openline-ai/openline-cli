@@ -90,30 +90,6 @@ export function getConfig() :any {
   config.customerOs.commsApiService = 'deployment/infra/k8s/comms-api-k8s-service.yaml'
   config.customerOs.commsApiLoadbalancer = 'deployment/infra/k8s/comms-api-k8s-loadbalancer-service.yaml'
 
-  // Voice network
-  config.voice = {}
-  config.voice.repo = 'https://github.com/openline-ai/openline-voice.git'
-  config.voice.githubPath = 'https://raw.githubusercontent.com/openline-ai/openline-voice/otter'
-
-  // Voice Kamailio
-  config.voice.kamailio = {}
-  config.voice.kamailio.Image = 'ghcr.io/openline-ai/openline-voice/openline-kamailio-server:'
-  config.voice.kamailio.Deployment = 'deployment/k8s/local-minikube/apps-config/kamailio.yaml'
-  config.voice.kamailio.Service = 'deployment/k8s/local-minikube/apps-config/kamailio-k8s-service.yaml'
-  config.voice.kamailio.Loadbalancer = 'deployment/k8s/local-minikube/apps-config/kamailio-k8s-loadbalancer-service.yaml'
-
-  // Voice Asterisk
-  config.voice.asterisk = {}
-  config.voice.asterisk.Image = 'ghcr.io/openline-ai/openline-voice/openline-asterisk-server:'
-  config.voice.asterisk.Deployment = 'deployment/k8s/local-minikube/apps-config/asterisk.yaml'
-  config.voice.asterisk.Service = 'deployment/k8s/local-minikube/apps-config/asterisk-k8s-service.yaml'
-
-  // Voice Plugin
-  config.voice.plugin = {}
-  config.voice.plugin.Image = 'ghcr.io/openline-ai/openline-voice/voice-plugin:'
-  config.voice.plugin.Deployment = 'deployment/k8s/local-minikube/apps-config/voice-plugin.yaml'
-  config.voice.plugin.Service = 'deployment/k8s/local-minikube/apps-config/voice-plugin-k8s-service.yaml'
-
   config.webchat = {}
   config.webchat.repo = 'https://github.com/openline-ai/openline-web-chat.git'
 
