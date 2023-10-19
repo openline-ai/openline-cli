@@ -40,7 +40,6 @@ export default class DevRm extends Command {
         'events-processing-platform',
         'file-store-api',
         'kamailio',
-        'ory-tunnel',
         'settings-api',
         'test-env',
         'user-admin-api',
@@ -209,18 +208,6 @@ export default class DevRm extends Command {
       break
     }
 
-      case 'ory-tunnel': {
-      const appServices: Apps = {
-        deployments: [],
-        services: [
-          'ory-tunnel-service',
-          'ory-tunnel-loadbalancer',
-        ],
-        statefulsets: ['ory-tunnel'],
-      }
-      deleteApp(appServices, flags.verbose)
-      break
-    }
       case 'voice-plugin': {
       const appServices: Apps = {
         deployments: ['voice-plugin'],
