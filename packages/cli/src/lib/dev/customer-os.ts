@@ -3,6 +3,8 @@ import {getConfig} from '../../config/dev'
 import {deployImage, Yaml, updateImageTag} from './deploy'
 import {buildLocalImage} from './build-image'
 import {logTerminal} from '../logs'
+import FormData from "form-data";
+import axios from "axios";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -281,19 +283,80 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     image = null
   }
 
+  shell.exec(`bash ${SECRETS}`, {silent: false})
+  const kubeApplySecretsConfig = `kubectl apply -f user-admin-api-secret.yaml --namespace ${NAMESPACE}`
+  if (verbose) logTerminal('EXEC', kubeApplySecretsConfig)
+  shell.exec(kubeApplySecretsConfig, {silent: !verbose})
+
   const installConfig: Yaml = {
     deployYaml: DEPLOYMENT,
     serviceYaml: SERVICE,
     loadbalancerYaml: LOADBALANCER,
   }
-
   const deploy = deployImage(image, installConfig, verbose)
   if (deploy === false) return false
 
-  shell.exec(`bash ${SECRETS}`, {silent: false})
-  const kubeApplySecretsConfig = `kubectl apply -f user-admin-api-secret.yaml --namespace ${NAMESPACE}`
-  if (verbose) logTerminal('EXEC', kubeApplySecretsConfig)
-  shell.exec(kubeApplySecretsConfig, {silent: !verbose})
+  let userAdminApiOutput = []
+  let retry = 1
+  const maxAttempts = config.server.timeOuts / 2
+
+  const userAdminApiPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep user-admin-api`, {silent: true})
+    .stdout
+    .split(/\r?\n/)
+    .filter(Boolean);
+
+  let userAdminApiPodStatus;
+  do {
+    userAdminApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${userAdminApiPodName[0]} -o jsonpath='{.status.phase}'`)
+    shell.exec('sleep 2')
+    logTerminal('INFO', `UserAdminApi Pod Status >>>>>>>>>>> ` + userAdminApiPodStatus)
+  } while (userAdminApiPodStatus == "Pending")
+
+  let userAdminApiReadyStatus;
+  do {
+    userAdminApiReadyStatus = shell.exec(`kubectl -n ${NAMESPACE} logs ${userAdminApiPodName[0]}`, {silent: true})
+    shell.exec('sleep 2')
+    logTerminal('INFO', `UserAdminApi Ready Status >>>>>>>>>>> ` + userAdminApiReadyStatus.includes("Listening and serving HTTP on :4001"))
+  } while (!userAdminApiReadyStatus.includes("Listening and serving HTTP on :4001"))
+  const axios = require('axios');
+
+  logTerminal('INFO', `>>>>>>>>>>>>>> Finished waiting <<<<<<<<<<<<<<`)
+
+
+  const FormData = require('form-data');
+  const fs = require('fs');
+
+  const url = 'http://127.0.0.1:4001/demo-tenant';
+  const headers = {
+    'X-Openline-Api-Key': 'cad7ccb6-d8ff-4bae-a048-a42db33a217e',
+    'TENANT_NAME': 'openline',
+    'MASTER_USERNAME': 'development@openline.ai',
+  };
+
+  const form = new FormData();
+
+// Fetch the JSON data from the URL
+  axios.get('https://raw.githubusercontent.com/openline-ai/openline-cli/otter/resources/demo-tenant.json')
+    .then((response: import('axios').AxiosResponse) => {
+      // Append the fetched data to the form
+      form.append('file', Buffer.from(JSON.stringify(response.data)), {
+        filename: 'demo-tenant.json',
+        contentType: 'application/json',
+      });
+      return axios({
+        method: 'get',
+        url,
+        headers,
+        data: form,
+        maxRedirects: 0,
+      });
+    })
+    .then((response: import('axios').AxiosResponse) => {
+      console.log('Response:', response.data);
+    })
+    .catch((error: Error) => {
+      console.error('Error:', error.message);
+    });
 
   logTerminal('SUCCESS', 'user-admin-api successfully installed')
   return true
