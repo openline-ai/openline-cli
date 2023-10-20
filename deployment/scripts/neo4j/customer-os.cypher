@@ -136,379 +136,379 @@ ON CREATE SET
             rel.primary=true,
             rel.label="WORK";
 
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"edi@openline.ai"})
-ON CREATE SET
-            e.email="edi@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            u.id=randomUUID(),
-            u.firstName="Eduard",
-            u.lastName="Firut",
-            u.roles=["USER", "OWNER"],
-    		u.createdAt=datetime({timezone: 'UTC'}),
-    		u.updatedAt=datetime({timezone: 'UTC'}),
-    		u.source="openline",
-    		u.sourceOfTruth="openline",
-    		u.appSource="manual",
-            rel.primary=true,
-            rel.label="WORK"
-MERGE (p:Player {authId: "edi@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
-
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"alex@openline.ai"})
-ON CREATE SET
-            e.email="alex@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            rel.primary=true,
-            rel.label="WORK",
-            u.id=randomUUID(),
-            u.firstName="Alex",
-            u.lastName="Basarab",
-            u.roles=["USER", "OWNER"],
-            u.createdAt=datetime({timezone: 'UTC'}),
-            u.updatedAt=datetime({timezone: 'UTC'}),
-            u.source="openline",
-            u.sourceOfTruth="openline",
-            u.appSource="manual"
-MERGE (p:Player {authId: "alex@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
-
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"acalinica@openline.ai"})
-ON CREATE SET
-            e.email="acalinica@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            rel.primary=true,
-            rel.label="WORK",
-            u.id=randomUUID(),
-            u.firstName="Alex",
-            u.lastName="Calinica",
-            u.roles=["USER","OWNER"],
-    		u.createdAt=datetime({timezone: 'UTC'}),
-    		u.updatedAt=datetime({timezone: 'UTC'}),
-    		u.source="openline",
-    		u.sourceOfTruth="openline",
-    		u.appSource="manual"
-MERGE (p:Player {authId: "acalinica@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.identityId="31237453-f836-4899-a2ed-fe6ed713327d",
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
-
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"silviu@openline.ai"})
-ON CREATE SET
-            e.email="silviu@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            rel.primary=true,
-            rel.label="WORK",
-            u.id=randomUUID(),
-            u.firstName="Silviu",
-            u.lastName="Basu",
-            u.roles=["USER","OWNER"],
-    		u.createdAt=datetime({timezone: 'UTC'}),
-    		u.updatedAt=datetime({timezone: 'UTC'}),
-    		u.source="openline",
-    		u.sourceOfTruth="openline",
-    		u.appSource="manual"
-MERGE (p:Player {authId: "silviu@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.identityId="1edadb89-7ce1-41d0-a2d3-e673795b90b6",
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
-
-
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"kasia@openline.ai"})
-ON CREATE SET
-            e.email="kasia@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            rel.primary=true,
-            rel.label="WORK",
-            u.id=randomUUID(),
-            u.firstName="Kasia",
-            u.lastName="Marciniszyn",
-            u.roles=["USER","OWNER"],
-    		u.createdAt=datetime({timezone: 'UTC'}),
-    		u.updatedAt=datetime({timezone: 'UTC'}),
-    		u.source="openline",
-    		u.sourceOfTruth="openline",
-    		u.appSource="manual"
-MERGE (p:Player {authId: "kasia@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.identityId="b7aeff67-ca86-4f68-8344-37748ae792fe",
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
-
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"gabi@openline.ai"})
-ON CREATE SET
-            e.email="gabi@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            rel.primary=true,
-            rel.label="WORK",
-            u.id=randomUUID(),
-            u.firstName="Gabriel",
-            u.lastName="Gontariu",
-            u.roles=["USER","OWNER"],
-    		u.createdAt=datetime({timezone: 'UTC'}),
-    		u.updatedAt=datetime({timezone: 'UTC'}),
-    		u.source="openline",
-    		u.sourceOfTruth="openline",
-    		u.appSource="manual"
-MERGE (p:Player {authId: "gabi@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.identityId="8327e04a-877b-4b05-8aaa-ef6a582f7836",
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
-
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"torrey@openline.ai"})
-ON CREATE SET
-            e.email="torrey@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            rel.primary=true,
-            rel.label="WORK",
-            u.id=randomUUID(),
-            u.firstName="Torrey",
-            u.lastName="Searle",
-            u.roles=["OWNER","USER"],
-    		u.createdAt=datetime({timezone: 'UTC'}),
-    		u.updatedAt=datetime({timezone: 'UTC'}),
-    		u.source="openline",
-    		u.sourceOfTruth="openline",
-    		u.appSource="manual"
-MERGE (p:Player {authId: "torrey@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.identityId="46a69d24-e15a-4a04-ae44-067186ab1c87",
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
-
-
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"vasi@openline.ai"})
-ON CREATE SET
-            e.email="vasi@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            rel.primary=true,
-            rel.label="WORK",
-            u.id=randomUUID(),
-            u.firstName="Vasi",
-            u.lastName="Coscotin",
-        u.roles=["OWNER","USER"],
-    		u.createdAt=datetime({timezone: 'UTC'}),
-    		u.updatedAt=datetime({timezone: 'UTC'}),
-    		u.source="openline",
-    		u.sourceOfTruth="openline",
-    		u.appSource="manual"
-MERGE (p:Player {authId: "vasi@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.identityId="c6591b09-4e2a-48ba-bff2-a30c33e26a3a",
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
-
-
-
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"antoine@openline.ai"})
-ON CREATE SET
-            e.email="antoine@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            rel.primary=true,
-            rel.label="WORK",
-            u.id=randomUUID(),
-            u.firstName="Antoine",
-            u.lastName="Valot",
-            u.roles=["USER"],
-    		u.createdAt=datetime({timezone: 'UTC'}),
-    		u.updatedAt=datetime({timezone: 'UTC'}),
-    		u.source="openline",
-    		u.sourceOfTruth="openline",
-    		u.appSource="manual"
-MERGE (p:Player {authId: "antoine@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
-
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"matt@openline.ai"})
-ON CREATE SET
-            e.email="matt@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            rel.primary=true,
-            rel.label="WORK",
-            u.id=randomUUID(),
-            u.firstName="Matt",
-            u.lastName="Brown",
-            u.roles=["USER"],
-    		u.createdAt=datetime({timezone: 'UTC'}),
-    		u.updatedAt=datetime({timezone: 'UTC'}),
-    		u.source="openline",
-    		u.sourceOfTruth="openline",
-    		u.appSource="manual"
-MERGE (p:Player {authId: "matt@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
-
-
-MATCH (t:Tenant {name:"openline"})
-MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"jonty@openline.ai"})
-ON CREATE SET
-            e.email="jonty@openline.ai",
-            e.id=randomUUID(),
-            e.source="openline",
-            e.sourceOfTruth="openline",
-            e.appSource="manual",
-            e.createdAt=datetime({timezone: 'UTC'}),
-            e.updatedAt=datetime({timezone: 'UTC'})
-WITH t, e
-MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
-ON CREATE SET
-            rel.primary=true,
-            rel.label="WORK",
-            u.id=randomUUID(),
-            u.firstName="Jonty",
-            u.lastName="Knox",
-            u.roles=["USER"],
-    		u.createdAt=datetime({timezone: 'UTC'}),
-    		u.updatedAt=datetime({timezone: 'UTC'}),
-    		u.source="openline",
-    		u.sourceOfTruth="openline",
-    		u.appSource="manual"
-MERGE (p:Player {authId: "jonty@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
-ON CREATE SET
-        p.id=randomUUID(),
-        p.createdAt=datetime({timezone: 'UTC'}),
-        p.updatedAt=datetime({timezone: 'UTC'}),
-        p.source="openline",
-        p.sourceOfTruth="openline",
-        p.appSource="manual";
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"edi@openline.ai"})
+//ON CREATE SET
+//            e.email="edi@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            u.id=randomUUID(),
+//            u.firstName="Eduard",
+//            u.lastName="Firut",
+//            u.roles=["USER", "OWNER"],
+//    		u.createdAt=datetime({timezone: 'UTC'}),
+//    		u.updatedAt=datetime({timezone: 'UTC'}),
+//    		u.source="openline",
+//    		u.sourceOfTruth="openline",
+//    		u.appSource="manual",
+//            rel.primary=true,
+//            rel.label="WORK"
+//MERGE (p:Player {authId: "edi@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
+//
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"alex@openline.ai"})
+//ON CREATE SET
+//            e.email="alex@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            rel.primary=true,
+//            rel.label="WORK",
+//            u.id=randomUUID(),
+//            u.firstName="Alex",
+//            u.lastName="Basarab",
+//            u.roles=["USER", "OWNER"],
+//            u.createdAt=datetime({timezone: 'UTC'}),
+//            u.updatedAt=datetime({timezone: 'UTC'}),
+//            u.source="openline",
+//            u.sourceOfTruth="openline",
+//            u.appSource="manual"
+//MERGE (p:Player {authId: "alex@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
+//
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"acalinica@openline.ai"})
+//ON CREATE SET
+//            e.email="acalinica@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            rel.primary=true,
+//            rel.label="WORK",
+//            u.id=randomUUID(),
+//            u.firstName="Alex",
+//            u.lastName="Calinica",
+//            u.roles=["USER","OWNER"],
+//    		u.createdAt=datetime({timezone: 'UTC'}),
+//    		u.updatedAt=datetime({timezone: 'UTC'}),
+//    		u.source="openline",
+//    		u.sourceOfTruth="openline",
+//    		u.appSource="manual"
+//MERGE (p:Player {authId: "acalinica@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.identityId="31237453-f836-4899-a2ed-fe6ed713327d",
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
+//
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"silviu@openline.ai"})
+//ON CREATE SET
+//            e.email="silviu@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            rel.primary=true,
+//            rel.label="WORK",
+//            u.id=randomUUID(),
+//            u.firstName="Silviu",
+//            u.lastName="Basu",
+//            u.roles=["USER","OWNER"],
+//    		u.createdAt=datetime({timezone: 'UTC'}),
+//    		u.updatedAt=datetime({timezone: 'UTC'}),
+//    		u.source="openline",
+//    		u.sourceOfTruth="openline",
+//    		u.appSource="manual"
+//MERGE (p:Player {authId: "silviu@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.identityId="1edadb89-7ce1-41d0-a2d3-e673795b90b6",
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
+//
+//
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"kasia@openline.ai"})
+//ON CREATE SET
+//            e.email="kasia@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            rel.primary=true,
+//            rel.label="WORK",
+//            u.id=randomUUID(),
+//            u.firstName="Kasia",
+//            u.lastName="Marciniszyn",
+//            u.roles=["USER","OWNER"],
+//    		u.createdAt=datetime({timezone: 'UTC'}),
+//    		u.updatedAt=datetime({timezone: 'UTC'}),
+//    		u.source="openline",
+//    		u.sourceOfTruth="openline",
+//    		u.appSource="manual"
+//MERGE (p:Player {authId: "kasia@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.identityId="b7aeff67-ca86-4f68-8344-37748ae792fe",
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
+//
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"gabi@openline.ai"})
+//ON CREATE SET
+//            e.email="gabi@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            rel.primary=true,
+//            rel.label="WORK",
+//            u.id=randomUUID(),
+//            u.firstName="Gabriel",
+//            u.lastName="Gontariu",
+//            u.roles=["USER","OWNER"],
+//    		u.createdAt=datetime({timezone: 'UTC'}),
+//    		u.updatedAt=datetime({timezone: 'UTC'}),
+//    		u.source="openline",
+//    		u.sourceOfTruth="openline",
+//    		u.appSource="manual"
+//MERGE (p:Player {authId: "gabi@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.identityId="8327e04a-877b-4b05-8aaa-ef6a582f7836",
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
+//
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"torrey@openline.ai"})
+//ON CREATE SET
+//            e.email="torrey@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            rel.primary=true,
+//            rel.label="WORK",
+//            u.id=randomUUID(),
+//            u.firstName="Torrey",
+//            u.lastName="Searle",
+//            u.roles=["OWNER","USER"],
+//    		u.createdAt=datetime({timezone: 'UTC'}),
+//    		u.updatedAt=datetime({timezone: 'UTC'}),
+//    		u.source="openline",
+//    		u.sourceOfTruth="openline",
+//    		u.appSource="manual"
+//MERGE (p:Player {authId: "torrey@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.identityId="46a69d24-e15a-4a04-ae44-067186ab1c87",
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
+//
+//
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"vasi@openline.ai"})
+//ON CREATE SET
+//            e.email="vasi@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            rel.primary=true,
+//            rel.label="WORK",
+//            u.id=randomUUID(),
+//            u.firstName="Vasi",
+//            u.lastName="Coscotin",
+//        u.roles=["OWNER","USER"],
+//    		u.createdAt=datetime({timezone: 'UTC'}),
+//    		u.updatedAt=datetime({timezone: 'UTC'}),
+//    		u.source="openline",
+//    		u.sourceOfTruth="openline",
+//    		u.appSource="manual"
+//MERGE (p:Player {authId: "vasi@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.identityId="c6591b09-4e2a-48ba-bff2-a30c33e26a3a",
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
+//
+//
+//
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"antoine@openline.ai"})
+//ON CREATE SET
+//            e.email="antoine@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            rel.primary=true,
+//            rel.label="WORK",
+//            u.id=randomUUID(),
+//            u.firstName="Antoine",
+//            u.lastName="Valot",
+//            u.roles=["USER"],
+//    		u.createdAt=datetime({timezone: 'UTC'}),
+//    		u.updatedAt=datetime({timezone: 'UTC'}),
+//    		u.source="openline",
+//    		u.sourceOfTruth="openline",
+//    		u.appSource="manual"
+//MERGE (p:Player {authId: "antoine@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
+//
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"matt@openline.ai"})
+//ON CREATE SET
+//            e.email="matt@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            rel.primary=true,
+//            rel.label="WORK",
+//            u.id=randomUUID(),
+//            u.firstName="Matt",
+//            u.lastName="Brown",
+//            u.roles=["USER"],
+//    		u.createdAt=datetime({timezone: 'UTC'}),
+//    		u.updatedAt=datetime({timezone: 'UTC'}),
+//    		u.source="openline",
+//    		u.sourceOfTruth="openline",
+//    		u.appSource="manual"
+//MERGE (p:Player {authId: "matt@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
+//
+//
+//MATCH (t:Tenant {name:"openline"})
+//MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"jonty@openline.ai"})
+//ON CREATE SET
+//            e.email="jonty@openline.ai",
+//            e.id=randomUUID(),
+//            e.source="openline",
+//            e.sourceOfTruth="openline",
+//            e.appSource="manual",
+//            e.createdAt=datetime({timezone: 'UTC'}),
+//            e.updatedAt=datetime({timezone: 'UTC'})
+//WITH t, e
+//MERGE (t)<-[:USER_BELONGS_TO_TENANT]-(u:User)-[rel:HAS]->(e)
+//ON CREATE SET
+//            rel.primary=true,
+//            rel.label="WORK",
+//            u.id=randomUUID(),
+//            u.firstName="Jonty",
+//            u.lastName="Knox",
+//            u.roles=["USER"],
+//    		u.createdAt=datetime({timezone: 'UTC'}),
+//    		u.updatedAt=datetime({timezone: 'UTC'}),
+//    		u.source="openline",
+//    		u.sourceOfTruth="openline",
+//    		u.appSource="manual"
+//MERGE (p:Player {authId: "jonty@openline.ai", provider: "google"})-[:IDENTIFIES {default: true}]->(u)
+//ON CREATE SET
+//        p.id=randomUUID(),
+//        p.createdAt=datetime({timezone: 'UTC'}),
+//        p.updatedAt=datetime({timezone: 'UTC'}),
+//        p.source="openline",
+//        p.sourceOfTruth="openline",
+//        p.appSource="manual";
 
 
 MATCH (t:Tenant {name:"openline"})

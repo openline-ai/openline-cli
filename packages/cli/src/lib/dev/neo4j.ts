@@ -9,6 +9,9 @@ const NEO4J_RELEASE_NAME = 'customer-db-neo4j'
 const NEO4J_POD = 'customer-db-neo4j-0'
 const NEO4J_NAME = 'openline-neo4j-db'
 
+let retry = 1
+const maxAttempts = config.server.timeOuts / 2
+
 function neo4jCheck() :boolean {
   return (shell.exec(`kubectl get service ${NEO4J_RELEASE_NAME} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
@@ -33,11 +36,48 @@ export function installNeo4j(verbose :boolean, location = config.setupDir) :bool
 }
 
 export function provisionNeo4j(verbose :boolean, location = config.setupDir) :boolean {
-  let neo = ''
-  let retry = 1
-  const maxAttempts = config.server.timeOuts / 2
-  const NEO4J_CYPHER = location + config.customerOs.neo4jCypher
+  waitForNeo4jToBeInitialized(verbose)
 
+  const version = shell.exec(`kubectl describe pod ${NEO4J_POD} -n ${NAMESPACE} | grep HELM_NEO4J_VERSION | tr -s ' ' | cut -d ' ' -f 3`, {silent: true}).stdout.trimEnd()
+  if (verbose) logTerminal('INFO', `Neo4j version detected... ${version}`)
+
+  const NEO4J_CYPHER = location + config.customerOs.neo4jCypher
+  let neoOutput = []
+  do {
+    const neoOutputFull = shell.exec(`cat ${NEO4J_CYPHER} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_RELEASE_NAME}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
+    neoOutput = neoOutputFull.filter(function (line) {
+      return !(line.includes('see a command prompt') || line === '')
+    })
+    if (neoOutput.length > 0) {
+      retry++
+      shell.exec(`kubectl delete pod cypher-shell -n ${NAMESPACE}`, {silent: true})
+      shell.exec('sleep 2')
+      if (verbose) logTerminal('INFO', `Neo4j provisioning attempt failed reason = ${JSON.stringify(neoOutput)} retrying... ${retry}/${maxAttempts}`)
+    }
+  } while (neoOutput.length > 0)
+
+
+  logTerminal('SUCCESS', 'neo4j database successfully provisioned')
+  return true
+}
+
+export function uninstallNeo4j(verbose:boolean) :boolean {
+  const helmUninstall = `helm uninstall ${NEO4J_RELEASE_NAME} --namespace ${NAMESPACE}`
+  if (verbose) logTerminal('EXEC', helmUninstall)
+  const result = shell.exec(helmUninstall, {silent: true})
+  if (result.code === 0) {
+    logTerminal('SUCCESS', 'Neo4j successfully uninstalled')
+  } else {
+    logTerminal('ERROR', result.stderr, 'dev:neo4j:uninstallNeo4j')
+    return false
+  }
+
+  return true
+}
+
+export function waitForNeo4jToBeInitialized(verbose:boolean) {
+  logTerminal('INFO', 'Waiting for Neo4J to be initialized')
+  let neo = ''
   while (neo === '') {
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `Neo4j starting up, please wait... ${retry}/${maxAttempts}`)
@@ -62,74 +102,4 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
       return false
     }
   }
-
-  const version = shell.exec(`kubectl describe pod ${NEO4J_POD} -n ${NAMESPACE} | grep HELM_NEO4J_VERSION | tr -s ' ' | cut -d ' ' -f 3`, {silent: true}).stdout.trimEnd()
-  if (verbose) logTerminal('INFO', `Neo4j version detected... ${version}`)
-
-  let neoOutput = []
-  do {
-    const neoOutputFull = shell.exec(`cat ${NEO4J_CYPHER} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_RELEASE_NAME}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
-    neoOutput = neoOutputFull.filter(function (line) {
-      return !(line.includes('see a command prompt') || line === '')
-    })
-    if (neoOutput.length > 0) {
-      retry++
-      shell.exec(`kubectl delete pod cypher-shell -n ${NAMESPACE}`, {silent: true})
-      shell.exec('sleep 2')
-      if (verbose) logTerminal('INFO', `Neo4j provisioning attempt failed reason = ${JSON.stringify(neoOutput)} retrying... ${retry}/${maxAttempts}`)
-    }
-  } while (neoOutput.length > 0)
-
-  const axios = require('axios');
-  const FormData = require('form-data');
-  const fs = require('fs');
-
-  // const url = 'http://127.0.0.1:4001/demo-tenant';
-  // const headers = {
-  //   'X-Openline-Api-Key': 'cad7ccb6-d8ff-4bae-a048-a42db33a217e',
-  //   'TENANT_NAME': 'openline',
-  //   'MASTER_USERNAME': 'development@openline.ai',
-  // };
-  //
-  // const form = new FormData();
-//
-// // Fetch the JSON data from the URL
-//   axios.get('https://raw.githubusercontent.com/openline-ai/openline-cli/otter/resources/demo-tenant.json')
-//     .then((response: import('axios').AxiosResponse) => {
-//       // Append the fetched data to the form
-//       form.append('file', Buffer.from(JSON.stringify(response.data)), {
-//         filename: 'demo-tenant.json',
-//         contentType: 'application/json',
-//       });
-//       return axios({
-//         method: 'get',
-//         url,
-//         headers,
-//         data: form,
-//         maxRedirects: 0,
-//       });
-//     })
-//     .then((response: import('axios').AxiosResponse) => {
-//       console.log('Response:', response.data);
-//     })
-//     .catch((error: Error) => {
-//       console.error('Error:', error.message);
-//     });
-
-  logTerminal('SUCCESS', 'neo4j database successfully provisioned')
-  return true
-}
-
-export function uninstallNeo4j(verbose:boolean) :boolean {
-  const helmUninstall = `helm uninstall ${NEO4J_RELEASE_NAME} --namespace ${NAMESPACE}`
-  if (verbose) logTerminal('EXEC', helmUninstall)
-  const result = shell.exec(helmUninstall, {silent: true})
-  if (result.code === 0) {
-    logTerminal('SUCCESS', 'Neo4j successfully uninstalled')
-  } else {
-    logTerminal('ERROR', result.stderr, 'dev:neo4j:uninstallNeo4j')
-    return false
-  }
-
-  return true
 }

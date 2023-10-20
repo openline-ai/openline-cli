@@ -49,6 +49,7 @@ export default class DevStart extends Command {
         'file-store-api',
         'jaeger',
         'settings-api',
+        'test-contract',
         'test-env',
         `user-admin-api`,
         'validation-api',
@@ -237,12 +238,26 @@ export default class DevStart extends Command {
         start.dependencyCheck(flags.verbose)
         start.startDevServer(flags.verbose)
         start.cleanupSetupFiles()
-        // install customerOS
         ns.installNamespace(flags.verbose, location)
         start.installDatabases(flags.verbose, location)
         installCustomerOsApi(flags.verbose, location, version)
         installEventStoreDB(flags.verbose, location)
         installEventsProcessingPlatform(flags.verbose, location, version)
+        installUserAdminApi(flags.verbose, location, version)
+        sql.provisionPostgresql(flags.verbose, location)
+        neo.provisionNeo4j(flags.verbose, location)
+        redis.provisionRedis(flags.verbose, location)
+        start.cleanupSetupFiles()
+        logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+        break
+
+      case 'test-contract':
+        start.dependencyCheck(flags.verbose)
+        start.startDevServer(flags.verbose)
+        start.cleanupSetupFiles()
+        ns.installNamespace(flags.verbose, location)
+        start.installDatabases(flags.verbose, location)
+        installCustomerOsApi(flags.verbose, location, version)
         installUserAdminApi(flags.verbose, location, version)
         sql.provisionPostgresql(flags.verbose, location)
         neo.provisionNeo4j(flags.verbose, location)
