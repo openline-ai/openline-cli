@@ -3,11 +3,9 @@ import * as shell from "shelljs";
 import {deployImage, Yaml, updateImageTag} from './deploy'
 import {logTerminal} from "../logs";
 import {getPlatform} from "../dependencies";
-import * as colima from "./colima";
-import * as k3d from "./k3d";
-
-
 const config = getConfig()
+const CLI_RAW_REPO = config.cli.rawRepo
+
 const NAMESPACE = config.namespace.name
 const EVENTSTORE_SERVICE = 'customer-db-eventstore'
 
@@ -16,9 +14,9 @@ function postgresqlServiceCheck() :boolean {
 }
 
 export function installEventStoreDB(verbose: boolean, location = config.setupDir) :boolean {
-  const DEPLOYMENT = config.customerOs.eventStoreDbDeployment
-  const SERVICE = location + config.customerOs.eventStoreDbService
-  const LOADBALANCER = location + config.customerOs.eventStoreDbLoadbalancer
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.eventStoreDbDeployment
+  const SERVICE = CLI_RAW_REPO + config.customerOs.eventStoreDbService
+  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.eventStoreDbLoadbalancer
   let IMAGE_VERSION
   let ImageUpdate
   switch (getPlatform()) {

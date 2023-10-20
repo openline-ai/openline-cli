@@ -6,6 +6,7 @@ import {exit} from 'node:process'
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 const REDIS_SERVICE = 'customer-db-redis'
+const CLI_RAW_REPO = config.cli.rawRepo
 
 function redisServiceCheck() :boolean {
   return (shell.exec(`kubectl get service ${REDIS_SERVICE}-master -n ${NAMESPACE}`, {silent: true}).code === 0)
@@ -36,7 +37,7 @@ function deployRedis(verbose: boolean, location = config.setupDir) {
 
 export function provisionRedis(verbose: boolean, location = config.setupDir) :boolean {
 
-  const REDIS_DB_SETUP = location + config.customerOs.redisSetup
+  const REDIS_DB_SETUP = CLI_RAW_REPO + config.customerOs.redisSetup
 
   let ms = ''
   let retry = 1
