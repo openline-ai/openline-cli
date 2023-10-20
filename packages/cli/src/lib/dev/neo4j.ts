@@ -3,6 +3,7 @@ import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import {exit} from 'node:process'
 import {waitForUserAdminAppPodToBeReady} from "./customer-os";
+import {exec} from "shelljs";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -44,7 +45,8 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
   if (verbose) logTerminal('INFO', `Neo4j version detected... ${version}`)
 
   const NEO4J_CYPHER = CLI_RAW_REPO + config.customerOs.neo4jCypher
-  shell.exec(`wget ${NEO4J_CYPHER}`, { silent: true });
+  shell.exec(`wget ${NEO4J_CYPHER}`, { silent: verbose, async: true });
+  exec(`wait`);
   const parts = NEO4J_CYPHER.split('/');
   const neo4jCypherFilename = parts[parts.length - 1];
   let neoOutput = []

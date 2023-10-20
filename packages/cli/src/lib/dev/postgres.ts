@@ -2,6 +2,7 @@ import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import {exit} from 'node:process'
+import { exec } from 'shelljs';
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -106,7 +107,12 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   if (verbose) logTerminal('INFO', `connecting to ${cosDb} pod`)
 
   let provision = ''
-  shell.exec(`wget ${POSTGRESQL_DB_SETUP}`, { silent: true });
+  if (verbose) logTerminal('INFO', `Files before wget:`)
+  shell.exec(`ls`, { silent: verbose });
+  shell.exec(`wget ${POSTGRESQL_DB_SETUP}`, { silent: verbose, async: true });
+  exec(`wait`);
+  if (verbose) logTerminal('INFO', `Files after wget:`)
+  shell.exec(`ls`, { silent: verbose });
   const parts = POSTGRESQL_DB_SETUP.split('/');
   const postgresqlDbSetupFilename = parts[parts.length - 1];
   while (provision === '') {
