@@ -17,6 +17,7 @@ export function getConfig() :any {
 
   config.cli = {}
   config.cli.repo = 'https://github.com/openline-ai/openline-cli.git'
+  config.cli.rawRepo = 'https://raw.githubusercontent.com/openline-ai/openline-cli/otter/'
 
   // customerOS config
   config.customerOs = {}

@@ -13,6 +13,7 @@ const EVENTS_PROCESSING_PLATFORM = 'events-processing-platform-service'
 const COMMS_API = 'comms-api-service'
 const VALIDATION_API = 'validation-api-service'
 const USER_ADMIN_API = 'user-admin-api-service'
+const CLI_RAW_REPO = config.cli.rawRepo
 
 
 function customerOsApiCheck() :boolean {
@@ -48,9 +49,9 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
     return true
   }
 
-  const DEPLOYMENT = config.customerOs.apiDeployment
-  const SERVICE = location + config.customerOs.apiService
-  const LOADBALANCER = location + config.customerOs.apiLoadbalancer
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.apiDeployment
+  const SERVICE = CLI_RAW_REPO + config.customerOs.apiService
+  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.apiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -61,7 +62,7 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
 
   if (location !== config.setupDir) {
     // Need to come back to this after we standardize Dockerfiles
-    const buildPath = location + '/packages/server/customer-os-api'
+    const buildPath = CLI_RAW_REPO + '/packages/server/customer-os-api'
 
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
@@ -85,9 +86,10 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
     logTerminal('SUCCESS', 'settings-api already running')
     return true
   }
-  const DEPLOYMENT = config.customerOs.settingsDeployment
-  const SERVICE = location + config.customerOs.settingsService
-  const LOADBALANCER = location + config.customerOs.settingsLoadbalancer
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.settingsDeployment
+  const SERVICE = CLI_RAW_REPO + config.customerOs.settingsService
+  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.settingsLoadbalancer
+  const SECRETS = CLI_RAW_REPO + config.customerOs.userAdminApiSecrets
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -103,6 +105,11 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
     if (build === false) return false
     image = null
   }
+
+  shell.exec(`bash ${SECRETS}`, {silent: false})
+  const kubeApplySecretsConfig = `kubectl apply -f user-admin-api-secret.yaml --namespace ${NAMESPACE}`
+  if (verbose) logTerminal('EXEC', kubeApplySecretsConfig)
+  shell.exec(kubeApplySecretsConfig, {silent: !verbose})
 
   const installConfig: Yaml = {
     deployYaml: DEPLOYMENT,
@@ -121,9 +128,9 @@ export function installfileStoreApi(verbose: boolean, location = config.setupDir
     logTerminal('SUCCESS', 'file-store-api already running')
     return true
   }
-  const DEPLOYMENT = config.customerOs.fileStoreDeployment
-  const SERVICE = location + config.customerOs.fileStoreService
-  const LOADBALANCER = location + config.customerOs.fileStoreLoadbalancer
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.fileStoreDeployment
+  const SERVICE = CLI_RAW_REPO + config.customerOs.fileStoreService
+  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.fileStoreLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -156,9 +163,9 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
     logTerminal('SUCCESS', 'events-processing-platform already running')
     return true
   }
-  const DEPLOYMENT = config.customerOs.eventsProcessingPlatformDeployment
-  const SERVICE = location + config.customerOs.eventsProcessingPlatformService
-  const LOADBALANCER = location + config.customerOs.eventsProcessingPlatformLoadbalancer
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.eventsProcessingPlatformDeployment
+  const SERVICE = CLI_RAW_REPO + config.customerOs.eventsProcessingPlatformService
+  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.eventsProcessingPlatformLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -189,9 +196,9 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
 
 export function installCommsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (commsApiCheck()) return true
-  const DEPLOYMENT = config.customerOs.commsApiDeployment
-  const SERVICE = location + config.customerOs.commsApiService
-  const LOADBALANCER = location + config.customerOs.commsApiLoadbalancer
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.commsApiDeployment
+  const SERVICE = CLI_RAW_REPO + config.customerOs.commsApiService
+  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.commsApiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -225,9 +232,9 @@ export function installValidationApi(verbose: boolean, location = config.setupDi
     logTerminal('SUCCESS', 'validation-api already running')
     return true
   }
-  const DEPLOYMENT = config.customerOs.validationApiDeployment
-  const SERVICE = location + config.customerOs.validationApiService
-  const LOADBALANCER = location + config.customerOs.validationApiLoadbalancer
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.validationApiDeployment
+  const SERVICE = CLI_RAW_REPO + config.customerOs.validationApiService
+  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.validationApiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -261,10 +268,10 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     logTerminal('SUCCESS', 'user-admin-api already running')
     return true
   }
-  const DEPLOYMENT = config.customerOs.userAdminApiDeployment
-  const SERVICE = location + config.customerOs.userAdminApiService
-  const LOADBALANCER = location + config.customerOs.userAdminApiLoadbalancer
-  const SECRETS = location + config.customerOs.userAdminApiSecrets
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.userAdminApiDeployment
+  const SERVICE = CLI_RAW_REPO + config.customerOs.userAdminApiService
+  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.userAdminApiLoadbalancer
+  const SECRETS = CLI_RAW_REPO + config.customerOs.userAdminApiSecrets
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
