@@ -2,6 +2,7 @@ import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import {exit} from 'node:process'
+import {exec} from "shelljs";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -59,7 +60,8 @@ export function provisionRedis(verbose: boolean, location = config.setupDir) :bo
   cosDb = cosDb.slice(0, -1)
 
   if (verbose) logTerminal('INFO', `connecting to ${cosDb} pod`)
-  shell.exec(`wget ${REDIS_DB_SETUP}`, { silent: true });
+  shell.exec(`wget ${REDIS_DB_SETUP}`, { silent: verbose, async: true });
+  exec(`wait`);
   const parts = REDIS_DB_SETUP.split('/');
   const redisDbSetupFilename = parts[parts.length - 1];
   let provision = ''

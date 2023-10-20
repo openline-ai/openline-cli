@@ -3,6 +3,7 @@ import {getConfig} from '../../config/dev'
 import {deployImage, Yaml, updateImageTag} from './deploy'
 import {buildLocalImage} from './build-image'
 import {logTerminal} from '../logs'
+import {exec} from "shelljs";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -282,7 +283,8 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     image = null
   }
 
-  shell.exec(`wget ${SECRETS}`, { silent: true });
+  shell.exec(`wget ${SECRETS}`, { silent: verbose, async: true });
+  exec(`wait`);
   const parts = SECRETS.split('/');
   const filename = parts[parts.length - 1];
   shell.exec(`bash ${filename}`, {silent: false})
