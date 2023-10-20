@@ -1,6 +1,6 @@
 {
   "name": "openline",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Openline CLI",
   "author": "mattbr0wn",
   "bin": "./bin/run",
