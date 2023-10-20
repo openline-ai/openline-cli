@@ -12,7 +12,6 @@ export function installDependencies(verbose: boolean) :boolean {
   const kubectl = mac.kubeCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const helm = mac.helmCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const netcat = mac.netcatCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const ory = mac.oryCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const jq = mac.jqCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
 
   const table = new Table({
@@ -28,7 +27,6 @@ export function installDependencies(verbose: boolean) :boolean {
     ['helm', helm],
     ['kubectl', kubectl],
     ['netcat', netcat],
-    ['ory', ory],
     ['jq', jq],
   )
 
@@ -47,7 +45,6 @@ export function installDependencies(verbose: boolean) :boolean {
   if (helm === notInstalled) mac.installHelm()
   if (kubectl === notInstalled) mac.installKube()
   if (netcat === notInstalled) mac.installNetcat()
-  if (ory === notInstalled) mac.installOry()
   if (jq === notInstalled) mac.installJq()
 
 

@@ -13,7 +13,7 @@ function postgresqlServiceCheck() :boolean {
 }
 
 export function installJaeger(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
-  const DEPLOYMENT = location + config.customerOs.jaegerDeployment
+  const DEPLOYMENT = config.customerOs.jaegerDeployment
   const SERVICE = location + config.customerOs.jaegerService
   const LOADBALANCER = location + config.customerOs.jaegerLoadbalancer
 

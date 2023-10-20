@@ -16,7 +16,7 @@ function postgresqlServiceCheck() :boolean {
 }
 
 export function installEventStoreDB(verbose: boolean, location = config.setupDir) :boolean {
-  const DEPLOYMENT = location + config.customerOs.eventStoreDbDeployment
+  const DEPLOYMENT = config.customerOs.eventStoreDbDeployment
   const SERVICE = location + config.customerOs.eventStoreDbService
   const LOADBALANCER = location + config.customerOs.eventStoreDbLoadbalancer
   let IMAGE_VERSION

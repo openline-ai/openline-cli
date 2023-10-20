@@ -10,7 +10,6 @@ const CUSTOMER_OS_API = 'customer-os-api-service'
 const SETTING_API = 'settings-api-service'
 const FILE_STORAGE_API = 'file-store-api-service'
 const EVENTS_PROCESSING_PLATFORM = 'events-processing-platform-service'
-const ORY_TUNNEL = 'ory-tunnel-service'
 const COMMS_API = 'comms-api-service'
 const VALIDATION_API = 'validation-api-service'
 const USER_ADMIN_API = 'user-admin-api-service'
@@ -31,10 +30,6 @@ function eventsProcessingPlatformCheck() :boolean {
   return (shell.exec(`kubectl get service ${EVENTS_PROCESSING_PLATFORM} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
-function oryTunnelCheck() :boolean {
-  return (shell.exec(`kubectl get service ${ORY_TUNNEL} -n ${NAMESPACE}`, {silent: true}).code === 0)
-}
-
 function commsApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${COMMS_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
@@ -53,7 +48,7 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
     return true
   }
 
-  const DEPLOYMENT = location + config.customerOs.apiDeployment
+  const DEPLOYMENT = config.customerOs.apiDeployment
   const SERVICE = location + config.customerOs.apiService
   const LOADBALANCER = location + config.customerOs.apiLoadbalancer
 
@@ -90,7 +85,7 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
     logTerminal('SUCCESS', 'settings-api already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.settingsDeployment
+  const DEPLOYMENT = config.customerOs.settingsDeployment
   const SERVICE = location + config.customerOs.settingsService
   const LOADBALANCER = location + config.customerOs.settingsLoadbalancer
 
@@ -126,7 +121,7 @@ export function installfileStoreApi(verbose: boolean, location = config.setupDir
     logTerminal('SUCCESS', 'file-store-api already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.fileStoreDeployment
+  const DEPLOYMENT = config.customerOs.fileStoreDeployment
   const SERVICE = location + config.customerOs.fileStoreService
   const LOADBALANCER = location + config.customerOs.fileStoreLoadbalancer
 
@@ -161,7 +156,7 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
     logTerminal('SUCCESS', 'events-processing-platform already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.eventsProcessingPlatformDeployment
+  const DEPLOYMENT = config.customerOs.eventsProcessingPlatformDeployment
   const SERVICE = location + config.customerOs.eventsProcessingPlatformService
   const LOADBALANCER = location + config.customerOs.eventsProcessingPlatformLoadbalancer
 
@@ -192,45 +187,9 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
   return true
 }
 
-export function installOryTunnel(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
-  if (oryTunnelCheck()) {
-    logTerminal('SUCCESS', 'ory-tunnel already running')
-    return true
-  }
-  const STATEFUL_SET = location + config.customerOs.oryTunnelStatefulset
-  const SERVICE = location + config.customerOs.oryTunnelService
-  const LOADBALANCER = location + config.customerOs.oryTunnelLoadbalancer
-
-  if (imageVersion.toLowerCase() !== 'latest') {
-    const tag = updateImageTag([STATEFUL_SET], imageVersion)
-    if (!tag) return false
-  }
-
-  let image: string | null  = config.customerOs.oryTunnelImage + imageVersion
-
-  if (location !== config.setupDir) {
-    // come back to this
-    const buildPath = location + '/packages/server/ory-tunnel'
-    const build = buildLocalImage({ path: buildPath, context: buildPath, imageName: image, verbose })
-    if (build === false) return false
-    image = null
-  }
-
-  const installConfig: Yaml = {
-    deployYaml: STATEFUL_SET,
-    serviceYaml: SERVICE,
-    loadbalancerYaml: LOADBALANCER,
-  }
-  const deploy = deployImage(image, installConfig, verbose)
-  if (deploy === false) return false
-
-  logTerminal('SUCCESS', 'ory-tunnel successfully installed')
-  return true
-}
-
 export function installCommsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (commsApiCheck()) return true
-  const DEPLOYMENT = location + config.customerOs.commsApiDeployment
+  const DEPLOYMENT = config.customerOs.commsApiDeployment
   const SERVICE = location + config.customerOs.commsApiService
   const LOADBALANCER = location + config.customerOs.commsApiLoadbalancer
 
@@ -266,7 +225,7 @@ export function installValidationApi(verbose: boolean, location = config.setupDi
     logTerminal('SUCCESS', 'validation-api already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.validationApiDeployment
+  const DEPLOYMENT = config.customerOs.validationApiDeployment
   const SERVICE = location + config.customerOs.validationApiService
   const LOADBALANCER = location + config.customerOs.validationApiLoadbalancer
 
@@ -302,7 +261,7 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     logTerminal('SUCCESS', 'user-admin-api already running')
     return true
   }
-  const DEPLOYMENT = location + config.customerOs.userAdminApiDeployment
+  const DEPLOYMENT = config.customerOs.userAdminApiDeployment
   const SERVICE = location + config.customerOs.userAdminApiService
   const LOADBALANCER = location + config.customerOs.userAdminApiLoadbalancer
   const SECRETS = location + config.customerOs.userAdminApiSecrets
@@ -322,22 +281,45 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     image = null
   }
 
-  const installConfig: Yaml = {
-    deployYaml: DEPLOYMENT,
-    serviceYaml: SERVICE,
-    loadbalancerYaml: LOADBALANCER,
-  }
-
-  const deploy = deployImage(image, installConfig, verbose)
-  if (deploy === false) return false
-
   shell.exec(`bash ${SECRETS}`, {silent: false})
   const kubeApplySecretsConfig = `kubectl apply -f user-admin-api-secret.yaml --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', kubeApplySecretsConfig)
   shell.exec(kubeApplySecretsConfig, {silent: !verbose})
 
+  const installConfig: Yaml = {
+    deployYaml: DEPLOYMENT,
+    serviceYaml: SERVICE,
+    loadbalancerYaml: LOADBALANCER,
+  }
+  const deploy = deployImage(image, installConfig, verbose)
+  if (deploy === false) return false
+
   logTerminal('SUCCESS', 'user-admin-api successfully installed')
   return true
+}
+
+export function waitForUserAdminAppPodToBeReady() {
+  logTerminal('INFO', 'Waiting for user-admin-api pod to be Ready')
+  let userAdminApiPodName
+  do {
+    userAdminApiPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep user-admin-api`, {silent: true})
+      .stdout
+      .split(/\r?\n/)
+      .filter(Boolean);
+  } while (userAdminApiPodName.length < 1)
+
+  let userAdminApiPodStatus;
+  do {
+    userAdminApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${userAdminApiPodName[0]} -o jsonpath='{.status.phase}'`)
+    shell.exec('sleep 2')
+    logTerminal('INFO', `UserAdminApi Pod Status >>>>>>>>>>> ` + userAdminApiPodStatus)
+  } while (userAdminApiPodStatus == "Pending")
+
+  let userAdminApiReadyStatus;
+  do {
+    userAdminApiReadyStatus = shell.exec(`kubectl -n ${NAMESPACE} logs ${userAdminApiPodName[0]}`, {silent: true})
+    shell.exec('sleep 2')
+  } while (!userAdminApiReadyStatus.includes("Listening and serving HTTP on :4001"))
 }
 
 export function pingCustomerOsApi() :boolean {

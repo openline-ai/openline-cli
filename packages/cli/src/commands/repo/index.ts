@@ -17,11 +17,9 @@ export default class Repo extends Command {
       description: 'the Openline project you would like to view',
       options: [
         'cli',
-        'contacts',
         'customer-os',
         'hubspot-integration',
         'ui-kit',
-        'voice',
         'web-chat',
         'website',
         'zendesk-integration',
@@ -46,13 +44,6 @@ export default class Repo extends Command {
       console.log(table.toString())
       break
 
-    case 'contacts':
-      table.push(
-        ['contacts', repos.baseUrl + repos.contacts],
-      )
-      console.log(table.toString())
-      break
-
     case 'customer-os':
       table.push(
         ['customer-os', repos.baseUrl + repos.customerOs],
@@ -70,13 +61,6 @@ export default class Repo extends Command {
     case 'ui-kit':
       table.push(
         ['ui-kit', repos.baseUrl + repos.uiKit],
-      )
-      console.log(table.toString())
-      break
-
-    case 'voice':
-      table.push(
-        ['voice', repos.baseUrl + repos.voice],
       )
       console.log(table.toString())
       break

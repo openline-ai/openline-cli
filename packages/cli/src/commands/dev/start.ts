@@ -5,12 +5,9 @@ import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
 import * as redis from '../../lib/dev/redis'
 import {getConfig} from '../../config/dev'
-import {installCustomerOsApi, installfileStoreApi, installOryTunnel, installSettingsApi, installCommsApi, installEventsProcessingPlatform, installValidationApi, installUserAdminApi} from '../../lib/dev/customer-os'
-import {installContactsGui} from '../../lib/dev/contacts'
+import {installCustomerOsApi, installfileStoreApi, installSettingsApi, installCommsApi, installEventsProcessingPlatform, installValidationApi, installUserAdminApi} from '../../lib/dev/customer-os'
 import {installEventStoreDB} from '../../lib/dev/eventstore'
-import * as voice from '../../lib/dev/voice'
 import * as start from '../../lib/dev/start'
-import {cloneRepo} from '../../lib/clone/clone-repo'
 import {logTerminal} from '../../lib/logs'
 import {installJaeger} from "../../lib/dev/jaeger";
 
@@ -43,11 +40,7 @@ export default class DevStart extends Command {
       description: 'the Openline application you would like to start',
       default: 'customer-os',
       options: [
-        'asterisk',
-        'channels-api',
         'comms-api',
-        'contacts',
-        'contacts-gui',
         'customer-os',
         'customer-os-api',
         'db',
@@ -55,14 +48,10 @@ export default class DevStart extends Command {
         'event-store-db',
         'file-store-api',
         'jaeger',
-        'kamailio',
-        'ory-tunnel',
         'settings-api',
         'test-env',
         `user-admin-api`,
         'validation-api',
-        'voice',
-        'voice-plugin'
       ],
     },
   ]
@@ -91,13 +80,11 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
-      installOryTunnel(flags.verbose, location, version)
       installCommsApi(flags.verbose, location, version)
       installEventStoreDB(flags.verbose, location)
       installEventsProcessingPlatform(flags.verbose, location, version)
@@ -106,11 +93,9 @@ export default class DevStart extends Command {
       installJaeger(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
+      neo.provisionNeo4jWithDemoTenant(flags.verbose)
       redis.provisionRedis(flags.verbose, location)
       start.cleanupSetupFiles()
-      // install contacts
-      cloneRepo(config.contacts.repo, flags.verbose, config.setupDir, undefined, true)
-      installContactsGui(flags.verbose, location, version)
       start.cleanupSetupFiles()
 
       logTerminal('SUCCESS', 'Openline dev server has been started')
@@ -120,47 +105,11 @@ export default class DevStart extends Command {
 
     const app = args.app.toLowerCase()
     switch (app) {
-    case 'contacts':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.installDatabases(flags.verbose, location)
-      installCustomerOsApi(flags.verbose, location, version)
-      installfileStoreApi(flags.verbose, location, version)
-      installSettingsApi(flags.verbose, location, version)
-      sql.provisionPostgresql(flags.verbose, location)
-      neo.provisionNeo4j(flags.verbose, location)
-      redis.provisionRedis(flags.verbose, location)
-      start.cleanupSetupFiles()
-      // install contacts
-      cloneRepo(config.contacts.repo, flags.verbose, config.setupDir, undefined, true)
-      installContactsGui(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'contacts-gui':
-      start.dependencyCheck(flags.verbose)
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      cloneRepo(config.contacts.repo, flags.verbose, config.setupDir, undefined, true)
-      installContactsGui(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
     case 'customer-os':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
@@ -174,6 +123,7 @@ export default class DevStart extends Command {
       installJaeger(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
+      neo.provisionNeo4jWithDemoTenant(flags.verbose)
       redis.provisionRedis(flags.verbose, location)
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -184,7 +134,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installCustomerOsApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -195,29 +144,16 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installSettingsApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
-
-    case 'ory-tunnel':
-        start.dependencyCheck(flags.verbose)
-        start.startDevServer(flags.verbose)
-        start.cleanupSetupFiles()
-        // install customerOS
-        cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-        ns.installNamespace(flags.verbose, location)
-        installOryTunnel(flags.verbose, location, version)
-        logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-        break
 
     case 'file-store-api':
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installfileStoreApi(flags.verbose, location, version)
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -226,7 +162,6 @@ export default class DevStart extends Command {
       start.dependencyCheck(flags.verbose)
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installCommsApi(flags.verbose, location, version)
       start.cleanupSetupFiles()
@@ -238,96 +173,12 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
+      neo.provisionNeo4jWithDemoTenant(flags.verbose)
       redis.provisionRedis(flags.verbose, location)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'voice':
-      start.dependencyCheck(flags.verbose)
-      if (process.arch !== 'x64') {
-        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
-        return
-      }
-
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.installDatabases(flags.verbose, location)
-      installCustomerOsApi(flags.verbose, location, version)
-      installfileStoreApi(flags.verbose, location, version)
-      installSettingsApi(flags.verbose, location, version)
-      installCommsApi(flags.verbose, location, version)
-      sql.provisionPostgresql(flags.verbose, location)
-      neo.provisionNeo4j(flags.verbose, location)
-      redis.provisionRedis(flags.verbose, location)
-      start.cleanupSetupFiles()
-      // install voice
-      cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
-      voice.installKamailio(flags.verbose, location, version)
-      voice.installAsterisk(flags.verbose, location, version)
-      voice.installVoicePlugin(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'kamailio':
-      start.dependencyCheck(flags.verbose)
-      if (process.arch !== 'x64') {
-        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
-        return
-      }
-
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
-      voice.installKamailio(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'asterisk':
-      start.dependencyCheck(flags.verbose)
-      if (process.arch !== 'x64') {
-        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
-        return
-      }
-
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
-      voice.installAsterisk(flags.verbose, location, version)
-      start.cleanupSetupFiles()
-      logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
-      break
-
-    case 'voice-plugin':
-      start.dependencyCheck(flags.verbose)
-      if (process.arch !== 'x64') {
-        logTerminal('ERROR', 'Voice Platform only works on x86 machines, detected: ' + process.arch)
-        return
-      }
-
-      start.startDevServer(flags.verbose)
-      start.cleanupSetupFiles()
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
-      ns.installNamespace(flags.verbose, location)
-      start.cleanupSetupFiles()
-      cloneRepo(config.voice.repo, flags.verbose, config.setupDir, undefined, true)
-      voice.installVoicePlugin(flags.verbose, location, version)
       start.cleanupSetupFiles()
       logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
       break
@@ -337,7 +188,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installEventStoreDB(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -349,7 +199,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installEventsProcessingPlatform(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -361,7 +210,6 @@ export default class DevStart extends Command {
       start.startDevServer(flags.verbose)
       start.cleanupSetupFiles()
       // install customerOS
-      cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
       ns.installNamespace(flags.verbose, location)
       installJaeger(flags.verbose, location)
       start.cleanupSetupFiles()
@@ -373,7 +221,6 @@ export default class DevStart extends Command {
         start.startDevServer(flags.verbose)
         start.cleanupSetupFiles()
         // install customerOS
-        cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
         ns.installNamespace(flags.verbose, location)
         installValidationApi(flags.verbose, location, version)
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -384,7 +231,6 @@ export default class DevStart extends Command {
         start.startDevServer(flags.verbose)
         start.cleanupSetupFiles()
         // install customerOS
-        cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
         ns.installNamespace(flags.verbose, location)
         installUserAdminApi(flags.verbose, location, version)
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -394,8 +240,6 @@ export default class DevStart extends Command {
         start.dependencyCheck(flags.verbose)
         start.startDevServer(flags.verbose)
         start.cleanupSetupFiles()
-        // install customerOS
-        cloneRepo(config.customerOs.repo, flags.verbose, config.setupDir, undefined, true)
         ns.installNamespace(flags.verbose, location)
         start.installDatabases(flags.verbose, location)
         installCustomerOsApi(flags.verbose, location, version)
@@ -404,6 +248,7 @@ export default class DevStart extends Command {
         installUserAdminApi(flags.verbose, location, version)
         sql.provisionPostgresql(flags.verbose, location)
         neo.provisionNeo4j(flags.verbose, location)
+        neo.provisionNeo4jWithDemoTenant(flags.verbose)
         redis.provisionRedis(flags.verbose, location)
         start.cleanupSetupFiles()
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
