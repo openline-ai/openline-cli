@@ -89,7 +89,6 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
   const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.settingsDeployment
   const SERVICE = CLI_RAW_REPO + config.customerOs.settingsService
   const LOADBALANCER = CLI_RAW_REPO + config.customerOs.settingsLoadbalancer
-  const SECRETS = CLI_RAW_REPO + config.customerOs.userAdminApiSecrets
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -189,7 +188,7 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
   return true
 }
 
-export function installCommsApi(verbose: boolean, CLI_RAW_REPO = config.setupDir, imageVersion = 'latest') :boolean {
+export function installCommsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
   if (commsApiCheck()) return true
   const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.commsApiDeployment
   const SERVICE = CLI_RAW_REPO + config.customerOs.commsApiService
@@ -283,7 +282,10 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     image = null
   }
 
-  shell.exec(`bash ${SECRETS}`, {silent: false})
+  shell.exec(`wget ${SECRETS}`, { silent: true });
+  const parts = SECRETS.split('/');
+  const filename = parts[parts.length - 1];
+  shell.exec(`bash ${filename}`, {silent: false})
   const kubeApplySecretsConfig = `kubectl apply -f user-admin-api-secret.yaml --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', kubeApplySecretsConfig)
   shell.exec(kubeApplySecretsConfig, {silent: !verbose})

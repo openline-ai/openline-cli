@@ -106,11 +106,14 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   if (verbose) logTerminal('INFO', `connecting to ${cosDb} pod`)
 
   let provision = ''
+  shell.exec(`wget ${POSTGRESQL_DB_SETUP}`, { silent: true });
+  const parts = POSTGRESQL_DB_SETUP.split('/');
+  const postgresqlDbSetupFilename = parts[parts.length - 1];
   while (provision === '') {
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      provision = shell.exec(`echo ${POSTGRESQL_DB_SETUP}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: false}).stdout
+      provision = shell.exec(`echo ${postgresqlDbSetupFilename}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- /bin/bash -c "PGPASSWORD=${sqlPw} psql -U ${sqlUser} ${sqlDb}"`, {silent: false}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning message store DB timed out', 'dev:postgres:provisionPostresql')

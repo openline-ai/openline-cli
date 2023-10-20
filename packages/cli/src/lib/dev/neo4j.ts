@@ -44,9 +44,12 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
   if (verbose) logTerminal('INFO', `Neo4j version detected... ${version}`)
 
   const NEO4J_CYPHER = CLI_RAW_REPO + config.customerOs.neo4jCypher
+  shell.exec(`wget ${NEO4J_CYPHER}`, { silent: true });
+  const parts = NEO4J_CYPHER.split('/');
+  const neo4jCypherFilename = parts[parts.length - 1];
   let neoOutput = []
   do {
-    const neoOutputFull = shell.exec(`cat ${NEO4J_CYPHER} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_RELEASE_NAME}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
+    const neoOutputFull = shell.exec(`cat ${neo4jCypherFilename} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_RELEASE_NAME}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
     neoOutput = neoOutputFull.filter(function (line) {
       return !(line.includes('see a command prompt') || line === '')
     })
