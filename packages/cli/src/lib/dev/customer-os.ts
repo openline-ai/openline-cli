@@ -100,7 +100,7 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = location + '/packages/server/settings-api'
+    const buildPath = CLI_RAW_REPO + '/packages/server/settings-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -141,7 +141,7 @@ export function installfileStoreApi(verbose: boolean, location = config.setupDir
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = location + '/packages/server/file-store-api'
+    const buildPath = CLI_RAW_REPO + '/packages/server/file-store-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -176,7 +176,7 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = location + '/packages/server/events-processing-platform'
+    const buildPath = CLI_RAW_REPO + '/packages/server/events-processing-platform'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -194,7 +194,7 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
   return true
 }
 
-export function installCommsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+export function installCommsApi(verbose: boolean, CLI_RAW_REPO = config.setupDir, imageVersion = 'latest') :boolean {
   if (commsApiCheck()) return true
   const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.commsApiDeployment
   const SERVICE = CLI_RAW_REPO + config.customerOs.commsApiService
@@ -209,7 +209,7 @@ export function installCommsApi(verbose: boolean, location = config.setupDir, im
 
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are standardized
-    const buildPath = location + '/packages/server/comms-api'
+    const buildPath = CLI_RAW_REPO + '/packages/server/comms-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -245,7 +245,7 @@ export function installValidationApi(verbose: boolean, location = config.setupDi
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = location + '/packages/server/validation-api'
+    const buildPath = CLI_RAW_REPO + '/packages/server/validation-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -282,7 +282,7 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = location + '/packages/server/user-admin-api'
+    const buildPath = CLI_RAW_REPO + '/packages/server/user-admin-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null

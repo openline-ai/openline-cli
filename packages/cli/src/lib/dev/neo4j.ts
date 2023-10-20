@@ -9,6 +9,7 @@ const NAMESPACE = config.namespace.name
 const NEO4J_RELEASE_NAME = 'customer-db-neo4j'
 const NEO4J_POD = 'customer-db-neo4j-0'
 const NEO4J_NAME = 'openline-neo4j-db'
+const CLI_RAW_REPO = config.cli.rawRepo
 
 let retry = 1
 const maxAttempts = config.server.timeOuts / 2
@@ -19,7 +20,7 @@ function neo4jCheck() :boolean {
 
 export function installNeo4j(verbose :boolean, location = config.setupDir) :boolean {
   if (neo4jCheck()) return true
-  const HELM_VALUES_PATH = location + config.customerOs.neo4jHelmValues
+  const HELM_VALUES_PATH = CLI_RAW_REPO + config.customerOs.neo4jHelmValues
 
   const helmAdd = 'helm repo add neo4j https://helm.neo4j.com/neo4j --force-update'
   if (verbose) logTerminal('EXEC', helmAdd)
@@ -42,7 +43,7 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
   const version = shell.exec(`kubectl describe pod ${NEO4J_POD} -n ${NAMESPACE} | grep HELM_NEO4J_VERSION | tr -s ' ' | cut -d ' ' -f 3`, {silent: true}).stdout.trimEnd()
   if (verbose) logTerminal('INFO', `Neo4j version detected... ${version}`)
 
-  const NEO4J_CYPHER = location + config.customerOs.neo4jCypher
+  const NEO4J_CYPHER = CLI_RAW_REPO + config.customerOs.neo4jCypher
   let neoOutput = []
   do {
     const neoOutputFull = shell.exec(`cat ${NEO4J_CYPHER} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_RELEASE_NAME}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
