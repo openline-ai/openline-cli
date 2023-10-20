@@ -37,7 +37,6 @@ export default class DevRm extends Command {
         'events-processing-platform',
         'file-store-api',
         'settings-api',
-        'test-contract',
         'test-env',
         'user-admin-api',
         'validation-api',

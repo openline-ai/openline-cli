@@ -2,6 +2,7 @@ import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import {exit} from 'node:process'
+import {waitForUserAdminAppPodToBeReady} from "./customer-os";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -102,4 +103,50 @@ export function waitForNeo4jToBeInitialized(verbose:boolean) {
       return false
     }
   }
+}
+
+function runDemoTenantProvisioningScript() {
+  logTerminal('INFO', 'Waiting for Neo4J to be provisioned with the demo tenant')
+  shell.exec('sleep 2')
+  const axios = require('axios');
+  const FormData = require('form-data');
+  const fs = require('fs');
+
+  const url = 'http://127.0.0.1:4001/demo-tenant';
+  const headers = {
+    'X-Openline-Api-Key': 'cad7ccb6-d8ff-4bae-a048-a42db33a217e',
+    'TENANT_NAME': 'openline',
+    'MASTER_USERNAME': 'development@openline.ai',
+  };
+
+  const form = new FormData();
+
+// Fetch the JSON data from the URL
+  axios.get('https://raw.githubusercontent.com/openline-ai/openline-cli/otter/resources/demo-tenant.json')
+    .then((response: import('axios').AxiosResponse) => {
+      // Append the fetched data to the form
+      form.append('file', Buffer.from(JSON.stringify(response.data)), {
+        filename: 'demo-tenant.json',
+        contentType: 'application/json',
+      });
+      return axios({
+        method: 'get',
+        url,
+        headers,
+        data: form,
+        maxRedirects: 0,
+      });
+    })
+    .then((response: import('axios').AxiosResponse) => {
+      console.log('Response:', response.data);
+    })
+    .catch((error: Error) => {
+      console.error('Error:', error.message);
+    });
+}
+
+export function provisionNeo4jWithDemoTenant(verbose:boolean){
+  waitForUserAdminAppPodToBeReady();
+  waitForNeo4jToBeInitialized(verbose)
+  runDemoTenantProvisioningScript();
 }
