@@ -106,11 +106,6 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
     image = null
   }
 
-  shell.exec(`bash ${SECRETS}`, {silent: false})
-  const kubeApplySecretsConfig = `kubectl apply -f user-admin-api-secret.yaml --namespace ${NAMESPACE}`
-  if (verbose) logTerminal('EXEC', kubeApplySecretsConfig)
-  shell.exec(kubeApplySecretsConfig, {silent: !verbose})
-
   const installConfig: Yaml = {
     deployYaml: DEPLOYMENT,
     serviceYaml: SERVICE,
