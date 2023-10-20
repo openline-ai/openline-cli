@@ -59,13 +59,15 @@ export function provisionRedis(verbose: boolean, location = config.setupDir) :bo
   cosDb = cosDb.slice(0, -1)
 
   if (verbose) logTerminal('INFO', `connecting to ${cosDb} pod`)
-
+  shell.exec(`wget ${REDIS_DB_SETUP}`, { silent: true });
+  const parts = REDIS_DB_SETUP.split('/');
+  const redisDbSetupFilename = parts[parts.length - 1];
   let provision = ''
   while (provision === '') {
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `attempting to provision redis db, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      provision = shell.exec(`echo ${REDIS_DB_SETUP}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- redis-cli`, {silent: false}).stdout
+      provision = shell.exec(`echo ${redisDbSetupFilename}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- redis-cli`, {silent: false}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning redis DB timed out', 'dev:redis:provisionRedis')
