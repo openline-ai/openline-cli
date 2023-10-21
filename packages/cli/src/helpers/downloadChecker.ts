@@ -7,6 +7,7 @@ export function waitForFileToBeDownloaded(filePath: string, verbose: boolean) {
   shell.exec(`wget ${filePath}`, {silent: !verbose});
   let localFileSize;
   do {
+    shell.exec('sleep 2')
     localFileSize = shell.exec(`ls -l ${fileName}| awk '{print $5}'`, {silent: true});
   }
   while (localFileSize.toString() !== remoteFileSize.toString())
