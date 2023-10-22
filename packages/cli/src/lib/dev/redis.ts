@@ -3,6 +3,7 @@ import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import {exit} from 'node:process'
 import {exec} from "shelljs";
+import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -38,8 +39,6 @@ function deployRedis(verbose: boolean, location = config.setupDir) {
 
 export function provisionRedis(verbose: boolean, location = config.setupDir) :boolean {
 
-  const REDIS_DB_SETUP = CLI_RAW_REPO + config.customerOs.redisSetup
-
   let ms = ''
   let retry = 1
   const maxAttempts = config.server.timeOuts / 5
@@ -58,18 +57,15 @@ export function provisionRedis(verbose: boolean, location = config.setupDir) :bo
   }
 
   cosDb = cosDb.slice(0, -1)
-
   if (verbose) logTerminal('INFO', `connecting to ${cosDb} pod`)
-  shell.exec(`wget ${REDIS_DB_SETUP}`, { silent: verbose, async: true });
-  exec(`wait`);
-  const parts = REDIS_DB_SETUP.split('/');
-  const redisDbSetupFilename = parts[parts.length - 1];
+  const REDIS_DB_SETUP = CLI_RAW_REPO + config.customerOs.redisSetup
+  const redisDbSetupFileName = waitForFileToBeDownloaded(REDIS_DB_SETUP, verbose);
   let provision = ''
   while (provision === '') {
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `attempting to provision redis db, please wait... ${retry}/${maxAttempts}`)
       shell.exec('sleep 2')
-      provision = shell.exec(`echo ${redisDbSetupFilename}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- redis-cli`, {silent: false}).stdout
+      provision = shell.exec(`echo ${redisDbSetupFileName}|xargs cat|kubectl exec -n ${NAMESPACE} -i ${cosDb} -- redis-cli`, {silent: false}).stdout
       retry++
     } else {
       logTerminal('ERROR', 'Provisioning redis DB timed out', 'dev:redis:provisionRedis')

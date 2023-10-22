@@ -1,9 +1,9 @@
 import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
-import {deployImage, Yaml, updateImageTag} from './deploy'
+import {deployImage, updateImageTag, Yaml} from './deploy'
 import {buildLocalImage} from './build-image'
 import {logTerminal} from '../logs'
-import {exec} from "shelljs";
+import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -282,12 +282,9 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     if (build === false) return false
     image = null
   }
+  const secretsFilename = waitForFileToBeDownloaded(SECRETS, verbose);
 
-  shell.exec(`wget ${SECRETS}`, { silent: verbose, async: true });
-  exec(`wait`);
-  const parts = SECRETS.split('/');
-  const filename = parts[parts.length - 1];
-  shell.exec(`bash ${filename}`, {silent: false})
+  shell.exec(`bash ${secretsFilename}`, {silent: false})
   const kubeApplySecretsConfig = `kubectl apply -f user-admin-api-secret.yaml --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', kubeApplySecretsConfig)
   shell.exec(kubeApplySecretsConfig, {silent: !verbose})
@@ -305,7 +302,6 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
 }
 
 export function waitForUserAdminAppPodToBeReady() {
-  logTerminal('INFO', 'Waiting for user-admin-api pod to be Ready')
   let userAdminApiPodName
   do {
     userAdminApiPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep user-admin-api`, {silent: true})
@@ -318,7 +314,6 @@ export function waitForUserAdminAppPodToBeReady() {
   do {
     userAdminApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${userAdminApiPodName[0]} -o jsonpath='{.status.phase}'`)
     shell.exec('sleep 2')
-    logTerminal('INFO', `UserAdminApi Pod Status >>>>>>>>>>> ` + userAdminApiPodStatus)
   } while (userAdminApiPodStatus == "Pending")
 
   let userAdminApiReadyStatus;

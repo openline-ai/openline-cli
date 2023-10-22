@@ -3,6 +3,7 @@ import * as shell from "shelljs";
 import {deployImage, Yaml, updateImageTag} from './deploy'
 import {logTerminal} from "../logs";
 import {getPlatform} from "../dependencies";
+import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
 const config = getConfig()
 const CLI_RAW_REPO = config.cli.rawRepo
 
@@ -28,7 +29,8 @@ export function installEventStoreDB(verbose: boolean, location = config.setupDir
       break
   }
 
-  ImageUpdate = 'sed "s/\\$IMAGE_VERSION/' + IMAGE_VERSION + `/" `+ DEPLOYMENT + ` > event-store-temp.yaml && mv event-store-temp.yaml ` + DEPLOYMENT
+  const eventStoreDeploymentFileName = waitForFileToBeDownloaded(DEPLOYMENT, verbose);
+  ImageUpdate = 'sed "s/\\$IMAGE_VERSION/' + IMAGE_VERSION + `/" `+ eventStoreDeploymentFileName + ` > event-store-temp.yaml && mv event-store-temp.yaml ` + eventStoreDeploymentFileName
   shell.exec(ImageUpdate, {silent: !verbose})
 
   let image: string | null = config.customerOs.eventStoreDbImage+IMAGE_VERSION

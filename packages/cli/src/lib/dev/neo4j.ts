@@ -4,6 +4,7 @@ import {logTerminal} from '../logs'
 import {exit} from 'node:process'
 import {waitForUserAdminAppPodToBeReady} from "./customer-os";
 import {exec} from "shelljs";
+import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -45,10 +46,8 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
   if (verbose) logTerminal('INFO', `Neo4j version detected... ${version}`)
 
   const NEO4J_CYPHER = CLI_RAW_REPO + config.customerOs.neo4jCypher
-  shell.exec(`wget ${NEO4J_CYPHER}`, { silent: verbose, async: true });
-  exec(`wait`);
-  const parts = NEO4J_CYPHER.split('/');
-  const neo4jCypherFilename = parts[parts.length - 1];
+  const neo4jCypherFilename = waitForFileToBeDownloaded(NEO4J_CYPHER, verbose);
+
   let neoOutput = []
   do {
     const neoOutputFull = shell.exec(`cat ${neo4jCypherFilename} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_RELEASE_NAME}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
@@ -113,7 +112,7 @@ export function waitForNeo4jToBeInitialized(verbose:boolean) {
 
 function runDemoTenantProvisioningScript() {
   logTerminal('INFO', 'Waiting for Neo4J to be provisioned with the demo tenant')
-  shell.exec('sleep 2')
+  shell.exec('sleep 3')
   const axios = require('axios');
   const FormData = require('form-data');
   const fs = require('fs');
@@ -147,7 +146,7 @@ function runDemoTenantProvisioningScript() {
       console.log('Response:', response.data);
     })
     .catch((error: Error) => {
-      console.error('Error:', error.message);
+      console.error('Error provisioning demo-tenant:', error.name + '\n' + error.message + '\n' + error.stack);
     });
 }
 
