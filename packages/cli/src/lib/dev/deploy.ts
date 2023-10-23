@@ -6,6 +6,7 @@ import {getPlatform} from '../dependencies'
 import * as fs from 'node:fs'
 import * as YAML from 'yaml'
 import * as k3d from './k3d'
+import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -93,7 +94,8 @@ export function deployLoadbalancer(YamlConfigPath: string, verbose: boolean) :bo
   }
 
   if (getPlatform() === 'linux') {
-    const file = fs.readFileSync(YamlConfigPath ? YamlConfigPath : '', 'utf8')
+    const yamlConfigPath = waitForFileToBeDownloaded(YamlConfigPath, verbose);
+    const file = fs.readFileSync(yamlConfigPath ? yamlConfigPath : '', 'utf8')
     const config = YAML.parse(file)
     for (const val of config.spec.ports) {
       if (!k3d.createPortForward(verbose, val.port, val.protocol)) {
