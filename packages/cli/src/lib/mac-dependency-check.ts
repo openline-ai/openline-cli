@@ -29,7 +29,7 @@ export function installDependencies(verbose: boolean) :boolean {
     ['kubectl', kubectl],
     ['netcat', netcat],
     ['jq', jq],
-    ['wget', jq],
+    ['wget', wget],
   )
 
   if (verbose) {
