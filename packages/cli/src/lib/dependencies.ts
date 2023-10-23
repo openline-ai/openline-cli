@@ -170,6 +170,7 @@ export function installNetcat() :void {
 
 // kubectl
 export function kubeCheck() :boolean {
+  shell.exec('sleep 2')
   return (shell.exec('which kubectl', {silent: true}).code === 0)
 }
 
@@ -211,6 +212,21 @@ export function installJq() :void {
     logTerminal('SUCCESS', 'jq successfully installed')
   } else {
     logTerminal('ERROR', 'jq installation failed', 'Please install jq before retrying the command.')
+    exit(1)
+  }
+}
+
+export function wgetCheck() :boolean {
+  return (shell.exec('which wget', {silent: true}).code === 0)
+}
+
+export function installWget() :void {
+  logTerminal('INFO', 'We need to install wget before continuing')
+  const results = shell.exec(config.dependencies[getPlatform()].wget).code === 0
+  if (results) {
+    logTerminal('SUCCESS', 'wget successfully installed')
+  } else {
+    logTerminal('ERROR', 'wget installation failed', 'Please install wget before retrying the command.')
     exit(1)
   }
 }

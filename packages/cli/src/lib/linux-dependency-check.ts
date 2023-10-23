@@ -12,6 +12,7 @@ export function installDependencies(verbose: boolean) :boolean {
   const helm = deps.helmCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const netcat = deps.netcatCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
   const jq = deps.jqCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const wget = deps.wgetCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
 
   const table = new Table({
     head: [colors.cyan.bold('Dependency'), colors.cyan.bold('Installed?')],
@@ -25,6 +26,7 @@ export function installDependencies(verbose: boolean) :boolean {
     ['kubectl', kubectl],
     ['netcat', netcat],
     ['jq', jq],
+    ['wget', wget],
 
   )
 
@@ -43,6 +45,7 @@ export function installDependencies(verbose: boolean) :boolean {
   if (kubectl === notInstalled) deps.installKube()
   if (netcat === notInstalled) deps.installNetcat()
   if (jq === notInstalled) deps.installJq()
+  if (wget === notInstalled) deps.installWget()
 
   deps.checkDockerGroup()
   return true

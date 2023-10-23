@@ -116,6 +116,7 @@ export function getConfig() :any {
   config.dependencies.mac.xcode = 'xcode-select --install'
   config.dependencies.mac.netcat = 'brew install netcat'
   config.dependencies.mac.jq = 'brew install jq'
+  config.dependencies.mac.wget = 'brew install wget'
 
 
   config.dependencies.linux = {}
@@ -132,6 +133,7 @@ export function getConfig() :any {
                                       'sudo install -o root -g root -m 0755 ' + config.setupDir + '/kubectl /usr/local/bin/kubectl\''
   config.dependencies.linux.netcat = 'sudo apt-get update && sudo apt-get install -y netcat'
   config.dependencies.linux.jq = 'sudo apt-get update && sudo apt-get install -y jq'
+  config.dependencies.linux.wget = 'sudo apt install wget'
 
   return config
 }
