@@ -9,7 +9,7 @@ export function getConfig() :any {
   config.server.memory = 4
   config.server.timeOuts = 600 // seconds
 
-  config.setupDir = ''
+  config.setupDir = './openline-setup'
 
   config.namespace = {}
   config.namespace.name = 'openline'
