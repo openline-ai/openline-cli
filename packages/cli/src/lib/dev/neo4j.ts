@@ -50,7 +50,14 @@ export function provisionNeo4j(verbose :boolean, location = config.setupDir) :bo
 
   let neoOutput = []
   do {
-    const neoOutputFull = shell.exec(`cat ${neo4jCypherFilename} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_RELEASE_NAME}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`, {silent: true}).stderr.split(/\r?\n/)
+    if (verbose) {
+      logTerminal('INFO', `Starting the neo4j provisioning attempt... ${retry}/${maxAttempts}`)
+    }
+    const command = `cat ${neo4jCypherFilename} |kubectl run --rm -i --namespace ${NAMESPACE} --image "neo4j:${version}" cypher-shell  -- bash -c 'NEO4J_PASSWORD=StrongLocalPa\\$\\$ cypher-shell -a neo4j://${NEO4J_RELEASE_NAME}.openline.svc.cluster.local:7687 -u neo4j --non-interactive'`;
+    if (verbose) {
+      logTerminal('INFO', `Neo4j provisioning command ${command}`)
+    }
+    const neoOutputFull = shell.exec(command, {silent: true}).stderr.split(/\r?\n/)
     neoOutput = neoOutputFull.filter(function (line) {
       return !(line.includes('see a command prompt') || line === '')
     })
@@ -120,7 +127,7 @@ function runDemoTenantProvisioningScript() {
   const url = 'http://127.0.0.1:4001/demo-tenant';
   const headers = {
     'X-Openline-Api-Key': 'cad7ccb6-d8ff-4bae-a048-a42db33a217e',
-    'TENANT_NAME': 'openline',
+    'TENANT_NAME': 'openlineai',
     'MASTER_USERNAME': 'development@openline.ai',
   };
 
