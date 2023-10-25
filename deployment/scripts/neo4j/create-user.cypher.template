@@ -1,4 +1,4 @@
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
     MERGE (u:User {id:"!USER_EMAIL!"})-[:USER_BELONGS_TO_TENANT]->(t)
     ON CREATE SET
     		u.firstName="!USER_FIRST_NAME!",
@@ -9,7 +9,7 @@ MATCH (t:Tenant {name:"openline"})
     		u.sourceOfTruth="openline",
     		u.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"!USER_EMAIL!"})
 ON CREATE SET
             e.id=randomUUID(),

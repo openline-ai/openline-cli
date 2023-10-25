@@ -1,4 +1,4 @@
-MERGE(t:Tenant {name: "openline"}) ON CREATE SET t.createdAt=datetime({timezone: 'UTC'}), t.id=randomUUID();
+MERGE(t:Tenant {name: "openlineai"}) ON CREATE SET t.createdAt=datetime({timezone: 'UTC'}), t.id=randomUUID();
 
 CREATE CONSTRAINT organization_relationship_name_unique IF NOT EXISTS FOR (or:OrganizationRelationship) REQUIRE or.name IS UNIQUE;
 
@@ -58,7 +58,7 @@ WITH [
 {name: 'Unqualified', order:80}
 ] AS stages
 UNWIND stages AS stage
-MATCH (t:Tenant {name:"openline"}), (or:OrganizationRelationship)
+MATCH (t:Tenant {name:"openlineai"}), (or:OrganizationRelationship)
 MERGE (t)<-[:STAGE_BELONGS_TO_TENANT]-(s:OrganizationRelationshipStage {name: stage.name})<-[:HAS_STAGE]-(or)
 ON CREATE SET s.id=randomUUID(), s.createdAt=datetime({timezone: 'UTC'}), s:OrganizationRelationshipStage_openline, s.order=stage.order;
 
@@ -69,11 +69,11 @@ WITH [
 {name: 'Red', order:40}
 ] AS indicators
 UNWIND indicators AS indicator
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:HEALTH_INDICATOR_BELONGS_TO_TENANT]-(h:HealthIndicator {name: indicator.name})
 ON CREATE SET h.id=randomUUID(), h.createdAt=datetime({timezone: 'UTC'}), h.order=indicator.order, h:HealthIndicator_openline;
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
   MERGE (t)<-[:TAG_BELONGS_TO_TENANT]-(tag:Tag {name:"CUSTOMER"})
   ON CREATE SET tag.id=randomUUID(),
                 tag.createdAt=datetime({timezone: 'UTC'}),
@@ -81,7 +81,7 @@ MATCH (t:Tenant {name:"openline"})
                 tag.source="openline",
                 tag.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
   MERGE (t)<-[:TAG_BELONGS_TO_TENANT]-(tag:Tag {name:"SUPPLIER"})
   ON CREATE SET tag.id=randomUUID(),
                 tag.createdAt=datetime({timezone: 'UTC'}),
@@ -89,7 +89,7 @@ MATCH (t:Tenant {name:"openline"})
                 tag.source="openline",
                 tag.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
   MERGE (t)<-[:TAG_BELONGS_TO_TENANT]-(tag:Tag {name:"INVESTOR"})
   ON CREATE SET tag.id=randomUUID(),
                 tag.createdAt=datetime({timezone: 'UTC'}),
@@ -97,7 +97,7 @@ MATCH (t:Tenant {name:"openline"})
                 tag.source="openline",
                 tag.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
   MERGE (t)<-[:TAG_BELONGS_TO_TENANT]-(tag:Tag {name:"PROSPECT"})
   ON CREATE SET tag.id=randomUUID(),
                 tag.createdAt=datetime({timezone: 'UTC'}),
@@ -105,11 +105,11 @@ MATCH (t:Tenant {name:"openline"})
                 tag.source="openline",
                 tag.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
   MERGE (t)<-[:ORGANIZATION_TYPE_BELONGS_TO_TENANT]-(ot:OrganizationType {name:"COMPANY"})
   ON CREATE SET ot.id=randomUUID(), ot.createdAt=datetime({timezone: 'UTC'});
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
     MERGE (u:User {id:"development@openline.ai"})-[:USER_BELONGS_TO_TENANT]->(t)
     ON CREATE SET
     		u.firstName="Development",
@@ -119,7 +119,7 @@ MATCH (t:Tenant {name:"openline"})
     		u.sourceOfTruth="openline",
     		u.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"development@openline.ai"})
 ON CREATE SET
             e.email='development@openline.ai',
@@ -136,7 +136,7 @@ ON CREATE SET
             rel.primary=true,
             rel.label="WORK";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"edi@openline.ai"})
 ON CREATE SET
             e.email="edi@openline.ai",
@@ -169,7 +169,7 @@ ON CREATE SET
         p.sourceOfTruth="openline",
         p.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"alex@openline.ai"})
 ON CREATE SET
             e.email="alex@openline.ai",
@@ -202,7 +202,7 @@ ON CREATE SET
         p.sourceOfTruth="openline",
         p.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"acalinica@openline.ai"})
 ON CREATE SET
             e.email="acalinica@openline.ai",
@@ -236,7 +236,7 @@ ON CREATE SET
         p.sourceOfTruth="openline",
         p.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"silviu@openline.ai"})
 ON CREATE SET
             e.email="silviu@openline.ai",
@@ -271,7 +271,7 @@ ON CREATE SET
         p.appSource="manual";
 
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"kasia@openline.ai"})
 ON CREATE SET
             e.email="kasia@openline.ai",
@@ -305,7 +305,7 @@ ON CREATE SET
         p.sourceOfTruth="openline",
         p.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"gabi@openline.ai"})
 ON CREATE SET
             e.email="gabi@openline.ai",
@@ -339,7 +339,7 @@ ON CREATE SET
         p.sourceOfTruth="openline",
         p.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"torrey@openline.ai"})
 ON CREATE SET
             e.email="torrey@openline.ai",
@@ -374,7 +374,7 @@ ON CREATE SET
         p.appSource="manual";
 
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"vasi@openline.ai"})
 ON CREATE SET
             e.email="vasi@openline.ai",
@@ -410,7 +410,7 @@ ON CREATE SET
 
 
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"antoine@openline.ai"})
 ON CREATE SET
             e.email="antoine@openline.ai",
@@ -443,7 +443,7 @@ ON CREATE SET
         p.sourceOfTruth="openline",
         p.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"matt@openline.ai"})
 ON CREATE SET
             e.email="matt@openline.ai",
@@ -477,7 +477,7 @@ ON CREATE SET
         p.appSource="manual";
 
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"jonty@openline.ai"})
 ON CREATE SET
             e.email="jonty@openline.ai",
@@ -511,7 +511,7 @@ ON CREATE SET
         p.appSource="manual";
 
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
     MERGE (c:Contact {id:"echotest"})-[:CONTACT_BELONGS_TO_TENANT]->(t)
     ON CREATE SET
     		c.firstName ="Echo",
@@ -522,7 +522,7 @@ MATCH (t:Tenant {name:"openline"})
             c.sourceOfTruth="openline",
             c.appSource="manual";
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email {rawEmail:"echo@oasis.openline.ai"})
 ON CREATE SET
             e.id=randomUUID(),
@@ -538,13 +538,13 @@ ON CREATE SET
             rel.primary=true,
             rel.label="MAIN";
 
-MATCH (t:Tenant {name:"openline"})<-[:TAG_BELONGS_TO_TENANT]-(tag:Tag) SET tag:Tag_openline;
-MATCH (t:Tenant {name:"openline"})<-[:ORGANIZATION_TYPE_BELONGS_TO_TENANT]-(ot:OrganizationType) SET ot:OrganizationType_openline;
-MATCH (t:Tenant {name:"openline"})<-[:USER_BELONGS_TO_TENANT]-(u:User) SET u:User_openline;
-MATCH (t:Tenant {name:"openline"})<-[:CONTACT_BELONGS_TO_TENANT]-(c:Contact) SET c:Contact_openline;
-MATCH (t:Tenant {name:"openline"})<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email) SET e:Email_openline;
+MATCH (t:Tenant {name:"openlineai"})<-[:TAG_BELONGS_TO_TENANT]-(tag:Tag) SET tag:Tag_openline;
+MATCH (t:Tenant {name:"openlineai"})<-[:ORGANIZATION_TYPE_BELONGS_TO_TENANT]-(ot:OrganizationType) SET ot:OrganizationType_openline;
+MATCH (t:Tenant {name:"openlineai"})<-[:USER_BELONGS_TO_TENANT]-(u:User) SET u:User_openline;
+MATCH (t:Tenant {name:"openlineai"})<-[:CONTACT_BELONGS_TO_TENANT]-(c:Contact) SET c:Contact_openline;
+MATCH (t:Tenant {name:"openlineai"})<-[:EMAIL_ADDRESS_BELONGS_TO_TENANT]-(e:Email) SET e:Email_openline;
 
-MATCH (t:Tenant {name:"openline"})
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (e:ExternalSystem {id:"calcom"})-[:EXTERNAL_SYSTEM_BELONGS_TO_TENANT]->(t);
 
 MERGE (c:Country {name:"Romania"}) ON CREATE SET
