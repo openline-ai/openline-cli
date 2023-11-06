@@ -595,5 +595,9 @@ CREATE INDEX interaction_session_id_idx IF NOT EXISTS FOR (n:InteractionSession)
 CREATE INDEX interaction_event_id_idx IF NOT EXISTS FOR (n:InteractionEvent) ON (n.id);
 CREATE INDEX note_id_idx IF NOT EXISTS FOR (n:Note) ON (n.id);
 CREATE INDEX job_role_id_idx IF NOT EXISTS FOR (n:JobRole) ON (n.id);
+CREATE INDEX location_id_idx IF NOT EXISTS FOR (n:Location) ON (n.id);
+CREATE INDEX log_entry_id_idx IF NOT EXISTS FOR (n:LogEntry) ON (n.id);
+CREATE INDEX comment_id_idx IF NOT EXISTS FOR (n:Comment) ON (n.id);
+CREATE INDEX issue_id_idx IF NOT EXISTS FOR (n:Issue) ON (n.id);
 
 :exit;
