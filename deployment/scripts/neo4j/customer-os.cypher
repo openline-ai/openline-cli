@@ -599,5 +599,7 @@ CREATE INDEX location_id_idx IF NOT EXISTS FOR (n:Location) ON (n.id);
 CREATE INDEX log_entry_id_idx IF NOT EXISTS FOR (n:LogEntry) ON (n.id);
 CREATE INDEX comment_id_idx IF NOT EXISTS FOR (n:Comment) ON (n.id);
 CREATE INDEX issue_id_idx IF NOT EXISTS FOR (n:Issue) ON (n.id);
+CREATE INDEX meeting_id_idx IF NOT EXISTS FOR (n:Meeting) ON (n.id);
+CREATE INDEX timeline_event_id_idx IF NOT EXISTS FOR (n:TimelineEvent) ON (n.id);
 
 :exit;
