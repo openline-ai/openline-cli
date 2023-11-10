@@ -492,5 +492,8 @@ CREATE INDEX comment_id_idx IF NOT EXISTS FOR (n:Comment) ON (n.id);
 CREATE INDEX issue_id_idx IF NOT EXISTS FOR (n:Issue) ON (n.id);
 CREATE INDEX meeting_id_idx IF NOT EXISTS FOR (n:Meeting) ON (n.id);
 CREATE INDEX timeline_event_id_idx IF NOT EXISTS FOR (n:TimelineEvent) ON (n.id);
+CREATE INDEX opportunity_id_idx IF NOT EXISTS FOR (n:Opportunity) ON (n.id);
+CREATE INDEX contract_id_idx IF NOT EXISTS FOR (n:Contract) ON (n.id);
+CREATE INDEX service_line_item_id_idx IF NOT EXISTS FOR (n:ServiceLineItem) ON (n.id);
 
 :exit;
