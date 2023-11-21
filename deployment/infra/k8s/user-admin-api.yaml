@@ -90,6 +90,11 @@ spec:
                   name: user-admin-api-secret
                   key: GOOGLE_OAUTH_CLIENT_SECRET
 
+            - name: EVENTS_PROCESSING_PLATFORM_URL
+              value: "events-processing-platform-service.openline.svc.cluster.local:5001"
+            - name: EVENTS_PROCESSING_PLATFORM_API_KEY
+              value: "082c1193-a5a2-42fc-87fc-e960e692fffd"
+
               # valid log values (PANIC, FATAL, ERROR, WARN, INFO, DEBUG)
             - name: LOGGER_LEVEL
               value: "DEBUG"
