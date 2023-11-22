@@ -124,56 +124,12 @@ export function waitForNeo4jToBeInitialized(verbose:boolean) {
 function runDemoTenantProvisioningScript(verbose: boolean) {
   logTerminal('INFO', 'Waiting for Neo4J to be provisioned with the demo tenant')
   shell.exec('sleep 3')
-  // const axios = require('axios');
-  // const FormData = require('form-data');
-  // const fs = require('fs');
-  //
-  // const url = 'http://127.0.0.1:4001/demo-tenant';
-  // const headers = {
-  //   'X-Openline-Api-Key': 'cad7ccb6-d8ff-4bae-a048-a42db33a217e',
-  //   'TENANT_NAME': 'openlineai',
-  //   'MASTER_USERNAME': 'development@openline.ai',
-  // };
-
-//   const form = new FormData();
-//
-// // Fetch the JSON data from the URL
-//   axios.get('https://raw.githubusercontent.com/openline-ai/openline-cli/otter/resources/demo-tenant.json')
-//     .then((response: import('axios').AxiosResponse) => {
-//       // Append the fetched data to the form
-//       form.append('file', Buffer.from(JSON.stringify(response.data)), {
-//         filename: 'demo-tenant.json',
-//         contentType: 'application/json',
-//       });
-//       return axios({
-//         method: 'get',
-//         url,
-//         headers,
-//         data: form,
-//         maxRedirects: 0,
-//       });
-//     })
-//     .then((response: import('axios').AxiosResponse) => {
-//       console.log('Response:', response.data);
-//     })
-//     .catch((error: Error) => {
-//       console.error('Error provisioning demo-tenant:', error.name + '\n' + error.message + '\n' + error.stack);
-//     });
-
-
-  // const DEMO_TENANT_DATA = CLI_RAW_REPO + config.customerOs.neo4jDemoTenant
-  // waitForFileToBeDownloaded(DEMO_TENANT_DATA, verbose);
-  // shell.exec('cat demo-tenant.json', {silent: false}).stderr.split(/\r?\n/)
 
   const initializedUsers = `curl --location --request GET 'http://localhost:4001/demo-tenant-users' --header 'X-Openline-Api-Key: cad7ccb6-d8ff-4bae-a048-a42db33a217e' --header 'TENANT_NAME: openlineai' --header 'MASTER_USERNAME: edi@openline.ai' --form 'file=@"demo-tenant.json"'`;
-  shell.exec(initializedUsers, {silent: false}).stderr.split(/\r?\n/)
-
-  const NEO4J_EMAIL_PROPERTY = config.customerOs.emailProperty
-  // const neo4jCypherFilename = waitForFileToBeDownloaded(NEO4J_DEMO_TENANT, verbose);
-  cypherInsert(verbose, NEO4J_EMAIL_PROPERTY);
+  shell.exec(initializedUsers, {silent: !verbose}).stderr.split(/\r?\n/)
 
   const pushDataToTenant = `curl --location --request GET 'http://localhost:4001/demo-tenant-data' --header 'X-Openline-Api-Key: cad7ccb6-d8ff-4bae-a048-a42db33a217e' --header 'TENANT_NAME: openlineai' --header 'MASTER_USERNAME: edi@openline.ai' --form 'file=@"demo-tenant.json"'`;
-  shell.exec(pushDataToTenant, {silent: false}).stderr.split(/\r?\n/)
+  shell.exec(pushDataToTenant, {silent: !verbose}).stderr.split(/\r?\n/)
 }
 
 export function provisionNeo4jWithDemoTenant(verbose:boolean){
