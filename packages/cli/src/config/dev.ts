@@ -75,7 +75,6 @@ export function getConfig() :any {
   config.customerOs.neo4jCypher = 'deployment/scripts/neo4j/customer-os.cypher'
   config.customerOs.neo4jProvisioning = 'deployment/scripts/neo4j/provision-neo4j.sh'
   config.customerOs.neo4jDemoTenant = 'resources/demo-tenant.json'
-  config.customerOs.emailProperty = '../deployment/scripts/neo4j/email-property.cypher'
 
   config.customerOs.repo = 'https://github.com/openline-ai/openline-customer-os.git'
 
