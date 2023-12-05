@@ -13,7 +13,7 @@ spec:
         app: spaces-gui
     spec:
       containers:
-        - image: ghcr.io/openline-ai/openline-customer-os:latest
+        - image: ghcr.io/openline-ai/openline-customer-os/spaces:latest
           name: spaces-gui
           imagePullPolicy: Never
           ports:
