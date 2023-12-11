@@ -5,7 +5,16 @@ import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
 import * as redis from '../../lib/dev/redis'
 import {getConfig} from '../../config/dev'
-import {installCustomerOsApi, installfileStoreApi, installSettingsApi, installCommsApi, installEventsProcessingPlatform, installValidationApi, installUserAdminApi} from '../../lib/dev/customer-os'
+import {
+  installCustomerOsApi,
+  installfileStoreApi,
+  installSettingsApi,
+  installCommsApi,
+  installEventsProcessingPlatform,
+  installValidationApi,
+  installUserAdminApi,
+  installWebhooks
+} from '../../lib/dev/customer-os'
 import {installEventStoreDB} from '../../lib/dev/eventstore'
 import * as start from '../../lib/dev/start'
 import {logTerminal} from '../../lib/logs'
@@ -43,6 +52,7 @@ export default class DevStart extends Command {
         'comms-api',
         'customer-os',
         'customer-os-api',
+        'customer-os-webhooks',
         'db',
         'events-processing-platform',
         'event-store-db',
@@ -90,6 +100,7 @@ export default class DevStart extends Command {
       installEventsProcessingPlatform(flags.verbose, location, version)
       installValidationApi(flags.verbose, location, version)
       installUserAdminApi(flags.verbose, location, version)
+      installWebhooks(flags.verbose, location, version)
       installJaeger(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
@@ -120,6 +131,7 @@ export default class DevStart extends Command {
       installEventsProcessingPlatform(flags.verbose, location, version)
       installValidationApi(flags.verbose, location, version)
       installUserAdminApi(flags.verbose, location, version)
+      installWebhooks(flags.verbose, location, version)
       installJaeger(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
@@ -233,6 +245,16 @@ export default class DevStart extends Command {
         // install customerOS
         ns.installNamespace(flags.verbose, location)
         installUserAdminApi(flags.verbose, location, version)
+        logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+        break
+
+      case 'customer-os-webhooks':
+        start.dependencyCheck(flags.verbose)
+        start.startDevServer(flags.verbose)
+        start.cleanupSetupFiles()
+        // install customerOS
+        ns.installNamespace(flags.verbose, location)
+        installWebhooks(flags.verbose, location, version)
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
         break
 

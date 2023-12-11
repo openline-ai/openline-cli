@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-os-webhooks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-os-webhooks
+  template:
+    metadata:
+      labels:
+        app: customer-os-webhooks
+    spec:
+      containers:
+        - image: ghcr.io/openline-ai/openline-customer-os/customer-os-webhooks:latest
+          name: customer-os-webhooks
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 10004
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 10004
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          readinessProbe: # To check if the Pod is ready to serve traffic or not
+            httpGet:
+              path: /readiness
+              port: 10004
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+          env:
+          - name: CORS_URL
+            value: "http://localhost:3000"
+
+          - name: PORT
+            value: "10004"
+
+          - name: POSTGRES_USER
+            value: "postgres"
+          - name: POSTGRES_PASSWORD
+            value: "password"
+          - name: POSTGRES_DB
+            value: "openline"
+          - name: POSTGRES_HOST
+            value: "customer-db-postgresql.openline.svc.cluster.local"
+          - name: POSTGRES_PORT
+            value: "5432"
+          - name: POSTGRES_MAX_CONN
+            value: "100"
+          - name: POSTGRES_MAX_IDLE_CONN
+            value: "10"
+          - name: POSTGRES_CONN_MAX_LIFETIME
+            value: "0"
+# valid log values (SILENT, ERROR, WARN, INFO)
+          - name: POSTGRES_LOG_LEVEL
+            value: "INFO"
+
+          - name: NEO4J_TARGET
+            value: "neo4j://127.0.0.1:7687"
+          - name: NEO4J_AUTH_USER
+            value: "neo4j"
+          - name: NEO4J_AUTH_PWD
+            value: "StrongLocalPa$$$"
+          - name: NEO4J_AUTH_REALM
+            value: ""
+          - name: NEO4J_MAX_CONN_POOL_SIZE
+            value: "100"
+          - name: NEO4J_CONN_ACQUISITION_TIMEOUT_SEC
+            value: "60"
+# valid log values (ERROR, WARNING, INFO, DEBUG)
+          - name: NEO4J_LOG_LEVEL
+            value: "INFO"
+
+          - name: EVENTS_PROCESSING_PLATFORM_URL
+            value: "events-processing-platform-service.openline.svc.cluster.local:5001"
+          - name: EVENTS_PROCESSING_PLATFORM_API_KEY
+            value: "082c1193-a5a2-42fc-87fc-e960e692fffd"
+
+# valid log values (PANIC, FATAL, ERROR, WARN, INFO, DEBUG)
+          - name: LOGGER_LEVEL
+            value: "DEBUG"
+          - name: LOGGER_DEV_MODE
+            value: "true"
+          - name: LOGGER_ENCODER
+            value: "console"
+
+          - name: JAEGER_ENABLED
+            value: "true"
+          - name: JAEGER_SERVICE_NAME
+            value: "customer-os-webhooks"
+          - name: JAEGER_AGENT_HOST
+            value: "jaeger.openline.svc.cluster.local"
+          - name: JAEGER_AGENT_PORT
+            value: "6831"
+          - name: JAEGER_SAMPLER_TYPE
+            value: "const"
+          - name: JAEGER_SAMPLER_PARAM
+            value: "1"
+          - name: JAEGER_REPORTER_LOG_SPANS
+            value: "false"
