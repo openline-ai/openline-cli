@@ -310,9 +310,9 @@ export function installWebhooks(verbose: boolean, location = config.setupDir, im
     return true
   }
 
-  const DEPLOYMENT = config.customerOs.webhooksDeployment
-  const SERVICE = config.customerOs.webhooksService
-  const LOADBALANCER = config.customerOs.webhooksLoadbalancer
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.webhooksDeployment
+  const SERVICE = CLI_RAW_REPO + config.customerOs.webhooksService
+  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.webhooksLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
