@@ -60,6 +60,11 @@ export function getConfig() :any {
   config.customerOs.userAdminApiService = 'deployment/infra/k8s/user-admin-api-service.yaml'
   config.customerOs.userAdminApiLoadbalancer = 'deployment/infra/k8s/user-admin-api-loadbalancer.yaml'
   config.customerOs.userAdminApiSecrets = 'deployment/infra/k8s/user-admin-api-secrets.sh'
+    // Webhooks
+  config.customerOs.webhooksAdminApiImage = 'ghcr.io/openline-ai/openline-customer-os/customer-os-webhooks:'
+  config.customerOs.webhooksDeployment = 'deployment/infra/k8s/customer-os-webhooks.yaml'
+  config.customerOs.webhooksService = 'deployment/infra/k8s/customer-os-webhooks-service.yaml'
+  config.customerOs.webhooksLoadbalancer = 'deployment/infra/k8s/customer-os-webhooks-loadbalancer.yaml'
   // customerOS postgreSQL DB
   config.customerOs.postgresqlPersistentVolume = 'deployment/infra/k8s/postgresql-persistent-volume.yaml'
   config.customerOs.postgresqlPersistentVolumeClaim = 'deployment/infra/k8s/postgresql-persistent-volume-claim.yaml'

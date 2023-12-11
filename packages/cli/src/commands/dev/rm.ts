@@ -31,6 +31,7 @@ export default class DevRm extends Command {
         'comms-api',
         'customer-os',
         'customer-os-api',
+        'customer-os-webhooks',
         'db',
         'events-processing-platform',
         'event-store-db',
@@ -128,10 +129,22 @@ export default class DevRm extends Command {
       deleteApp(appServices, flags.verbose)
       break
     }
+
     case 'comms-api': {
       const appServices: Apps = {
         deployments: ['comms-api'],
         services: ['comms-api-service', 'comms-api-loadbalancer'],
+        statefulsets: [],
+      }
+
+      deleteApp(appServices, flags.verbose)
+      break
+    }
+
+    case 'customer-os-webhooks': {
+      const appServices: Apps = {
+        deployments: ['customer-os-webhooks'],
+        services: ['customer-os-webhooks-service', 'customer-os-webhooks-loadbalancer'],
         statefulsets: [],
       }
 

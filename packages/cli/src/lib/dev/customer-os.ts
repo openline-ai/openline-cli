@@ -14,6 +14,7 @@ const EVENTS_PROCESSING_PLATFORM = 'events-processing-platform-service'
 const COMMS_API = 'comms-api-service'
 const VALIDATION_API = 'validation-api-service'
 const USER_ADMIN_API = 'user-admin-api-service'
+const CUSTOMER_OS_WEBHOOKS = 'customer-os-webhooks-service'
 const CLI_RAW_REPO = config.cli.rawRepo
 
 
@@ -42,6 +43,9 @@ function validationApiCheck() :boolean {
 
 function userAdminApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${USER_ADMIN_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+}
+function webhooksApiCheck() :boolean {
+  return (shell.exec(`kubectl get service ${CUSTOMER_OS_WEBHOOKS} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
 export function installCustomerOsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
@@ -300,6 +304,42 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
   logTerminal('SUCCESS', 'user-admin-api successfully installed')
   return true
 }
+export function installWebhooks(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+  if (webhooksApiCheck()) {
+    logTerminal('SUCCESS', 'customer-os-webhooks already running')
+    return true
+  }
+
+  const DEPLOYMENT = config.customerOs.webhooksDeployment
+  const SERVICE = config.customerOs.webhooksService
+  const LOADBALANCER = config.customerOs.webhooksLoadbalancer
+
+  if (imageVersion.toLowerCase() !== 'latest') {
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
+    if (!tag) return false
+  }
+
+  let image: string | null  = config.customerOs.fileStoreImage + imageVersion
+
+  if (location !== config.setupDir) {
+    // come back to this
+    const buildPath = CLI_RAW_REPO + '/packages/server/customer-os-webhooks'
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
+    image = null
+  }
+
+  const installConfig: Yaml = {
+    deployYaml: DEPLOYMENT,
+    serviceYaml: SERVICE,
+    loadbalancerYaml: LOADBALANCER,
+  }
+  const deploy = deployImage(image, installConfig, verbose)
+  if (deploy === false) return false
+
+  logTerminal('SUCCESS', 'customer-os-webhooks successfully installed')
+  return true
+}
 
 export function waitForUserAdminAppPodToBeReady() {
   let userAdminApiPodName
@@ -357,4 +397,8 @@ export function pingValidationApi() :boolean {
 
 export function pingUserAdminApi() :boolean {
   return shell.exec('curl localhost:4001/health', {silent: true}).code === 0
+}
+
+export function pingCustomerOsWebhooks() :boolean {
+  return shell.exec('curl localhost:10004/health', {silent: true}).code === 0
 }
