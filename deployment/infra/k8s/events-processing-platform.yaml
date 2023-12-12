@@ -44,11 +44,16 @@ spec:
             - name: EVENT_STORE_SUBSCRIPTIONS_EMAIL_VALIDATION_POOL_SIZE
               value: "1"
 
+            - name: EVENTS_PROCESSING_PLATFORM_URL
+              value: "events-processing-platform-service.openline.svc.cluster.local:5001"
+            - name: EVENTS_PROCESSING_PLATFORM_API_KEY
+              value: "082c1193-a5a2-42fc-87fc-e960e692fffd"
+
             - name: GRPC_PORT
               value: ":5001"
             - name: GRPC_DEVELOPMENT
               value: "true"
-            - name: GRPC_API_KEY 
+            - name: GRPC_API_KEY
               value: "082c1193-a5a2-42fc-87fc-e960e692fffd"
 
             - name: LOGGER_LEVEL
