@@ -125,10 +125,10 @@ function runDemoTenantProvisioningScript(verbose: boolean) {
   logTerminal('INFO', 'Waiting for Neo4J to be provisioned with the demo tenant')
   shell.exec('sleep 3')
 
-  const initializedUsers = `curl --location --request GET 'http://localhost:4001/demo-tenant-users' --header 'X-Openline-Api-Key: cad7ccb6-d8ff-4bae-a048-a42db33a217e' --header 'TENANT_NAME: openlineai' --header 'MASTER_USERNAME: edi@openline.ai' --form 'file=@"demo-tenant.json"'`;
+  const initializedUsers = `curl --location --request GET 'http://localhost:4001/demo-tenant-users' --header 'X-Openline-Api-Key: cad7ccb6-d8ff-4bae-a048-a42db33a217e' --header 'TENANT_NAME: openlineai' --header 'MASTER_USERNAME: edi@openline.ai' --form 'file=@"resources/demo-tenant.json"'`;
   shell.exec(initializedUsers, {silent: !verbose}).stderr.split(/\r?\n/)
 
-  const pushDataToTenant = `curl --location --request GET 'http://localhost:4001/demo-tenant-data' --header 'X-Openline-Api-Key: cad7ccb6-d8ff-4bae-a048-a42db33a217e' --header 'TENANT_NAME: openlineai' --header 'MASTER_USERNAME: edi@openline.ai' --form 'file=@"demo-tenant.json"'`;
+  const pushDataToTenant = `curl --location --request GET 'http://localhost:4001/demo-tenant-data' --header 'X-Openline-Api-Key: cad7ccb6-d8ff-4bae-a048-a42db33a217e' --header 'TENANT_NAME: openlineai' --header 'MASTER_USERNAME: edi@openline.ai' --form 'file=@"resources/demo-tenant.json"'`;
   shell.exec(pushDataToTenant, {silent: !verbose}).stderr.split(/\r?\n/)
 }
 
