@@ -10,3 +10,6 @@ volumes:
     defaultStorageClass:
       requests:
         storage: 5Gi
+
+env:
+  NEO4J_PLUGINS: '["apoc"]'
