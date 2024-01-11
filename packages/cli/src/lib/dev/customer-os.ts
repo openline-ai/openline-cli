@@ -363,6 +363,28 @@ export function waitForUserAdminAppPodToBeReady() {
   } while (!userAdminApiReadyStatus.includes("Listening and serving HTTP on :4001"))
 }
 
+export function waitForCustomerOsApiPodToBeReady() {
+  let customerOsApiPodName
+  do {
+    customerOsApiPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep customer-os-api`, {silent: true})
+      .stdout
+      .split(/\r?\n/)
+      .filter(Boolean);
+  } while (customerOsApiPodName.length < 1)
+
+  let customerOsApiPodStatus;
+  do {
+    customerOsApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${customerOsApiPodName[0]} -o jsonpath='{.status.phase}'`)
+    shell.exec('sleep 2')
+  } while (customerOsApiPodStatus == "Pending")
+
+  let customerOsApiReadyStatus;
+  do {
+    customerOsApiReadyStatus = shell.exec(`kubectl -n ${NAMESPACE} logs ${customerOsApiPodName[0]}`, {silent: true})
+    shell.exec('sleep 2')
+  } while (!customerOsApiReadyStatus.includes("Listening and serving HTTP on :10000"))
+}
+
 export function pingCustomerOsApi() :boolean {
   return shell.exec('curl localhost:10000/health', {silent: true}).code === 0
 }
