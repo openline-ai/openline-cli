@@ -5,6 +5,8 @@ import {exit} from 'node:process'
 import {waitForCustomerOsApiPodToBeReady, waitForUserAdminAppPodToBeReady} from "./customer-os";
 import {exec} from "shelljs";
 import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
+import * as demoTenantData from "./demo-tenant.json"
+import * as fs from "fs";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -121,21 +123,57 @@ export function waitForNeo4jToBeInitialized(verbose:boolean) {
   }
 }
 
-function runDemoTenantProvisioningScript(verbose: boolean) {
+async function runDemoTenantProvisioningScript(verbose: boolean) {
   logTerminal('INFO', 'Waiting for Neo4J to be provisioned with the demo tenant')
+  const stringifiedDemoTenantData = JSON.stringify(demoTenantData);
 
   shell.exec('sleep 3')
-  const initializedUsers = `curl --location --request GET 'http://localhost:4001/demo-tenant-users' --header 'X-Openline-Api-Key: cad7ccb6-d8ff-4bae-a048-a42db33a217e' --header 'TENANT_NAME: openlineai' --header 'MASTER_USERNAME: edi@openline.ai' --form 'file=@"resources/demo-tenant.json"'`;
-  shell.exec(initializedUsers, {silent: !verbose}).stderr.split(/\r?\n/)
+  await initiateDemoTenantUsers("demo-tenant-users", stringifiedDemoTenantData).then(() => {
+    console.log("Users successfully initiated!")
+  }).catch((e) => {
+    console.log("Users not initiated!")
+    console.error(e)
+  })
 
   shell.exec('sleep 3')
-  const pushDataToTenant = `curl --location --request GET 'http://localhost:4001/demo-tenant-data' --header 'X-Openline-Api-Key: cad7ccb6-d8ff-4bae-a048-a42db33a217e' --header 'TENANT_NAME: openlineai' --header 'MASTER_USERNAME: edi@openline.ai' --form 'file=@"resources/demo-tenant.json"'`;
-  shell.exec(pushDataToTenant, {silent: !verbose}).stderr.split(/\r?\n/)
+  await initiateDemoTenantUsers("demo-tenant-data", stringifiedDemoTenantData).then(() => {
+    console.log("Data successfully initiated!")
+  }).catch((e) => {
+    console.log("Data not initiated!")
+    console.error(e)
+  })
 }
 
-export function provisionNeo4jWithDemoTenant(verbose:boolean){
+async function initiateDemoTenantUsers(urlPath: string, stringifiedDemoTenantData: string) {
+  const formData = new FormData();
+  formData.append('file', new Blob([stringifiedDemoTenantData], {type: 'application/json'}));
+
+  try {
+    const res = await fetch("http://127.0.0.1:4001/" + urlPath, {
+      method: "POST",
+      headers: {
+        "X-Openline-Api-Key": "cad7ccb6-d8ff-4bae-a048-a42db33a217e",
+        "TENANT_NAME": "openlineai",
+        "MASTER_USERNAME": "edi@openline.ai",
+      },
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
+  } catch (e) {
+    console.error("Error:", e);
+  }
+
+}
+
+
+
+
+export async function provisionNeo4jWithDemoTenant(verbose:boolean){
   waitForUserAdminAppPodToBeReady();
   waitForCustomerOsApiPodToBeReady();
   waitForNeo4jToBeInitialized(verbose)
-  runDemoTenantProvisioningScript(verbose);
+  await runDemoTenantProvisioningScript(verbose);
 }
+
