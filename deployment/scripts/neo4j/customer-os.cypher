@@ -3,6 +3,14 @@ MATCH (t:Tenant {name:"openlineai"})
 MERGE (t)-[:HAS_WORKSPACE]->(w:Workspace {name:"openline.ai", provider: "google", appSource: "manual"});
 
 MATCH (t:Tenant {name:"openlineai"})
+MERGE (t)-[:HAS_SETTINGS]->(s:TenantSettings {id:randomUUID()})
+				ON CREATE SET
+					s.createdAt=datetime({timezone: 'UTC'}),
+					s.invoicingEnabled=false,
+					s.tenant="openlineai",
+					s.defaultCurrency="EUR";
+
+MATCH (t:Tenant {name:"openlineai"})
 MERGE (u:User {id:"development@openline.ai"})-[:USER_BELONGS_TO_TENANT]->(t)
 ON CREATE SET
     u.firstName="Development",

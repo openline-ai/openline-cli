@@ -135,7 +135,7 @@ async function runDemoTenantProvisioningScript(verbose: boolean) {
     console.error(e)
   })
 
-  shell.exec('sleep 3')
+  shell.exec('sleep 5')
   await initiateDemoTenantUsers("demo-tenant-data", stringifiedDemoTenantData).then(() => {
     console.log("Data successfully initiated!")
   }).catch((e) => {
