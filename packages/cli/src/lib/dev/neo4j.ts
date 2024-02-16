@@ -127,24 +127,18 @@ async function runDemoTenantProvisioningScript(verbose: boolean) {
   logTerminal('INFO', 'Waiting for Neo4J to be provisioned with the demo tenant')
   const stringifiedDemoTenantData = JSON.stringify(demoTenantData);
 
+  console.log(">>> Running users init")
   shell.exec('sleep 3')
-  await initiateDemoTenantUsers("demo-tenant-users", stringifiedDemoTenantData).then(() => {
-    console.log("Users successfully initiated!")
-  }).catch((e) => {
-    console.log("Users not initiated!")
-    console.error(e)
-  })
+    await initiateDemoTenant("demo-tenant-users", stringifiedDemoTenantData);
+    console.log("Users successfully initiated!");
 
-  shell.exec('sleep 5')
-  await initiateDemoTenantUsers("demo-tenant-data", stringifiedDemoTenantData).then(() => {
-    console.log("Data successfully initiated!")
-  }).catch((e) => {
-    console.log("Data not initiated!")
-    console.error(e)
-  })
+  console.log(">>> Running data init");
+  shell.exec('sleep 5');
+    await initiateDemoTenant("demo-tenant-data", stringifiedDemoTenantData);
+    console.log("Data successfully initiated!");
 }
 
-async function initiateDemoTenantUsers(urlPath: string, stringifiedDemoTenantData: string) {
+async function initiateDemoTenant(urlPath: string, stringifiedDemoTenantData: string) {
   const formData = new FormData();
   formData.append('file', new Blob([stringifiedDemoTenantData], {type: 'application/json'}));
 
@@ -158,9 +152,7 @@ async function initiateDemoTenantUsers(urlPath: string, stringifiedDemoTenantDat
       },
       body: formData
     })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error(error));
+    console.log(res)
   } catch (e) {
     console.error("Error:", e);
   }
