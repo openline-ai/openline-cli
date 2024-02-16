@@ -385,6 +385,29 @@ export function waitForCustomerOsApiPodToBeReady() {
   } while (!customerOsApiReadyStatus.includes("Listening and serving HTTP on :10000"))
 }
 
+export function waitForEventsProcessingPlatformPodToBeReady() {
+  let eventsProcessingPlatformPodName
+  let restarts = 0
+  do {
+    eventsProcessingPlatformPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep events-processing-platform`, {silent: true})
+      .stdout
+      .split(/\r?\n/)
+      .filter(Boolean);
+  } while (eventsProcessingPlatformPodName.length < 1)
+
+  let eventsProcessingPlatformPodStatus;
+  do {
+    eventsProcessingPlatformPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${eventsProcessingPlatformPodName[0]} -o jsonpath='{.status.phase}'`)
+    shell.exec('sleep 2')
+  } while (eventsProcessingPlatformPodStatus == "Pending")
+
+  let eventsProcessingPlatformPodLogs;
+  do {
+    eventsProcessingPlatformPodLogs = shell.exec(`kubectl -n ${NAMESPACE} logs ${eventsProcessingPlatformPodName[0]}`, {silent: true})
+    shell.exec('sleep 2')
+  } while (!eventsProcessingPlatformPodLogs.includes("EVENTS-PROCESSING-PLATFORM gRPC Server is listening on port: {:5001}"))
+}
+
 export function pingCustomerOsApi() :boolean {
   return shell.exec('curl localhost:10000/health', {silent: true}).code === 0
 }

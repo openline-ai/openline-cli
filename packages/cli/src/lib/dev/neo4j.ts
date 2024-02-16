@@ -2,7 +2,11 @@ import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import {exit} from 'node:process'
-import {waitForCustomerOsApiPodToBeReady, waitForUserAdminAppPodToBeReady} from "./customer-os";
+import {
+  waitForCustomerOsApiPodToBeReady,
+  waitForEventsProcessingPlatformPodToBeReady,
+  waitForUserAdminAppPodToBeReady
+} from "./customer-os";
 import {exec} from "shelljs";
 import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
 import * as demoTenantData from "./demo-tenant.json"
@@ -129,16 +133,16 @@ async function runDemoTenantProvisioningScript(verbose: boolean) {
 
   console.log(">>> Running users init")
   shell.exec('sleep 3')
-    await initiateDemoTenant("demo-tenant-users", stringifiedDemoTenantData);
+    await initiateDemoTenant("demo-tenant-users", stringifiedDemoTenantData, verbose);
     console.log("Users successfully initiated!");
 
   console.log(">>> Running data init");
   shell.exec('sleep 5');
-    await initiateDemoTenant("demo-tenant-data", stringifiedDemoTenantData);
+    await initiateDemoTenant("demo-tenant-data", stringifiedDemoTenantData, verbose);
     console.log("Data successfully initiated!");
 }
 
-async function initiateDemoTenant(urlPath: string, stringifiedDemoTenantData: string) {
+async function initiateDemoTenant(urlPath: string, stringifiedDemoTenantData: string, verbose: boolean) {
   const formData = new FormData();
   formData.append('file', new Blob([stringifiedDemoTenantData], {type: 'application/json'}));
 
@@ -152,19 +156,17 @@ async function initiateDemoTenant(urlPath: string, stringifiedDemoTenantData: st
       },
       body: formData
     })
-    console.log(res)
+    if (verbose) console.log(res)
   } catch (e) {
     console.error("Error:", e);
   }
 
 }
 
-
-
-
 export async function provisionNeo4jWithDemoTenant(verbose:boolean){
   waitForUserAdminAppPodToBeReady();
   waitForCustomerOsApiPodToBeReady();
+  waitForEventsProcessingPlatformPodToBeReady();
   waitForNeo4jToBeInitialized(verbose)
   await runDemoTenantProvisioningScript(verbose);
 }
