@@ -87,7 +87,14 @@
       "country": "UK",
       "zip": "EC2V 6DN",
       "domesticPaymentsBankInfo": "ACH Routing Number: 026073150<br/>Account Number: 8311492202<br/>Account Type: Checking",
-      "internationalPaymentsBankInfo": "ACH Routing Number: 026073150<br/>Account Number: 8311492202<br/>Account Type: Checking"
+      "internationalPaymentsBankInfo": "ACH Routing Number: 026073150<br/>Account Number: 8311492202<br/>Account Type: Checking",
+      "vatNumber":                     "123456zz",
+      "sendInvoicesFrom":              "jonty@openline.ai",
+      "canPayWithCard":                false,
+      "canPayWithDirectDebitSEPA":     false,
+      "canPayWithDirectDebitACH":      false,
+      "canPayWithDirectDebitBacs":     false,
+      "canPayWithPigeon":              false
     }
   ],
   "organizations": [
@@ -155,7 +162,7 @@
           "serviceStartedAt":   "2023-08-05T09:00:00Z",
           "signedAt":           "2023-08-05T09:00:00Z",
           "invoicingStartDate":    "2024-01-01T09:00:00Z",
-          "billingCycle":          "MONTHLY_BILLING",
+          "billingCycle":          "QUARTERLY_BILLING",
           "currency":              "GBP",
           "addressLine1":          "AddressLine1",
           "addressLine2":          "AddressLine2",
@@ -163,7 +170,7 @@
           "locality":              "London",
           "country":               "UK",
           "organizationLegalName": "BCC",
-          "invoiceEmail":          "InvoiceEmail@BCCContractName001.com",
+          "invoiceEmail":          "InvoiceEmail@BCCContractName002.com",
           "invoiceNote":           "invoiceNote",
           "serviceLines": [
             {
