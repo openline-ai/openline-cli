@@ -412,6 +412,7 @@ export function waitForEventsProcessingPlatformPodToBeReady(verbose:boolean) {
   } while (eventsProcessingPlatformPodStatus == "Pending")
   if (verbose) logTerminal('SUCCESS', 'events-processing-platform pod status is not Pending anymore')
   if (verbose) shell.exec(`kubectl -n ${NAMESPACE} get pods`)
+  if (verbose) shell.exec(`kubectl -n ${NAMESPACE} logs -f event-store-0`)
 
   let eventsProcessingPlatformPodLogs;
   do {
