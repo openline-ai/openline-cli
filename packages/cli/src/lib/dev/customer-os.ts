@@ -411,7 +411,11 @@ export function waitForEventsProcessingPlatformPodToBeReady(verbose:boolean) {
     shell.exec('sleep 2')
   } while (eventsProcessingPlatformPodStatus == "Pending")
   if (verbose) logTerminal('SUCCESS', 'events-processing-platform pod status is not Pending anymore')
+  if (verbose) shell.exec('sleep 10')
+  if (verbose) shell.exec('docker -v')
+  if (verbose) shell.exec('lsb_release -a')
   if (verbose) shell.exec(`kubectl -n ${NAMESPACE} get pods`)
+  if (verbose) shell.exec(`kubectl -n ${NAMESPACE} describe pod event-store-0 | grep Image`)
   if (verbose) shell.exec(`kubectl -n ${NAMESPACE} logs -f event-store-0`)
 
   let eventsProcessingPlatformPodLogs;
