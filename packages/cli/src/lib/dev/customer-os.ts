@@ -411,12 +411,13 @@ export function waitForEventsProcessingPlatformPodToBeReady(verbose:boolean) {
     shell.exec('sleep 2')
   } while (eventsProcessingPlatformPodStatus == "Pending")
   if (verbose) logTerminal('SUCCESS', 'events-processing-platform pod status is not Pending anymore')
+  if (verbose) shell.exec(`kubectl -n ${NAMESPACE} get pods`)
 
   let eventsProcessingPlatformPodLogs;
   do {
     eventsProcessingPlatformPodLogs = shell.exec(`kubectl -n ${NAMESPACE} logs ${eventsProcessingPlatformPodName[0]}`, {silent: true})
     shell.exec('sleep 2')
-  } while (!eventsProcessingPlatformPodLogs.includes("EVENTS-PROCESSING-PLATFORM gRPC Server is listening on port: {:5001}"))
+  } while (!eventsProcessingPlatformPodLogs.includes("gRPC Server is listening on port"))
   if (verbose) logTerminal('SUCCESS', 'events-processing-platform pod is Running')
 }
 
