@@ -341,7 +341,8 @@ export function installWebhooks(verbose: boolean, location = config.setupDir, im
   return true
 }
 
-export function waitForUserAdminAppPodToBeReady() {
+export function waitForUserAdminAppPodToBeReady(verbose:boolean) {
+  if (verbose) logTerminal('INFO', 'Waiting for user-admin-api pod to reach the Running state')
   let userAdminApiPodName
   do {
     userAdminApiPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep user-admin-api`, {silent: true})
@@ -349,21 +350,25 @@ export function waitForUserAdminAppPodToBeReady() {
       .split(/\r?\n/)
       .filter(Boolean);
   } while (userAdminApiPodName.length < 1)
+  if (verbose) logTerminal('SUCCESS', 'user-admin-api pod exists')
 
   let userAdminApiPodStatus;
   do {
-    userAdminApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${userAdminApiPodName[0]} -o jsonpath='{.status.phase}'`)
+    userAdminApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${userAdminApiPodName[0]} -o jsonpath='{.status.phase}'`, {silent: true})
     shell.exec('sleep 2')
   } while (userAdminApiPodStatus == "Pending")
+  if (verbose) logTerminal('SUCCESS', 'user-admin-api pod status is not Pending anymore')
 
   let userAdminApiReadyStatus;
   do {
     userAdminApiReadyStatus = shell.exec(`kubectl -n ${NAMESPACE} logs ${userAdminApiPodName[0]}`, {silent: true})
     shell.exec('sleep 2')
   } while (!userAdminApiReadyStatus.includes("Listening and serving HTTP on :4001"))
+  if (verbose) logTerminal('SUCCESS', 'user-admin-api pod is Running')
 }
 
-export function waitForCustomerOsApiPodToBeReady() {
+export function waitForCustomerOsApiPodToBeReady(verbose:boolean) {
+  if (verbose) logTerminal('INFO', 'Waiting for customer-os-api pod to reach the Running state')
   let customerOsApiPodName
   do {
     customerOsApiPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep customer-os-api`, {silent: true})
@@ -371,21 +376,25 @@ export function waitForCustomerOsApiPodToBeReady() {
       .split(/\r?\n/)
       .filter(Boolean);
   } while (customerOsApiPodName.length < 1)
+  if (verbose) logTerminal('SUCCESS', 'customer-os-api pod exists')
 
   let customerOsApiPodStatus;
   do {
-    customerOsApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${customerOsApiPodName[0]} -o jsonpath='{.status.phase}'`)
+    customerOsApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${customerOsApiPodName[0]} -o jsonpath='{.status.phase}'`, {silent: true})
     shell.exec('sleep 2')
   } while (customerOsApiPodStatus == "Pending")
+  if (verbose) logTerminal('SUCCESS', 'customer-os-api pod status is not Pending anymore')
 
   let customerOsApiReadyStatus;
   do {
     customerOsApiReadyStatus = shell.exec(`kubectl -n ${NAMESPACE} logs ${customerOsApiPodName[0]}`, {silent: true})
     shell.exec('sleep 2')
   } while (!customerOsApiReadyStatus.includes("Listening and serving HTTP on :10000"))
+  if (verbose) logTerminal('SUCCESS', 'customer-os-api pod is Running')
 }
 
-export function waitForEventsProcessingPlatformPodToBeReady() {
+export function waitForEventsProcessingPlatformPodToBeReady(verbose:boolean) {
+  if (verbose) logTerminal('INFO', 'Waiting for events-processing-platform pod to reach the Running state')
   let eventsProcessingPlatformPodName
   let restarts = 0
   do {
@@ -394,18 +403,21 @@ export function waitForEventsProcessingPlatformPodToBeReady() {
       .split(/\r?\n/)
       .filter(Boolean);
   } while (eventsProcessingPlatformPodName.length < 1)
+  if (verbose) logTerminal('SUCCESS', 'events-processing-platform pod exists')
 
   let eventsProcessingPlatformPodStatus;
   do {
-    eventsProcessingPlatformPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${eventsProcessingPlatformPodName[0]} -o jsonpath='{.status.phase}'`)
+    eventsProcessingPlatformPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${eventsProcessingPlatformPodName[0]} -o jsonpath='{.status.phase}'`, {silent: true})
     shell.exec('sleep 2')
   } while (eventsProcessingPlatformPodStatus == "Pending")
+  if (verbose) logTerminal('SUCCESS', 'events-processing-platform pod status is not Pending anymore')
 
   let eventsProcessingPlatformPodLogs;
   do {
     eventsProcessingPlatformPodLogs = shell.exec(`kubectl -n ${NAMESPACE} logs ${eventsProcessingPlatformPodName[0]}`, {silent: true})
     shell.exec('sleep 2')
   } while (!eventsProcessingPlatformPodLogs.includes("EVENTS-PROCESSING-PLATFORM gRPC Server is listening on port: {:5001}"))
+  if (verbose) logTerminal('SUCCESS', 'events-processing-platform pod is Running')
 }
 
 export function pingCustomerOsApi() :boolean {

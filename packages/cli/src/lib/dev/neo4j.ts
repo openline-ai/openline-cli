@@ -125,6 +125,8 @@ export function waitForNeo4jToBeInitialized(verbose:boolean) {
       return false
     }
   }
+
+  if (verbose) logTerminal('SUCCESS', 'neo4j is not initialized')
 }
 
 async function runDemoTenantProvisioningScript(verbose: boolean) {
@@ -164,9 +166,9 @@ async function initiateDemoTenant(urlPath: string, stringifiedDemoTenantData: st
 }
 
 export async function provisionNeo4jWithDemoTenant(verbose:boolean){
-  waitForUserAdminAppPodToBeReady();
-  waitForCustomerOsApiPodToBeReady();
-  waitForEventsProcessingPlatformPodToBeReady();
+  waitForUserAdminAppPodToBeReady(verbose);
+  waitForCustomerOsApiPodToBeReady(verbose);
+  waitForEventsProcessingPlatformPodToBeReady(verbose);
   waitForNeo4jToBeInitialized(verbose)
   await runDemoTenantProvisioningScript(verbose);
 }
