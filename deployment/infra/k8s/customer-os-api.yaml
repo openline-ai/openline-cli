@@ -23,7 +23,7 @@ spec:
               path: /health
               port: 10000
               scheme: HTTP
-            initialDelaySeconds: 5
+            initialDelaySeconds: 30
             periodSeconds: 15
             timeoutSeconds: 5
           readinessProbe: # To check if the Pod is ready to serve traffic or not
@@ -31,7 +31,7 @@ spec:
               path: /readiness
               port: 10000
               scheme: HTTP
-            initialDelaySeconds: 5
+            initialDelaySeconds: 30
             timeoutSeconds: 1
           env:
             - name: NEO4J_TARGET
