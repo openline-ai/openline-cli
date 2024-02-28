@@ -32,6 +32,7 @@ spec:
               port: 10000
               scheme: HTTP
             initialDelaySeconds: 30
+            periodSeconds: 15
             timeoutSeconds: 1
           env:
             - name: NEO4J_TARGET
