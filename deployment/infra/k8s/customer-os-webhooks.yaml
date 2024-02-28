@@ -23,7 +23,7 @@ spec:
               path: /health
               port: 10004
               scheme: HTTP
-            initialDelaySeconds: 5
+            initialDelaySeconds: 30
             periodSeconds: 15
             timeoutSeconds: 5
           readinessProbe: # To check if the Pod is ready to serve traffic or not
@@ -31,7 +31,8 @@ spec:
               path: /readiness
               port: 10004
               scheme: HTTP
-            initialDelaySeconds: 5
+            initialDelaySeconds: 30
+            periodSeconds: 15
             timeoutSeconds: 1
           env:
           - name: CORS_URL
