@@ -17,11 +17,11 @@ spec:
           name: platform-admin-api
           imagePullPolicy: Never
           ports:
-            - containerPort: 10003
+            - containerPort: 10005
           livenessProbe:
             httpGet:
               path: /health
-              port: 10003
+              port: 10005
               scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 15
@@ -29,7 +29,7 @@ spec:
           readinessProbe: # To check if the Pod is ready to serve traffic or not
             httpGet:
               path: /readiness
-              port: 10003
+              port: 10005
               scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 15
