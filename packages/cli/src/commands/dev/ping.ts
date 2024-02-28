@@ -9,7 +9,7 @@ import {
   pingJaeger,
   pingEventsProcessingPlatform,
   pingUserAdminApi,
-  pingCustomerOsWebhooks
+  pingCustomerOsWebhooks, pingPlatformAdminApi
 } from '../../lib/dev/customer-os'
 
 import * as colors from 'colors' // eslint-disable-line no-restricted-imports
@@ -39,6 +39,7 @@ export default class DevPing extends Command {
     const validationApi = pingValidationApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const userAdminApi = pingUserAdminApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const customerOsWebhooks = pingCustomerOsWebhooks() ? colors.bold.green('Yes') : colors.red.bold('No')
+    const platformAdminApi = pingPlatformAdminApi() ? colors.bold.green('Yes') : colors.red.bold('No')
 
     const table = new Table({
       head: [colors.cyan.bold('App'), colors.cyan.bold('Service'), colors.cyan.bold('Location'), colors.cyan.bold('Up?')],
@@ -53,6 +54,7 @@ export default class DevPing extends Command {
       ['customer-os', 'validation-api', 'http://localhost:10003', validationApi],
       ['customer-os', 'user-admin-api', 'http://localhost:4001', userAdminApi],
       ['customer-os', 'customer-os-webhooks', 'http://localhost:10004', customerOsWebhooks],
+      ['customer-os', 'platform-admin-api', 'http://localhost:10005', platformAdminApi],
       ['customer-os', 'event-store-db', 'http://localhost:2113', eventStoreDb],
       ['customer-os', 'events-processing-platform', 'grpc://localhost:5001', eventsProcessingPlatform],
       ['customer-os', 'jaeger', 'http://localhost:16686', jaeger],

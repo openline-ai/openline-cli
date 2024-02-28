@@ -152,6 +152,17 @@ export default class DevRm extends Command {
       break
     }
 
+    case 'platform-admin-api': {
+      const appServices: Apps = {
+        deployments: ['platform-admin-api'],
+        services: ['platform-admin-api-service', 'platform-admin-api-loadbalancer'],
+        statefulsets: [],
+      }
+
+      deleteApp(appServices, flags.verbose)
+      break
+    }
+
       case 'event-store-db': {
       const appServices: Apps = {
         deployments: [],

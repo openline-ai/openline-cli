@@ -15,6 +15,7 @@ const COMMS_API = 'comms-api-service'
 const VALIDATION_API = 'validation-api-service'
 const USER_ADMIN_API = 'user-admin-api-service'
 const CUSTOMER_OS_WEBHOOKS = 'customer-os-webhooks-service'
+const PLATFORM_ADMIN_API = 'platform-admin-api-service'
 const CLI_RAW_REPO = config.cli.rawRepo
 
 
@@ -46,6 +47,9 @@ function userAdminApiCheck() :boolean {
 }
 function webhooksApiCheck() :boolean {
   return (shell.exec(`kubectl get service ${CUSTOMER_OS_WEBHOOKS} -n ${NAMESPACE}`, {silent: true}).code === 0)
+}
+function platformAdminApiCheck() :boolean {
+  return (shell.exec(`kubectl get service ${PLATFORM_ADMIN_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
 }
 
 export function installCustomerOsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
@@ -319,7 +323,7 @@ export function installWebhooks(verbose: boolean, location = config.setupDir, im
     if (!tag) return false
   }
 
-  let image: string | null  = config.customerOs.fileStoreImage + imageVersion
+  let image: string | null  = config.customerOs.webhooksImage + imageVersion
 
   if (location !== config.setupDir) {
     // come back to this
@@ -338,6 +342,42 @@ export function installWebhooks(verbose: boolean, location = config.setupDir, im
   if (deploy === false) return false
 
   logTerminal('SUCCESS', 'customer-os-webhooks successfully installed')
+  return true
+}
+export function installPlatformAdminApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+  if (platformAdminApiCheck()) {
+    logTerminal('SUCCESS', 'platform-admin-api already running')
+    return true
+  }
+
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.platformAdminApiDeployment
+  const SERVICE = CLI_RAW_REPO + config.customerOs.platformAdminApiService
+  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.platformAdminApiLoadbalancer
+
+  if (imageVersion.toLowerCase() !== 'latest') {
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
+    if (!tag) return false
+  }
+
+  let image: string | null  = config.customerOs.platformAdminApiImage + imageVersion
+
+  if (location !== config.setupDir) {
+    // come back to this
+    const buildPath = CLI_RAW_REPO + '/packages/server/customer-os-platform-admin-api'
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
+    image = null
+  }
+
+  const installConfig: Yaml = {
+    deployYaml: DEPLOYMENT,
+    serviceYaml: SERVICE,
+    loadbalancerYaml: LOADBALANCER,
+  }
+  const deploy = deployImage(image, installConfig, verbose)
+  if (deploy === false) return false
+
+  logTerminal('SUCCESS', 'platform-admin-api successfully installed')
   return true
 }
 
@@ -458,4 +498,8 @@ export function pingUserAdminApi() :boolean {
 
 export function pingCustomerOsWebhooks() :boolean {
   return shell.exec('curl localhost:10004/health', {silent: true}).code === 0
+}
+
+export function pingPlatformAdminApi() :boolean {
+  return shell.exec('curl localhost:10005/health', {silent: true}).code === 0
 }
