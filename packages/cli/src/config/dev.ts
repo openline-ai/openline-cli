@@ -60,8 +60,13 @@ export function getConfig() :any {
   config.customerOs.userAdminApiService = 'deployment/infra/k8s/user-admin-api-service.yaml'
   config.customerOs.userAdminApiLoadbalancer = 'deployment/infra/k8s/user-admin-api-loadbalancer.yaml'
   config.customerOs.userAdminApiSecrets = 'deployment/infra/k8s/user-admin-api-secrets.sh'
+    // Platform admin API
+  config.customerOs.platformAdminApiImage = 'ghcr.io/openline-ai/openline-customer-os/customer-os-platform-admin-api:'
+  config.customerOs.platformAdminApiDeployment = 'deployment/infra/k8s/platform-admin-api/platform-admin-api.yaml'
+  config.customerOs.platformAdminApiService = 'deployment/infra/k8s/platform-admin-api/platform-admin-api-service.yaml'
+  config.customerOs.platformAdminApiLoadbalancer = 'deployment/infra/k8s/platform-admin-api/platform-admin-api-loadbalancer.yaml'
     // Webhooks
-  config.customerOs.webhooksAdminApiImage = 'ghcr.io/openline-ai/openline-customer-os/customer-os-webhooks:'
+  config.customerOs.webhooksImage = 'ghcr.io/openline-ai/openline-customer-os/customer-os-webhooks:'
   config.customerOs.webhooksDeployment = 'deployment/infra/k8s/customer-os-webhooks.yaml'
   config.customerOs.webhooksService = 'deployment/infra/k8s/customer-os-webhooks-service.yaml'
   config.customerOs.webhooksLoadbalancer = 'deployment/infra/k8s/customer-os-webhooks-loadbalancer.yaml'

@@ -13,7 +13,8 @@ import {
   installEventsProcessingPlatform,
   installValidationApi,
   installUserAdminApi,
-  installWebhooks
+  installWebhooks,
+  installPlatformAdminApi
 } from '../../lib/dev/customer-os'
 import {installEventStoreDB} from '../../lib/dev/eventstore'
 import * as start from '../../lib/dev/start'
@@ -100,6 +101,7 @@ export default class DevStart extends Command {
       installEventsProcessingPlatform(flags.verbose, location, version)
       installValidationApi(flags.verbose, location, version)
       installUserAdminApi(flags.verbose, location, version)
+      installPlatformAdminApi(flags.verbose, location, version)
       installWebhooks(flags.verbose, location, version)
       installJaeger(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
@@ -131,6 +133,7 @@ export default class DevStart extends Command {
       installEventsProcessingPlatform(flags.verbose, location, version)
       installValidationApi(flags.verbose, location, version)
       installUserAdminApi(flags.verbose, location, version)
+      installPlatformAdminApi(flags.verbose, location, version)
       installWebhooks(flags.verbose, location, version)
       installJaeger(flags.verbose, location, version)
       sql.provisionPostgresql(flags.verbose, location)
@@ -258,6 +261,16 @@ export default class DevStart extends Command {
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
         break
 
+      case 'platform-admin-api':
+        start.dependencyCheck(flags.verbose)
+        start.startDevServer(flags.verbose)
+        start.cleanupSetupFiles()
+        // install customerOS
+        ns.installNamespace(flags.verbose, location)
+        installPlatformAdminApi(flags.verbose, location, version)
+        logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+        break
+
       case 'test-env':
         start.dependencyCheck(flags.verbose)
         start.startDevServer(flags.verbose)
@@ -268,6 +281,7 @@ export default class DevStart extends Command {
         installEventStoreDB(flags.verbose, location)
         installEventsProcessingPlatform(flags.verbose, location, version)
         installUserAdminApi(flags.verbose, location, version)
+        installPlatformAdminApi(flags.verbose, location, version)
         sql.provisionPostgresql(flags.verbose, location)
         neo.provisionNeo4j(flags.verbose, location)
         neo.provisionNeo4jWithDemoTenant(flags.verbose)
