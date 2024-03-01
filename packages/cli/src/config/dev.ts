@@ -1,5 +1,5 @@
 
-export function getConfig() :any {
+export function getConfig(): any {
   const config: any = {}
 
   // Dev server resource config
@@ -60,12 +60,12 @@ export function getConfig() :any {
   config.customerOs.userAdminApiService = 'deployment/infra/k8s/user-admin-api-service.yaml'
   config.customerOs.userAdminApiLoadbalancer = 'deployment/infra/k8s/user-admin-api-loadbalancer.yaml'
   config.customerOs.userAdminApiSecrets = 'deployment/infra/k8s/user-admin-api-secrets.sh'
-    // Platform admin API
+  // Platform admin API
   config.customerOs.platformAdminApiImage = 'ghcr.io/openline-ai/openline-customer-os/customer-os-platform-admin-api:'
   config.customerOs.platformAdminApiDeployment = 'deployment/infra/k8s/platform-admin-api/platform-admin-api.yaml'
   config.customerOs.platformAdminApiService = 'deployment/infra/k8s/platform-admin-api/platform-admin-api-service.yaml'
   config.customerOs.platformAdminApiLoadbalancer = 'deployment/infra/k8s/platform-admin-api/platform-admin-api-loadbalancer.yaml'
-    // Webhooks
+  // Webhooks
   config.customerOs.webhooksImage = 'ghcr.io/openline-ai/openline-customer-os/customer-os-webhooks:'
   config.customerOs.webhooksDeployment = 'deployment/infra/k8s/customer-os-webhooks.yaml'
   config.customerOs.webhooksService = 'deployment/infra/k8s/customer-os-webhooks-service.yaml'
@@ -114,6 +114,11 @@ export function getConfig() :any {
   config.customerOs.jaegerService = 'deployment/infra/k8s/jaeger-service.yaml'
   config.customerOs.jaegerLoadbalancer = 'deployment/infra/k8s/jaeger-loadbalancer.yaml'
 
+  // Temporal Server
+  config.customerOs.temporalServerDeployment = 'deployment/infra/k8s/temporal-server-deployment.yaml'
+  config.customerOs.temporalServerService = 'deployment/infra/k8s/temporal-server-service.yaml'
+  config.customerOs.temporalServerLoadbalancer = 'deployment/infra/k8s/temporal-server-loadbalancer.yaml'
+
   // CLI command dependencies
   config.dependencies = {}
   config.dependencies.mac = {}
@@ -136,12 +141,12 @@ export function getConfig() :any {
   config.dependencies.linux.docker = '/bin/bash -c \'curl -fsSL https://get.docker.com/ | sudo sh &&  sudo usermod -a -G docker $USER\''
   config.dependencies.linux.git = 'sudo apt-get update && sudo apt-get install -y git'
   config.dependencies.linux.helm = '/bin/bash -c \'mkdir -p ' + config.setupDir + '/helm && ' +
-                                  'curl -Lo ' + config.setupDir + '/helm/helm.tar.gz "https://get.helm.sh/helm-v3.10.2-linux-amd64.tar.gz" && ' +
-                                  'cd ' + config.setupDir + '/helm && ' +
-                                  'tar -zxvf helm.tar.gz &&' +
-                                  'sudo install -o root -g root -m 0755 ./linux-amd64/helm /usr/local/bin/helm\''
+    'curl -Lo ' + config.setupDir + '/helm/helm.tar.gz "https://get.helm.sh/helm-v3.10.2-linux-amd64.tar.gz" && ' +
+    'cd ' + config.setupDir + '/helm && ' +
+    'tar -zxvf helm.tar.gz &&' +
+    'sudo install -o root -g root -m 0755 ./linux-amd64/helm /usr/local/bin/helm\''
   config.dependencies.linux.kubectl = '/bin/bash -c \'curl -Lo ' + config.setupDir + '/kubectl "https://dl.k8s.io/release/v1.25.3/bin/linux/amd64/kubectl" && ' +
-                                      'sudo install -o root -g root -m 0755 ' + config.setupDir + '/kubectl /usr/local/bin/kubectl\''
+    'sudo install -o root -g root -m 0755 ' + config.setupDir + '/kubectl /usr/local/bin/kubectl\''
   config.dependencies.linux.netcat = 'sudo apt-get update && sudo apt-get install -y netcat'
   config.dependencies.linux.jq = 'sudo apt-get update && sudo apt-get install -y jq'
   config.dependencies.linux.wget = 'sudo apt install wget'
