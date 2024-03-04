@@ -2,17 +2,20 @@ import * as deps from './dependencies'
 import * as colors from 'colors' // eslint-disable-line no-restricted-imports
 const Table = require('cli-table') // eslint-disable-line unicorn/prefer-module
 
-export function installDependencies(verbose: boolean) :boolean {
+export function installDependencies(verbose: boolean): boolean {
+  const notInstalled = colors.red.bold('No')
+  const installed = colors.bold.green('Yes')
   // Checking if dependency installed
-  const setupDir = deps.setupDirCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const git = deps.gitCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const docker = deps.dockerCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const k3d = deps.k3dCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const kubectl = deps.kubeCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const helm = deps.helmCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const netcat = deps.netcatCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const jq = deps.jqCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const wget = deps.wgetCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const setupDir = deps.setupDirCheck() ? installed : notInstalled
+  const git = deps.gitCheck() ? installed : notInstalled
+  const docker = deps.dockerCheck() ? installed : notInstalled
+  const k3d = deps.k3dCheck() ? installed : notInstalled
+  const kubectl = deps.kubeCheck() ? installed : notInstalled
+  const helm = deps.helmCheck() ? installed : notInstalled
+  const netcat = deps.netcatCheck() ? installed : notInstalled
+  const jq = deps.jqCheck() ? installed : notInstalled
+  const wget = deps.wgetCheck() ? installed : notInstalled
+  const temporal = deps.temporalCheck() ? installed : notInstalled
 
   const table = new Table({
     head: [colors.cyan.bold('Dependency'), colors.cyan.bold('Installed?')],
@@ -27,14 +30,13 @@ export function installDependencies(verbose: boolean) :boolean {
     ['netcat', netcat],
     ['jq', jq],
     ['wget', wget],
+    ['temporal', temporal],
 
   )
 
   if (verbose) {
     console.log(table.toString())
   }
-
-  const notInstalled = colors.red.bold('No')
 
   // install missing dependencies
   if (setupDir === notInstalled) deps.createSetupDir()
@@ -46,6 +48,7 @@ export function installDependencies(verbose: boolean) :boolean {
   if (netcat === notInstalled) deps.installNetcat()
   if (jq === notInstalled) deps.installJq()
   if (wget === notInstalled) deps.installWget()
+  if (temporal === notInstalled) deps.installTemporal()
 
   deps.checkDockerGroup()
   return true

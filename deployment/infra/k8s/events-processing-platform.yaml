@@ -101,5 +101,5 @@ spec:
             - name: POSTGRES_HOST
               value: "customer-db-postgresql.openline.svc.cluster.local"
 
-            - name: TEMPORAL_RUN_WORKER
-              value: "true"
+            # - name: TEMPORAL_RUN_WORKER
+            #   value: "true"

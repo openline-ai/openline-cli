@@ -133,6 +133,7 @@ export function getConfig(): any {
   config.dependencies.mac.netcat = 'brew install netcat'
   config.dependencies.mac.jq = 'brew install jq'
   config.dependencies.mac.wget = 'brew install wget'
+  config.dependencies.mac.temporal = 'brew install temporal'
 
 
   config.dependencies.linux = {}
@@ -150,6 +151,7 @@ export function getConfig(): any {
   config.dependencies.linux.netcat = 'sudo apt-get update && sudo apt-get install -y netcat'
   config.dependencies.linux.jq = 'sudo apt-get update && sudo apt-get install -y jq'
   config.dependencies.linux.wget = 'sudo apt install wget'
+  config.dependencies.linux.temporal = 'curl -sSf https://temporal.download/cli.sh | sh && mv ./temporal /usr/local/bin'
 
   return config
 }

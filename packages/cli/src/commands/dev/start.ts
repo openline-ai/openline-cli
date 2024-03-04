@@ -20,7 +20,7 @@ import { installEventStoreDB } from '../../lib/dev/eventstore'
 import * as start from '../../lib/dev/start'
 import { logTerminal } from '../../lib/logs'
 import { installJaeger } from "../../lib/dev/jaeger";
-import { installCustomerOsTemporalServer } from '../../lib/dev/temporal-server'
+import { runTemporalServer } from '../../lib/dev/temporal-server'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -61,6 +61,7 @@ export default class DevStart extends Command {
         'file-store-api',
         'jaeger',
         'settings-api',
+        'temporal-server',
         'test-env',
         `user-admin-api`,
         'validation-api',
@@ -94,6 +95,7 @@ export default class DevStart extends Command {
       // install customerOS
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
+      runTemporalServer(flags.verbose)
       installCustomerOsApi(flags.verbose, location, version)
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
@@ -105,7 +107,6 @@ export default class DevStart extends Command {
       installPlatformAdminApi(flags.verbose, location, version)
       installWebhooks(flags.verbose, location, version)
       installJaeger(flags.verbose, location, version)
-      installCustomerOsTemporalServer(flags.verbose)
       sql.provisionPostgresql(flags.verbose, location)
       neo.provisionNeo4j(flags.verbose, location)
       neo.provisionNeo4jWithDemoTenant(flags.verbose)
@@ -127,6 +128,7 @@ export default class DevStart extends Command {
         // install customerOS
         ns.installNamespace(flags.verbose, location)
         start.installDatabases(flags.verbose, location)
+        runTemporalServer(flags.verbose)
         installCustomerOsApi(flags.verbose, location, version)
         installfileStoreApi(flags.verbose, location, version)
         installSettingsApi(flags.verbose, location, version)
@@ -279,7 +281,8 @@ export default class DevStart extends Command {
         start.cleanupSetupFiles()
         // install customerOS
         ns.installNamespace(flags.verbose, location)
-        installCustomerOsTemporalServer(flags.verbose)
+        //installCustomerOsTemporalServer(flags.verbose)
+        runTemporalServer(flags.verbose)
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
         break
 
@@ -289,6 +292,7 @@ export default class DevStart extends Command {
         start.cleanupSetupFiles()
         ns.installNamespace(flags.verbose, location)
         start.installDatabases(flags.verbose, location)
+        runTemporalServer(flags.verbose)
         installCustomerOsApi(flags.verbose, location, version)
         installEventStoreDB(flags.verbose, location)
         installEventsProcessingPlatform(flags.verbose, location, version)

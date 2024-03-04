@@ -1,28 +1,28 @@
-import {exit} from 'node:process'
+import { exit } from 'node:process'
 import * as shell from 'shelljs'
-import {getConfig} from '../config/dev'
-import {logTerminal} from './logs'
+import { getConfig } from '../config/dev'
+import { logTerminal } from './logs'
 const config = getConfig()
 
 import fs = require('fs')
 
-export function getPlatform() :string {
+export function getPlatform(): string {
   switch (process.platform) {
-  case 'darwin':
-    return 'mac'
-  case 'linux':
-    return 'linux'
-  default:
-    logTerminal('ERROR', 'Operating system unsupported at this time')
-    return 'unknown'
+    case 'darwin':
+      return 'mac'
+    case 'linux':
+      return 'linux'
+    default:
+      logTerminal('ERROR', 'Operating system unsupported at this time')
+      return 'unknown'
   }
 }
 
-export function setupDirCheck() :boolean {
+export function setupDirCheck(): boolean {
   return (fs.existsSync(config.setupDir))
 }
 
-export function createSetupDir() :boolean {
+export function createSetupDir(): boolean {
   logTerminal('INFO', 'Creating Setup Dir')
   const result = shell.exec('mkdir -p ' + config.setupDir).code === 0
   if (result) {
@@ -35,8 +35,8 @@ export function createSetupDir() :boolean {
   return true
 }
 
-export function checkDockerGroup() :void {
-  const result = shell.exec('groups', {silent: true}).stdout.includes('docker')
+export function checkDockerGroup(): void {
+  const result = shell.exec('groups', { silent: true }).stdout.includes('docker')
   if (result) {
     logTerminal('SUCCESS', 'User in Docker group')
   } else {
@@ -46,11 +46,11 @@ export function checkDockerGroup() :void {
 }
 
 // colima
-export function colimaCheck() :boolean {
-  return (shell.exec('which colima', {silent: true}).code === 0)
+export function colimaCheck(): boolean {
+  return (shell.exec('which colima', { silent: true }).code === 0)
 }
 
-export function installColima() :boolean {
+export function installColima(): boolean {
   logTerminal('INFO', 'We need to install colima before continuing')
   const result = shell.exec(config.dependencies[getPlatform()].colima).code === 0
   if (result) {
@@ -64,11 +64,11 @@ export function installColima() :boolean {
 }
 
 // colima
-export function k3dCheck() :boolean {
-  return (shell.exec('which k3d', {silent: true}).code === 0)
+export function k3dCheck(): boolean {
+  return (shell.exec('which k3d', { silent: true }).code === 0)
 }
 
-export function installK3d() :boolean {
+export function installK3d(): boolean {
   logTerminal('INFO', 'We need to install k3d before continuing')
   const result = shell.exec(config.dependencies[getPlatform()].k3d).code === 0
   if (result) {
@@ -82,11 +82,11 @@ export function installK3d() :boolean {
 }
 
 // docker
-export function dockerCheck() :boolean {
-  return (shell.exec('which docker', {silent: true}).code === 0)
+export function dockerCheck(): boolean {
+  return (shell.exec('which docker', { silent: true }).code === 0)
 }
 
-export function installDocker() :boolean {
+export function installDocker(): boolean {
   logTerminal('INFO', 'We need to install docker before continuing')
   const result = shell.exec(config.dependencies[getPlatform()].docker).code === 0
   if (result) {
@@ -100,11 +100,11 @@ export function installDocker() :boolean {
 }
 
 // git
-export function gitCheck() :boolean {
-  return (shell.exec('which git', {silent: true}).code === 0)
+export function gitCheck(): boolean {
+  return (shell.exec('which git', { silent: true }).code === 0)
 }
 
-export function installGit() :boolean {
+export function installGit(): boolean {
   logTerminal('INFO', 'We need to install git before continuing')
   const results = shell.exec(config.dependencies[getPlatform()].git).code === 0
   if (results) {
@@ -118,11 +118,11 @@ export function installGit() :boolean {
 }
 
 // helm
-export function helmCheck() :boolean {
-  return (shell.exec('which helm', {silent: true}).code === 0)
+export function helmCheck(): boolean {
+  return (shell.exec('which helm', { silent: true }).code === 0)
 }
 
-export function installHelm() :boolean {
+export function installHelm(): boolean {
   logTerminal('INFO', 'We need to install helm before continuing')
   const results = shell.exec(config.dependencies[getPlatform()].helm).code === 0
   if (results) {
@@ -136,11 +136,11 @@ export function installHelm() :boolean {
 }
 
 // homebrew
-export function brewCheck() :boolean {
-  return (shell.exec('which brew', {silent: true}).code === 0)
+export function brewCheck(): boolean {
+  return (shell.exec('which brew', { silent: true }).code === 0)
 }
 
-export function installBrew() :void {
+export function installBrew(): void {
   logTerminal('INFO', 'We need to install homebrew before continuing.', 'Process will exit after install as you will need to set your path.  Please follow the instructions at the end of the installation.')
   const results = shell.exec(config.dependencies.mac.homebrew).code === 0
   if (results) {
@@ -153,11 +153,11 @@ export function installBrew() :void {
 }
 
 // netcat
-export function netcatCheck() :boolean {
-  return (shell.exec('which nc', {silent: true}).code === 0)
+export function netcatCheck(): boolean {
+  return (shell.exec('which nc', { silent: true }).code === 0)
 }
 
-export function installNetcat() :void {
+export function installNetcat(): void {
   logTerminal('INFO', 'We need to install netcat before continuing')
   const results = shell.exec(config.dependencies[getPlatform()].netcat).code === 0
   if (results) {
@@ -169,12 +169,12 @@ export function installNetcat() :void {
 }
 
 // kubectl
-export function kubeCheck() :boolean {
+export function kubeCheck(): boolean {
   shell.exec('sleep 2')
-  return (shell.exec('which kubectl', {silent: true}).code === 0)
+  return (shell.exec('which kubectl', { silent: true }).code === 0)
 }
 
-export function installKube() :void {
+export function installKube(): void {
   logTerminal('INFO', 'We need to install kubectl before continuing')
   const results = shell.exec(config.dependencies[getPlatform()].kubectl).code === 0
   if (results) {
@@ -186,10 +186,10 @@ export function installKube() :void {
 }
 
 // xcode
-export function xcodeCheck() :boolean {
-  return (shell.exec('which xcode-select', {silent: true}).code === 0)
+export function xcodeCheck(): boolean {
+  return (shell.exec('which xcode-select', { silent: true }).code === 0)
 }
-export function installXcode() :void {
+export function installXcode(): void {
   logTerminal('INFO', 'We need to install xcode before continuing')
   const results = shell.exec(config.dependencies.mac.xcode).code === 0
   if (results) {
@@ -201,11 +201,11 @@ export function installXcode() :void {
 }
 
 //jq
-export function jqCheck() :boolean {
-  return (shell.exec('which jq', {silent: true}).code === 0)
+export function jqCheck(): boolean {
+  return (shell.exec('which jq', { silent: true }).code === 0)
 }
 
-export function installJq() :void {
+export function installJq(): void {
   logTerminal('INFO', 'We need to install jq before continuing')
   const results = shell.exec(config.dependencies[getPlatform()].jq).code === 0
   if (results) {
@@ -216,17 +216,32 @@ export function installJq() :void {
   }
 }
 
-export function wgetCheck() :boolean {
-  return (shell.exec('which wget', {silent: true}).code === 0)
+export function wgetCheck(): boolean {
+  return (shell.exec('which wget', { silent: true }).code === 0)
 }
 
-export function installWget() :void {
+export function installWget(): void {
   logTerminal('INFO', 'We need to install wget before continuing')
   const results = shell.exec(config.dependencies[getPlatform()].wget).code === 0
   if (results) {
     logTerminal('SUCCESS', 'wget successfully installed')
   } else {
     logTerminal('ERROR', 'wget installation failed', 'Please install wget before retrying the command.')
+    exit(1)
+  }
+}
+
+export function temporalCheck(): boolean {
+  return (shell.exec('temporal --version', { silent: true }).code === 0)
+}
+
+export function installTemporal(): void {
+  logTerminal('INFO', 'We need to install temporal before continuing')
+  const results = shell.exec(config.dependencies[getPlatform()].temporal).code === 0
+  if (results) {
+    logTerminal('SUCCESS', 'temporal successfully installed')
+  } else {
+    logTerminal('ERROR', 'temporal installation failed', 'Please install temporal before retrying the command.')
     exit(1)
   }
 }
