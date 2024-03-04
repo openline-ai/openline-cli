@@ -20,7 +20,9 @@ export function pingTemporalServer(): boolean {
 export function runTemporalServer(verbose: boolean): boolean {
     logTerminal('WARNING', 'running temporal-server...')
     shell.exec("temporal server start-dev", { silent: true, async: true })
-    logTerminal('SUCCESS', 'temporal-server successfully installed')
+    logTerminal('SUCCESS', 'temporal-server successfully initiated')
+    logTerminal('INFO', 'server listening on localhost:7233')
+    logTerminal('INFO', 'web listening on localhost:8233')
     logTerminal('INFO', 'If temporal stops running by end of deploy, run "openline dev start temporal-server"')
     return true
 }
