@@ -20,7 +20,7 @@ import { installEventStoreDB } from '../../lib/dev/eventstore'
 import * as start from '../../lib/dev/start'
 import { logTerminal } from '../../lib/logs'
 import { installJaeger } from "../../lib/dev/jaeger";
-import { runTemporalServer } from '../../lib/dev/temporal-server'
+import { installTemporalServer, runLocalTemporalServer } from '../../lib/dev/temporal-server'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -95,7 +95,7 @@ export default class DevStart extends Command {
       // install customerOS
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
-      runTemporalServer(flags.verbose)
+      installTemporalServer(flags.verbose)
       installCustomerOsApi(flags.verbose, location, version)
       installfileStoreApi(flags.verbose, location, version)
       installSettingsApi(flags.verbose, location, version)
@@ -128,7 +128,7 @@ export default class DevStart extends Command {
         // install customerOS
         ns.installNamespace(flags.verbose, location)
         start.installDatabases(flags.verbose, location)
-        runTemporalServer(flags.verbose)
+        installTemporalServer(flags.verbose)
         installCustomerOsApi(flags.verbose, location, version)
         installfileStoreApi(flags.verbose, location, version)
         installSettingsApi(flags.verbose, location, version)
@@ -282,7 +282,7 @@ export default class DevStart extends Command {
         // install customerOS
         ns.installNamespace(flags.verbose, location)
         //installCustomerOsTemporalServer(flags.verbose)
-        runTemporalServer(flags.verbose)
+        runLocalTemporalServer(flags.verbose)
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
         break
 
@@ -292,7 +292,7 @@ export default class DevStart extends Command {
         start.cleanupSetupFiles()
         ns.installNamespace(flags.verbose, location)
         start.installDatabases(flags.verbose, location)
-        runTemporalServer(flags.verbose)
+        runLocalTemporalServer(flags.verbose)
         installCustomerOsApi(flags.verbose, location, version)
         installEventStoreDB(flags.verbose, location)
         installEventsProcessingPlatform(flags.verbose, location, version)

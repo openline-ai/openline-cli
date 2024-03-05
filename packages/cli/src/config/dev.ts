@@ -115,9 +115,7 @@ export function getConfig(): any {
   config.customerOs.jaegerLoadbalancer = 'deployment/infra/k8s/jaeger-loadbalancer.yaml'
 
   // Temporal Server
-  config.customerOs.temporalServerDeployment = 'deployment/infra/k8s/temporal-server-deployment.yaml'
-  config.customerOs.temporalServerService = 'deployment/infra/k8s/temporal-server-service.yaml'
-  config.customerOs.temporalServerLoadbalancer = 'deployment/infra/k8s/temporal-server-loadbalancer.yaml'
+  config.customerOs.temporalServerDeployment = 'deployment/infra/k8s/temporal/temporal.yaml'
 
   // CLI command dependencies
   config.dependencies = {}

@@ -1,23 +1,23 @@
 import * as shell from 'shelljs'
 import * as replace from 'replace-in-file'
-import {getConfig} from '../../config/dev'
-import {logTerminal} from '../logs'
-import {getPlatform} from '../dependencies'
+import { getConfig } from '../../config/dev'
+import { logTerminal } from '../logs'
+import { getPlatform } from '../dependencies'
 import * as fs from 'node:fs'
 import * as YAML from 'yaml'
 import * as k3d from './k3d'
-import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
+import { waitForFileToBeDownloaded } from "../../helpers/downloadChecker";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 
 export interface Yaml {
-    deployYaml: string,
-    serviceYaml: string,
-    loadbalancerYaml?: string
+  deployYaml: string,
+  serviceYaml: string,
+  loadbalancerYaml?: string
 }
 
-export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose = false) :boolean {
+export function deployImage(imageUrl: string | null, deployConfig: Yaml, verbose = false): boolean {
   if (verbose) {
     logTerminal('INFO', 'deploying image', imageUrl?.toString())
   }
@@ -25,7 +25,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   if (imageUrl !== null) {
     const dockerPull = `docker pull ${imageUrl}`
     if (verbose) logTerminal('EXEC', dockerPull)
-    const pull = shell.exec(dockerPull, {silent: true})
+    const pull = shell.exec(dockerPull, { silent: true })
     if (pull.code !== 0) {
       logTerminal('ERROR', pull.stderr, 'dev:deploy:deployImage')
       return false
@@ -34,7 +34,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
     if (getPlatform() === 'linux') {
       const pushCmd = 'k3d image import ' + imageUrl + ' -c development'
       if (verbose) logTerminal('EXEC', pushCmd)
-      const push = shell.exec(pushCmd, {silent: !verbose})
+      const push = shell.exec(pushCmd, { silent: !verbose })
       if (push.code !== 0) {
         logTerminal('ERROR', push.stderr, 'dev:deploy:tagImage')
         return false
@@ -42,17 +42,14 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
     }
   }
 
-  const kubeApplyDeployConfig = `kubectl apply -f ${deployConfig.deployYaml} --namespace ${NAMESPACE}`
-  if (verbose) logTerminal('EXEC', kubeApplyDeployConfig)
-  const deploy = shell.exec(kubeApplyDeployConfig, {silent: !verbose})
-  if (deploy.code !== 0) {
-    logTerminal('ERROR', deploy.stderr, 'dev:deploy:deployImage')
+  let ok = deployDeployment(deployConfig.deployYaml, verbose)
+  if (!ok) {
     return false
   }
 
   const kubeApplyServiceConfig = `kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', kubeApplyServiceConfig)
-  const service = shell.exec(kubeApplyServiceConfig, {silent: !verbose})
+  const service = shell.exec(kubeApplyServiceConfig, { silent: !verbose })
   if (service.code !== 0) {
     logTerminal('ERROR', service.stderr, 'dev:deploy:deployImage')
     return false
@@ -68,7 +65,7 @@ export function deployImage(imageUrl :string | null, deployConfig :Yaml, verbose
   return true
 }
 
-export function updateImageTag(deployFiles: string[], imageVersion: string) :boolean {
+export function updateImageTag(deployFiles: string[], imageVersion: string): boolean {
   const options = {
     files: deployFiles,
     from: 'latest',
@@ -84,10 +81,10 @@ export function updateImageTag(deployFiles: string[], imageVersion: string) :boo
   return true
 }
 
-export function deployLoadbalancer(YamlConfigPath: string, verbose: boolean) :boolean {
+export function deployLoadbalancer(YamlConfigPath: string, verbose: boolean): boolean {
   const kubeApplyLoadbalancer = `kubectl apply -f ${YamlConfigPath} --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', kubeApplyLoadbalancer)
-  const lb = shell.exec(kubeApplyLoadbalancer, {silent: !verbose})
+  const lb = shell.exec(kubeApplyLoadbalancer, { silent: !verbose })
   if (lb.code !== 0) {
     logTerminal('ERROR', lb.stderr, 'dev:deploy:deployLoadbalancer')
     return false
@@ -104,5 +101,16 @@ export function deployLoadbalancer(YamlConfigPath: string, verbose: boolean) :bo
     }
   }
 
+  return true
+}
+
+export function deployDeployment(YamlConfigPath: string, verbose: boolean): boolean {
+  const kubeApplyDeployment = `kubectl apply -f ${YamlConfigPath} --namespace ${NAMESPACE}`
+  if (verbose) logTerminal('EXEC', kubeApplyDeployment)
+  const deploy = shell.exec(kubeApplyDeployment, { silent: !verbose })
+  if (deploy.code !== 0) {
+    logTerminal('ERROR', deploy.stderr, 'dev:deploy:deployDeployment')
+    return false
+  }
   return true
 }
