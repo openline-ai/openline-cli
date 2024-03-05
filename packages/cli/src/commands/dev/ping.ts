@@ -1,4 +1,4 @@
-import {Command} from '@oclif/core'
+import { Command } from '@oclif/core'
 import {
   pingCustomerOsApi,
   pingfileStoreApi,
@@ -13,6 +13,7 @@ import {
 } from '../../lib/dev/customer-os'
 
 import * as colors from 'colors' // eslint-disable-line no-restricted-imports
+import { pingTemporalServer } from '../../lib/dev/temporal-server'
 const Table = require('cli-table') // eslint-disable-line unicorn/prefer-module
 
 export default class DevPing extends Command {
@@ -40,6 +41,7 @@ export default class DevPing extends Command {
     const userAdminApi = pingUserAdminApi() ? colors.bold.green('Yes') : colors.red.bold('No')
     const customerOsWebhooks = pingCustomerOsWebhooks() ? colors.bold.green('Yes') : colors.red.bold('No')
     const platformAdminApi = pingPlatformAdminApi() ? colors.bold.green('Yes') : colors.red.bold('No')
+    const temporalServer = pingTemporalServer() ? colors.bold.green('Yes') : colors.red.bold('No')
 
     const table = new Table({
       head: [colors.cyan.bold('App'), colors.cyan.bold('Service'), colors.cyan.bold('Location'), colors.cyan.bold('Up?')],
@@ -58,6 +60,8 @@ export default class DevPing extends Command {
       ['customer-os', 'event-store-db', 'http://localhost:2113', eventStoreDb],
       ['customer-os', 'events-processing-platform', 'grpc://localhost:5001', eventsProcessingPlatform],
       ['customer-os', 'jaeger', 'http://localhost:16686', jaeger],
+      ['customer-os', 'temporal-server', 'http://localhost:7233', temporalServer],
+      ['customer-os', 'temporal-web', 'http://localhost:8233', temporalServer],
 
     )
 

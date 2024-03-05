@@ -2,18 +2,21 @@ import * as mac from './dependencies'
 import * as colors from 'colors'
 const Table = require('cli-table') // eslint-disable-line unicorn/prefer-module
 
-export function installDependencies(verbose: boolean) :boolean {
+export function installDependencies(verbose: boolean): boolean {
+  const notInstalled = colors.red.bold('No')
+  const installed = colors.bold.green('Yes')
   // Checking if dependency installed
-  const xcode = mac.xcodeCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const brew = mac.brewCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const git = mac.gitCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const docker = mac.dockerCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const colima = mac.colimaCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const kubectl = mac.kubeCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const helm = mac.helmCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const netcat = mac.netcatCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const jq = mac.jqCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
-  const wget = mac.wgetCheck() ? colors.bold.green('Yes') : colors.red.bold('No')
+  const xcode = mac.xcodeCheck() ? installed : notInstalled
+  const brew = mac.brewCheck() ? installed : notInstalled
+  const git = mac.gitCheck() ? installed : notInstalled
+  const docker = mac.dockerCheck() ? installed : notInstalled
+  const colima = mac.colimaCheck() ? installed : notInstalled
+  const kubectl = mac.kubeCheck() ? installed : notInstalled
+  const helm = mac.helmCheck() ? installed : notInstalled
+  const netcat = mac.netcatCheck() ? installed : notInstalled
+  const jq = mac.jqCheck() ? installed : notInstalled
+  const wget = mac.wgetCheck() ? installed : notInstalled
+  const temporal = mac.temporalCheck() ? installed : notInstalled
 
   const table = new Table({
     head: [colors.cyan.bold('Dependency'), colors.cyan.bold('Installed?')],
@@ -30,13 +33,12 @@ export function installDependencies(verbose: boolean) :boolean {
     ['netcat', netcat],
     ['jq', jq],
     ['wget', wget],
+    ['temporal', temporal],
   )
 
   if (verbose) {
     console.log(table.toString())
   }
-
-  const notInstalled = colors.red.bold('No')
 
   // install missing dependencies
   if (xcode === notInstalled) mac.installXcode()
@@ -49,6 +51,7 @@ export function installDependencies(verbose: boolean) :boolean {
   if (netcat === notInstalled) mac.installNetcat()
   if (jq === notInstalled) mac.installJq()
   if (wget === notInstalled) mac.installWget()
+  if (temporal === notInstalled) mac.installTemporal()
 
 
   return true
