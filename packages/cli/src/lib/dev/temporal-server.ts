@@ -134,6 +134,7 @@ function waitForTemporal(verbose: boolean) {
             .stdout
             .split(/\r?\n/)
             .filter(Boolean);
+        logTerminal('SUCCESS', '...')
     } while (temporalPodName.length < 1)
     if (verbose) logTerminal('SUCCESS', 'temporal pod exists')
 
