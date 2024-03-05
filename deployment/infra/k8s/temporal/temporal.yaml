@@ -455,7 +455,7 @@ items:
           port: 8233
           targetPort: 8233
       selector:
-        app: temporal-ui
+        io.kompose.service: temporal-ui
   - apiVersion: v1
     kind: Service
     metadata:
@@ -463,11 +463,11 @@ items:
     spec:
       type: NodePort
       ports:                         
-        - name: http
+        - name: grpc
           port: 7233
           targetPort: 7233
       selector:
-        app: temporal
+        io.kompose.service: temporal
   - apiVersion: v1
     kind: Service
     metadata:
@@ -475,16 +475,10 @@ items:
     spec:
       type: LoadBalancer
       ports:
-        - name: temporal
-          port: 7233
-          targetPort: 7233
         - name: temporal-ui
           port: 8233
           targetPort: 8233
-        - name: temporal-web
-          port: 8088
-          targetPort: 8088
       selector:
-        io.kompose.service: temporal
+        io.kompose.service: temporal-ui
 kind: List
 metadata: {}

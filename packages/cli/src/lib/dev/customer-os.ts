@@ -1,9 +1,9 @@
 import * as shell from 'shelljs'
-import {getConfig} from '../../config/dev'
-import {deployImage, updateImageTag, Yaml} from './deploy'
-import {buildLocalImage} from './build-image'
-import {logTerminal} from '../logs'
-import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
+import { getConfig } from '../../config/dev'
+import { deployImage, updateImageTag, Yaml } from './deploy'
+import { buildLocalImage } from './build-image'
+import { logTerminal } from '../logs'
+import { waitForFileToBeDownloaded } from "../../helpers/downloadChecker";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -19,40 +19,40 @@ const PLATFORM_ADMIN_API = 'platform-admin-api-service'
 const CLI_RAW_REPO = config.cli.rawRepo
 
 
-function customerOsApiCheck() :boolean {
-  return (shell.exec(`kubectl get service ${CUSTOMER_OS_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+function customerOsApiCheck(): boolean {
+  return (shell.exec(`kubectl get service ${CUSTOMER_OS_API} -n ${NAMESPACE}`, { silent: true }).code === 0)
 }
 
-function settingsApiCheck() :boolean {
-  return (shell.exec(`kubectl get service ${SETTING_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+function settingsApiCheck(): boolean {
+  return (shell.exec(`kubectl get service ${SETTING_API} -n ${NAMESPACE}`, { silent: true }).code === 0)
 }
 
-function fileStoreApiCheck() :boolean {
-  return (shell.exec(`kubectl get service ${FILE_STORAGE_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+function fileStoreApiCheck(): boolean {
+  return (shell.exec(`kubectl get service ${FILE_STORAGE_API} -n ${NAMESPACE}`, { silent: true }).code === 0)
 }
-function eventsProcessingPlatformCheck() :boolean {
-  return (shell.exec(`kubectl get service ${EVENTS_PROCESSING_PLATFORM} -n ${NAMESPACE}`, {silent: true}).code === 0)
-}
-
-function commsApiCheck() :boolean {
-  return (shell.exec(`kubectl get service ${COMMS_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+function eventsProcessingPlatformCheck(): boolean {
+  return (shell.exec(`kubectl get service ${EVENTS_PROCESSING_PLATFORM} -n ${NAMESPACE}`, { silent: true }).code === 0)
 }
 
-function validationApiCheck() :boolean {
-  return (shell.exec(`kubectl get service ${VALIDATION_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+function commsApiCheck(): boolean {
+  return (shell.exec(`kubectl get service ${COMMS_API} -n ${NAMESPACE}`, { silent: true }).code === 0)
 }
 
-function userAdminApiCheck() :boolean {
-  return (shell.exec(`kubectl get service ${USER_ADMIN_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
-}
-function webhooksApiCheck() :boolean {
-  return (shell.exec(`kubectl get service ${CUSTOMER_OS_WEBHOOKS} -n ${NAMESPACE}`, {silent: true}).code === 0)
-}
-function platformAdminApiCheck() :boolean {
-  return (shell.exec(`kubectl get service ${PLATFORM_ADMIN_API} -n ${NAMESPACE}`, {silent: true}).code === 0)
+function validationApiCheck(): boolean {
+  return (shell.exec(`kubectl get service ${VALIDATION_API} -n ${NAMESPACE}`, { silent: true }).code === 0)
 }
 
-export function installCustomerOsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+function userAdminApiCheck(): boolean {
+  return (shell.exec(`kubectl get service ${USER_ADMIN_API} -n ${NAMESPACE}`, { silent: true }).code === 0)
+}
+function webhooksApiCheck(): boolean {
+  return (shell.exec(`kubectl get service ${CUSTOMER_OS_WEBHOOKS} -n ${NAMESPACE}`, { silent: true }).code === 0)
+}
+function platformAdminApiCheck(): boolean {
+  return (shell.exec(`kubectl get service ${PLATFORM_ADMIN_API} -n ${NAMESPACE}`, { silent: true }).code === 0)
+}
+
+export function installCustomerOsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (customerOsApiCheck()) {
     logTerminal('SUCCESS', 'customer-os-api already running')
     return true
@@ -90,7 +90,7 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
   return true
 }
 
-export function installSettingsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+export function installSettingsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (settingsApiCheck()) {
     logTerminal('SUCCESS', 'settings-api already running')
     return true
@@ -104,7 +104,7 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
     if (!tag) return false
   }
 
-  let image: string | null  = config.customerOs.settingsImage + imageVersion
+  let image: string | null = config.customerOs.settingsImage + imageVersion
 
   if (location !== config.setupDir) {
     // come back to this
@@ -126,7 +126,7 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
   return true
 }
 
-export function installfileStoreApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+export function installfileStoreApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (fileStoreApiCheck()) {
     logTerminal('SUCCESS', 'file-store-api already running')
     return true
@@ -140,7 +140,7 @@ export function installfileStoreApi(verbose: boolean, location = config.setupDir
     if (!tag) return false
   }
 
-  let image: string | null  = config.customerOs.fileStoreImage + imageVersion
+  let image: string | null = config.customerOs.fileStoreImage + imageVersion
 
   if (location !== config.setupDir) {
     // come back to this
@@ -161,7 +161,7 @@ export function installfileStoreApi(verbose: boolean, location = config.setupDir
   logTerminal('SUCCESS', 'file-store-api successfully installed')
   return true
 }
-export function installEventsProcessingPlatform(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+export function installEventsProcessingPlatform(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (eventsProcessingPlatformCheck()) {
     logTerminal('SUCCESS', 'events-processing-platform already running')
     return true
@@ -175,7 +175,7 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
     if (!tag) return false
   }
 
-  let image: string | null  = config.customerOs.eventsProcessingPlatformImage + imageVersion
+  let image: string | null = config.customerOs.eventsProcessingPlatformImage + imageVersion
 
   if (location !== config.setupDir) {
     // come back to this
@@ -197,7 +197,7 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
   return true
 }
 
-export function installCommsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+export function installCommsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (commsApiCheck()) return true
   const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.commsApiDeployment
   const SERVICE = CLI_RAW_REPO + config.customerOs.commsApiService
@@ -230,7 +230,7 @@ export function installCommsApi(verbose: boolean, location = config.setupDir, im
   return true
 }
 
-export function installValidationApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+export function installValidationApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (validationApiCheck()) {
     logTerminal('SUCCESS', 'validation-api already running')
     return true
@@ -244,7 +244,7 @@ export function installValidationApi(verbose: boolean, location = config.setupDi
     if (!tag) return false
   }
 
-  let image: string | null  = config.customerOs.validationApiImage + imageVersion
+  let image: string | null = config.customerOs.validationApiImage + imageVersion
 
   if (location !== config.setupDir) {
     // come back to this
@@ -266,7 +266,7 @@ export function installValidationApi(verbose: boolean, location = config.setupDi
   return true
 }
 
-export function installUserAdminApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+export function installUserAdminApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (userAdminApiCheck()) {
     logTerminal('SUCCESS', 'user-admin-api already running')
     return true
@@ -281,7 +281,7 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     if (!tag) return false
   }
 
-  let image: string | null  = config.customerOs.userAdminApiImage + imageVersion
+  let image: string | null = config.customerOs.userAdminApiImage + imageVersion
 
   if (location !== config.setupDir) {
     // come back to this
@@ -292,10 +292,10 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
   }
   const secretsFilename = waitForFileToBeDownloaded(SECRETS, verbose);
 
-  shell.exec(`bash ${secretsFilename}`, {silent: false})
+  shell.exec(`bash ${secretsFilename}`, { silent: false })
   const kubeApplySecretsConfig = `kubectl apply -f user-admin-api-secret.yaml --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', kubeApplySecretsConfig)
-  shell.exec(kubeApplySecretsConfig, {silent: !verbose})
+  shell.exec(kubeApplySecretsConfig, { silent: !verbose })
 
   const installConfig: Yaml = {
     deployYaml: DEPLOYMENT,
@@ -308,7 +308,7 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
   logTerminal('SUCCESS', 'user-admin-api successfully installed')
   return true
 }
-export function installWebhooks(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+export function installWebhooks(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (webhooksApiCheck()) {
     logTerminal('SUCCESS', 'customer-os-webhooks already running')
     return true
@@ -323,7 +323,7 @@ export function installWebhooks(verbose: boolean, location = config.setupDir, im
     if (!tag) return false
   }
 
-  let image: string | null  = config.customerOs.webhooksImage + imageVersion
+  let image: string | null = config.customerOs.webhooksImage + imageVersion
 
   if (location !== config.setupDir) {
     // come back to this
@@ -344,7 +344,7 @@ export function installWebhooks(verbose: boolean, location = config.setupDir, im
   logTerminal('SUCCESS', 'customer-os-webhooks successfully installed')
   return true
 }
-export function installPlatformAdminApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest') :boolean {
+export function installPlatformAdminApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (platformAdminApiCheck()) {
     logTerminal('SUCCESS', 'platform-admin-api already running')
     return true
@@ -359,7 +359,7 @@ export function installPlatformAdminApi(verbose: boolean, location = config.setu
     if (!tag) return false
   }
 
-  let image: string | null  = config.customerOs.platformAdminApiImage + imageVersion
+  let image: string | null = config.customerOs.platformAdminApiImage + imageVersion
 
   if (location !== config.setupDir) {
     // come back to this
@@ -381,11 +381,11 @@ export function installPlatformAdminApi(verbose: boolean, location = config.setu
   return true
 }
 
-export function waitForUserAdminAppPodToBeReady(verbose:boolean) {
+export function waitForUserAdminAppPodToBeReady(verbose: boolean) {
   if (verbose) logTerminal('INFO', 'Waiting for user-admin-api pod to reach the Running state')
   let userAdminApiPodName
   do {
-    userAdminApiPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep user-admin-api`, {silent: true})
+    userAdminApiPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep user-admin-api`, { silent: true })
       .stdout
       .split(/\r?\n/)
       .filter(Boolean);
@@ -394,24 +394,24 @@ export function waitForUserAdminAppPodToBeReady(verbose:boolean) {
 
   let userAdminApiPodStatus;
   do {
-    userAdminApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${userAdminApiPodName[0]} -o jsonpath='{.status.phase}'`, {silent: true})
+    userAdminApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${userAdminApiPodName[0]} -o jsonpath='{.status.phase}'`, { silent: true })
     shell.exec('sleep 2')
   } while (userAdminApiPodStatus == "Pending")
   if (verbose) logTerminal('SUCCESS', 'user-admin-api pod status is not Pending anymore')
 
   let userAdminApiReadyStatus;
   do {
-    userAdminApiReadyStatus = shell.exec(`kubectl -n ${NAMESPACE} logs ${userAdminApiPodName[0]}`, {silent: true})
+    userAdminApiReadyStatus = shell.exec(`kubectl -n ${NAMESPACE} logs ${userAdminApiPodName[0]}`, { silent: true })
     shell.exec('sleep 2')
   } while (!userAdminApiReadyStatus.includes("Listening and serving HTTP on :4001"))
   if (verbose) logTerminal('SUCCESS', 'user-admin-api pod is Running')
 }
 
-export function waitForCustomerOsApiPodToBeReady(verbose:boolean) {
+export function waitForCustomerOsApiPodToBeReady(verbose: boolean) {
   if (verbose) logTerminal('INFO', 'Waiting for customer-os-api pod to reach the Running state')
   let customerOsApiPodName
   do {
-    customerOsApiPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep customer-os-api`, {silent: true})
+    customerOsApiPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep customer-os-api`, { silent: true })
       .stdout
       .split(/\r?\n/)
       .filter(Boolean);
@@ -420,25 +420,25 @@ export function waitForCustomerOsApiPodToBeReady(verbose:boolean) {
 
   let customerOsApiPodStatus;
   do {
-    customerOsApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${customerOsApiPodName[0]} -o jsonpath='{.status.phase}'`, {silent: true})
+    customerOsApiPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${customerOsApiPodName[0]} -o jsonpath='{.status.phase}'`, { silent: true })
     shell.exec('sleep 2')
   } while (customerOsApiPodStatus == "Pending")
   if (verbose) logTerminal('SUCCESS', 'customer-os-api pod status is not Pending anymore')
 
   let customerOsApiReadyStatus;
   do {
-    customerOsApiReadyStatus = shell.exec(`kubectl -n ${NAMESPACE} logs ${customerOsApiPodName[0]}`, {silent: true})
+    customerOsApiReadyStatus = shell.exec(`kubectl -n ${NAMESPACE} logs ${customerOsApiPodName[0]}`, { silent: true })
     shell.exec('sleep 2')
   } while (!customerOsApiReadyStatus.includes("Listening and serving HTTP on :10000"))
   if (verbose) logTerminal('SUCCESS', 'customer-os-api pod is Running')
 }
 
-export function waitForEventsProcessingPlatformPodToBeReady(verbose:boolean) {
+export function waitForEventsProcessingPlatformPodToBeReady(verbose: boolean) {
   if (verbose) logTerminal('INFO', 'Waiting for events-processing-platform pod to reach the Running state')
   let eventsProcessingPlatformPodName
   let restarts = 0
   do {
-    eventsProcessingPlatformPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep events-processing-platform`, {silent: true})
+    eventsProcessingPlatformPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep events-processing-platform`, { silent: true })
       .stdout
       .split(/\r?\n/)
       .filter(Boolean);
@@ -447,59 +447,59 @@ export function waitForEventsProcessingPlatformPodToBeReady(verbose:boolean) {
 
   let eventsProcessingPlatformPodStatus;
   do {
-    eventsProcessingPlatformPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${eventsProcessingPlatformPodName[0]} -o jsonpath='{.status.phase}'`, {silent: true})
+    eventsProcessingPlatformPodStatus = shell.exec(`kubectl -n ${NAMESPACE} get pod ${eventsProcessingPlatformPodName[0]} -o jsonpath='{.status.phase}'`, { silent: true })
     shell.exec('sleep 2')
   } while (eventsProcessingPlatformPodStatus == "Pending")
   if (verbose) logTerminal('SUCCESS', 'events-processing-platform pod status is not Pending anymore')
 
   let eventsProcessingPlatformPodLogs;
   do {
-    eventsProcessingPlatformPodLogs = shell.exec(`kubectl -n ${NAMESPACE} logs ${eventsProcessingPlatformPodName[0]}`, {silent: true})
+    eventsProcessingPlatformPodLogs = shell.exec(`kubectl -n ${NAMESPACE} logs ${eventsProcessingPlatformPodName[0]}`, { silent: true })
     shell.exec('sleep 2')
   } while (!eventsProcessingPlatformPodLogs.includes("gRPC Server is listening on port"))
   if (verbose) logTerminal('SUCCESS', 'events-processing-platform pod is Running')
 }
 
-export function pingCustomerOsApi() :boolean {
-  return shell.exec('curl localhost:10000/health', {silent: true}).code === 0
+export function pingCustomerOsApi(): boolean {
+  return shell.exec('curl localhost:10000/health', { silent: true }).code === 0
 }
 
-export function pingSettingsApi() :boolean {
-  return shell.exec('nc -zv -w5 localhost 10002', {silent: true}).code === 0
+export function pingSettingsApi(): boolean {
+  return shell.exec('nc -zv -w5 localhost 10002', { silent: true }).code === 0
 }
 
-export function pingfileStoreApi() :boolean {
-  return shell.exec('nc -zv -w5 localhost 10001', {silent: true}).code === 0
+export function pingfileStoreApi(): boolean {
+  return shell.exec('nc -zv -w5 localhost 10001', { silent: true }).code === 0
 }
 
-export function pingEventsStoreDb() :boolean {
-  return shell.exec('nc -zv -w5 localhost 2113', {silent: true}).code === 0
+export function pingEventsStoreDb(): boolean {
+  return shell.exec('nc -zv -w5 localhost 2113', { silent: true }).code === 0
 }
 
-export function pingEventsProcessingPlatform() :boolean {
-  return shell.exec('nc -zv -w5 localhost 5001', {silent: true}).code === 0
+export function pingEventsProcessingPlatform(): boolean {
+  return shell.exec('nc -zv -w5 localhost 5001', { silent: true }).code === 0
 }
 
-export function pingJaeger() :boolean {
-  return shell.exec('curl http://localhost:16686/health', {silent: true}).code === 0
+export function pingJaeger(): boolean {
+  return shell.exec('curl http://localhost:16686/health', { silent: true }).code === 0
 }
 
-export function pingCommsApi() :boolean {
-  return shell.exec('curl localhost:8013/health', {silent: true}).code === 0
+export function pingCommsApi(): boolean {
+  return shell.exec('curl localhost:8013/health', { silent: true }).code === 0
 }
 
-export function pingValidationApi() :boolean {
-  return shell.exec('curl localhost:10003/health', {silent: true}).code === 0
+export function pingValidationApi(): boolean {
+  return shell.exec('curl localhost:10003/health', { silent: true }).code === 0
 }
 
-export function pingUserAdminApi() :boolean {
-  return shell.exec('curl localhost:4001/health', {silent: true}).code === 0
+export function pingUserAdminApi(): boolean {
+  return shell.exec('curl localhost:4001/health', { silent: true }).code === 0
 }
 
-export function pingCustomerOsWebhooks() :boolean {
-  return shell.exec('curl localhost:10004/health', {silent: true}).code === 0
+export function pingCustomerOsWebhooks(): boolean {
+  return shell.exec('curl localhost:10004/health', { silent: true }).code === 0
 }
 
-export function pingPlatformAdminApi() :boolean {
-  return shell.exec('curl localhost:10005/health', {silent: true}).code === 0
+export function pingPlatformAdminApi(): boolean {
+  return shell.exec('curl localhost:10005/health', { silent: true }).code === 0
 }
