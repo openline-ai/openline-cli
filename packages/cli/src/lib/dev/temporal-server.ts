@@ -6,7 +6,7 @@ import { logTerminal } from '../logs'
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 const TEMPORAL_SERVER = 'temporal'
-const CLI_RAW_REPO = "~/work/openline-cli/" // config.cli.rawRepo
+const CLI_RAW_REPO = config.cli.rawRepo
 
 function temporalServerCheck(): boolean {
     return (shell.exec(`kubectl get service ${TEMPORAL_SERVER} -n ${NAMESPACE}`, { silent: true }).code === 0)
@@ -21,18 +21,14 @@ export function installTemporalServer(verbose: boolean, location = config.setupD
     if (deploy === false) return false
 
     logTerminal('INFO', 'temporal grpc server listening on localhost:7233')
-    //kubectl port-forward service/temporal-ui 8233:8233
     logTerminal('INFO', 'temporal web ui listening on localhost:8233')
     logTerminal('SUCCESS', 'temporal successfully installed')
     return true
 }
 
 export function pingTemporalServer(): boolean {
-    // "temporal workflow list" is a command that lists all workflows in the temporal server
     let podname = shell.exec(`kubectl get pods -n ${NAMESPACE} -l io.kompose.service=temporal-admin-tools -o jsonpath='{.items[0].metadata.name}' `, { silent: true }).stdout
     return shell.exec(`kubectl exec -it -n ${NAMESPACE} ${podname} -- tctl workflow list`, { silent: true }).code === 0
-    //return shell.exec(`kubectl exec -n ${NAMESPACE} -it $(kubectl get pods -n ${NAMESPACE} -l app=temporal-server -o jsonpath='{.items[0].metadata.name}') -- temporal --ns openline workflow list`, { silent: true }).code === 0
-    //return shell.exec(`temporal workflow list`, { silent: true }).code === 0
 }
 
 export function runLocalTemporalServer(verbose: boolean): boolean {
