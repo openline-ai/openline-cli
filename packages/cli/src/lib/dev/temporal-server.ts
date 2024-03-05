@@ -50,8 +50,11 @@ export function installTemporalServer(verbose: boolean, location = config.setupD
 }
 
 export function pingTemporalServer(): boolean {
-    let podname = shell.exec(`kubectl get pods -n ${NAMESPACE} -l io.kompose.service=temporal-admin-tools -o jsonpath='{.items[0].metadata.name}' `, { silent: true }).stdout
-    return shell.exec(`kubectl exec -it -n ${NAMESPACE} ${podname} -- tctl workflow list`, { silent: true }).code === 0
+    let podname = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep temporal-frontend`, { silent: true }).stdout
+        .split(/\r?\n/)
+        .filter(Boolean);
+    let status = shell.exec(`kubectl -n ${NAMESPACE} get pod ${podname[0]} -o jsonpath='{.status.phase}'`, { silent: true })
+    return status === "Running"
 }
 
 export function runLocalTemporalServer(verbose: boolean): boolean {
