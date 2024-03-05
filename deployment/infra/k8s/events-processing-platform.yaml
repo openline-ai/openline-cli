@@ -104,4 +104,4 @@ spec:
             - name: TEMPORAL_RUN_WORKER
               value: "true"
             - name: TEMPORAL_HOSTPORT
-              value: "temporal:7233"
+              value: "temporal-frontend.openline.svc.cluster.local:7233"
