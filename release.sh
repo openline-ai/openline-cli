@@ -23,8 +23,11 @@ oclif promote --version "${version}" --sha "${sha}" --channel stable --indexes
 
 # Check the new version availability: 
 openline update --available
+
+# Download the tarball and get the sha256
 aws s3 cp s3://openline.sh/channels/stable/openline-darwin-arm64.tar.gz .
 shasum -a 256 openline-darwin-arm64.tar.gz
+# clean up
 rm openline-darwin-arm64.tar.gz
 
 echo "go the homebrew formula in github and update the sha256 value in line 12." 
