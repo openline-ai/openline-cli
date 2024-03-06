@@ -10,7 +10,7 @@ cd packages/cli
 oclif pack tarballs
 
 export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY"
-export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_KEY"
+export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_ACCESS_KEY"
 
 upload_out=$(oclif upload tarballs)
 version=$(echo $upload_out | perl -pe 'if(($v)=/([0-9]+([.][0-9]+)+)/){print"$v\n";exit}$_=""')
