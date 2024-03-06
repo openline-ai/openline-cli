@@ -86,7 +86,7 @@ function waitForCRD(verbose: boolean) {
     do {
         tmpOpPodStatus = shell.exec(`kubectl -n temporal-system get pod ${temporalOpPodName[0]} -o jsonpath='{.status.phase}'`, { silent: true })
         shell.exec('sleep 2')
-    } while (tmpOpPodStatus == "Pending")
+    } while (tmpOpPodStatus == "Pending" || tmpOpPodStatus == "ContainerCreating")
     if (verbose) logTerminal('SUCCESS', 'temporal-operator pod status is not Pending anymore')
 
     let tmpOpPodLogs;
@@ -120,6 +120,15 @@ function waitForCertManager(verbose: boolean) {
         certMgrPodStatus = shell.exec(`kubectl -n cert-manager get pod ${certMgrPodName[0]} -o jsonpath='{.status.phase}'`, { silent: true })
         shell.exec('sleep 2')
     } while (certMgrPodStatus != "Running")
+    let certWebhookPodName = shell.exec(`kubectl -n cert-manager get pods --no-headers -o custom-columns=":metadata.name" | grep cert-manager-webhook`, { silent: true })
+        .stdout
+        .split(/\r?\n/)
+        .filter(Boolean);
+    let certWebhookPodLogs;
+    do {
+        certWebhookPodLogs = shell.exec(`kubectl -n cert-manager logs ${certWebhookPodName[0]}`, { silent: true })
+        shell.exec('sleep 2')
+    } while (!certWebhookPodLogs.includes("listening for insecure healthz connections"))
     if (verbose) logTerminal('SUCCESS', 'cert-manager pod is Running')
 }
 
