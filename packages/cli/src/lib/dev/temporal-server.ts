@@ -92,7 +92,7 @@ function waitForCRD(verbose: boolean) {
     let tmpOpPodLogs;
     do {
         tmpOpPodLogs = shell.exec(`kubectl -n temporal-system logs ${temporalOpPodName[0]}`, { silent: true })
-        shell.exec('sleep 2')
+        shell.exec('sleep 10')
     } while (!tmpOpPodLogs.includes("Serving webhook server"))
     if (verbose) logTerminal('SUCCESS', 'temporal-operator pod is Running')
 }
