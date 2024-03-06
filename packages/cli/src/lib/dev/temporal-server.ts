@@ -51,10 +51,8 @@ export function installTemporalServer(verbose: boolean, location = config.setupD
 
 export function pingTemporalServer(): boolean {
     let podname = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep temporal-frontend`, { silent: true }).stdout
-        .split(/\r?\n/)
-        .filter(Boolean);
-    let status = shell.exec(`kubectl -n ${NAMESPACE} get pod ${podname[0]} -o jsonpath='{.status.phase}'`, { silent: true })
-    return status === "Running"
+    let status = shell.exec(`kubectl -n ${NAMESPACE} get pod ${podname} -o jsonpath='{.status.phase}'`, { silent: true }).stdout
+    return status == "Running"
 }
 
 export function runLocalTemporalServer(verbose: boolean): boolean {
@@ -134,7 +132,7 @@ function waitForTemporal(verbose: boolean) {
             .stdout
             .split(/\r?\n/)
             .filter(Boolean);
-        logTerminal('SUCCESS', '...')
+        if (verbose) logTerminal('SUCCESS', '...')
     } while (temporalPodName.length < 1)
     if (verbose) logTerminal('SUCCESS', 'temporal pod exists')
 
