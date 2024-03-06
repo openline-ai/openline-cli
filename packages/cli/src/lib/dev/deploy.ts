@@ -13,7 +13,7 @@ const NAMESPACE = config.namespace.name
 
 export interface Yaml {
   deployYaml: string,
-  serviceYaml: string,
+  serviceYaml?: string,
   loadbalancerYaml?: string
 }
 
@@ -47,12 +47,14 @@ export function deployImage(imageUrl: string | null, deployConfig: Yaml, verbose
     return false
   }
 
-  const kubeApplyServiceConfig = `kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`
-  if (verbose) logTerminal('EXEC', kubeApplyServiceConfig)
-  const service = shell.exec(kubeApplyServiceConfig, { silent: !verbose })
-  if (service.code !== 0) {
-    logTerminal('ERROR', service.stderr, 'dev:deploy:deployImage')
-    return false
+  if(deployConfig && deployConfig.serviceYaml !== null) {
+    const kubeApplyServiceConfig = `kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`
+    if (verbose) logTerminal('EXEC', kubeApplyServiceConfig)
+    const service = shell.exec(kubeApplyServiceConfig, { silent: !verbose })
+    if (service.code !== 0) {
+      logTerminal('ERROR', service.stderr, 'dev:deploy:deployImage')
+      return false
+    }
   }
 
   if ('loadbalancerYaml' in deployConfig && deployConfig.loadbalancerYaml !== null) {

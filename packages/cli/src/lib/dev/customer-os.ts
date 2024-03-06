@@ -196,6 +196,37 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
   logTerminal('SUCCESS', 'events-processing-platform successfully installed')
   return true
 }
+export function installEventsProcessingPlatformSubscribers(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
+  if (eventsProcessingPlatformCheck()) {
+    logTerminal('SUCCESS', 'events-processing-platform-subscribers already running')
+    return true
+  }
+  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.eventsProcessingPlatformSubscribersDeployment
+
+  if (imageVersion.toLowerCase() !== 'latest') {
+    const tag = updateImageTag([DEPLOYMENT], imageVersion)
+    if (!tag) return false
+  }
+
+  let image: string | null = config.customerOs.eventsProcessingPlatformSubscribersImage + imageVersion
+
+  if (location !== config.setupDir) {
+    // come back to this
+    const buildPath = CLI_RAW_REPO + '/packages/server/events-processing-platform-subscribers'
+    const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
+    if (build === false) return false
+    image = null
+  }
+
+  const installConfig: Yaml = {
+    deployYaml: DEPLOYMENT,
+  }
+  const deploy = deployImage(image, installConfig, verbose)
+  if (deploy === false) return false
+
+  logTerminal('SUCCESS', 'events-processing-platform-subscribers successfully installed')
+  return true
+}
 
 export function installCommsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (commsApiCheck()) return true

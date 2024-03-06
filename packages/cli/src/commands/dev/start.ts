@@ -14,7 +14,7 @@ import {
   installValidationApi,
   installUserAdminApi,
   installWebhooks,
-  installPlatformAdminApi
+  installPlatformAdminApi, installEventsProcessingPlatformSubscribers
 } from '../../lib/dev/customer-os'
 import { installEventStoreDB } from '../../lib/dev/eventstore'
 import * as start from '../../lib/dev/start'
@@ -57,6 +57,7 @@ export default class DevStart extends Command {
         'customer-os-webhooks',
         'db',
         'events-processing-platform',
+        'events-processing-platform-subscribers',
         'event-store-db',
         'file-store-api',
         'jaeger',
@@ -220,6 +221,17 @@ export default class DevStart extends Command {
         // install customerOS
         ns.installNamespace(flags.verbose, location)
         installEventsProcessingPlatform(flags.verbose, location)
+        start.cleanupSetupFiles()
+        logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
+        break
+
+      case 'events-processing-platform-subscribers':
+        start.dependencyCheck(flags.verbose)
+        start.startDevServer(flags.verbose)
+        start.cleanupSetupFiles()
+        // install customerOS
+        ns.installNamespace(flags.verbose, location)
+        installEventsProcessingPlatformSubscribers(flags.verbose, location)
         start.cleanupSetupFiles()
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
         break
