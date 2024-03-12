@@ -11,6 +11,7 @@ const CUSTOMER_OS_API = 'customer-os-api-service'
 const SETTING_API = 'settings-api-service'
 const FILE_STORAGE_API = 'file-store-api-service'
 const EVENTS_PROCESSING_PLATFORM = 'events-processing-platform-service'
+const EVENTS_PROCESSING_PLATFORM_SUBSCRIBERS = 'events-processing-platform-subscribers'
 const COMMS_API = 'comms-api-service'
 const VALIDATION_API = 'validation-api-service'
 const USER_ADMIN_API = 'user-admin-api-service'
@@ -32,6 +33,9 @@ function fileStoreApiCheck(): boolean {
 }
 function eventsProcessingPlatformCheck(): boolean {
   return (shell.exec(`kubectl get service ${EVENTS_PROCESSING_PLATFORM} -n ${NAMESPACE}`, { silent: true }).code === 0)
+}
+function eventsProcessingPlatformSubscribersCheck(): boolean {
+  return (shell.exec(`kubectl get deployment ${EVENTS_PROCESSING_PLATFORM_SUBSCRIBERS} -n ${NAMESPACE}`, { silent: true }).code === 0)
 }
 
 function commsApiCheck(): boolean {
@@ -197,7 +201,7 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
   return true
 }
 export function installEventsProcessingPlatformSubscribers(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
-  if (eventsProcessingPlatformCheck()) {
+  if (eventsProcessingPlatformSubscribersCheck()) {
     logTerminal('SUCCESS', 'events-processing-platform-subscribers already running')
     return true
   }
