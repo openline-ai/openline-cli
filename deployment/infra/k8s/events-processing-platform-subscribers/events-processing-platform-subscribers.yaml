@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: events-processing-platform
+  name: events-processing-platform-subscribers
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: events-processing-platform
+      app: events-processing-platform-subscribers
   template:
     metadata:
       labels:
-        app: events-processing-platform
+        app: events-processing-platform-subscribers
     spec:
       containers:
-        - image: ghcr.io/openline-ai/openline-customer-os/events-processing-platform:latest
-          name: events-processing-platform
+        - image: ghcr.io/openline-ai/openline-customer-os/events-processing-platform-subscribers:latest
+          name: events-processing-platform-subscribers
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5001  # Should match the port number that the Go application listens on
               name: grpc-port
           env:
             - name: SERVICE_NAME
-              value: "events-processing-platform"
+              value: "events-processing-platform-subscribers"
 
             - name: EVENT_STORE_CONNECTION_STRING
               value: "esdb://event-store-service.openline.svc.cluster.local:2113"
@@ -47,13 +47,6 @@ spec:
             - name: EVENTS_PROCESSING_PLATFORM_URL
               value: "events-processing-platform-service.openline.svc.cluster.local:5001"
             - name: EVENTS_PROCESSING_PLATFORM_API_KEY
-              value: "082c1193-a5a2-42fc-87fc-e960e692fffd"
-
-            - name: GRPC_PORT
-              value: ":5001"
-            - name: GRPC_DEVELOPMENT
-              value: "true"
-            - name: GRPC_API_KEY
               value: "082c1193-a5a2-42fc-87fc-e960e692fffd"
 
             - name: LOGGER_LEVEL

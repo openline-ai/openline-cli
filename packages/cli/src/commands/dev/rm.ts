@@ -36,6 +36,7 @@ export default class DevRm extends Command {
         'events-processing-platform',
         'event-store-db',
         'events-processing-platform',
+        'events-processing-platform-subscribers',
         'file-store-api',
         'settings-api',
         "temporal-server",
@@ -72,8 +73,6 @@ export default class DevRm extends Command {
           services: [
             'customer-os-api-service',
             'customer-os-api-loadbalancer',
-            'message-store-api-service',
-            'message-store-api-loadbalancer',
             'comms-api-service',
             'comms-api-service-loadbalancer',
           ],
@@ -100,16 +99,6 @@ export default class DevRm extends Command {
         uninstallPostgresql(flags.verbose)
         uninstallRedis(flags.verbose)
         break
-
-      case 'message-store-api': {
-        const appServices: Apps = {
-          deployments: ['message-store-api'],
-          services: ['message-store-api-service', 'message-store-api-loadbalancer'],
-          statefulsets: [],
-        }
-        deleteApp(appServices, flags.verbose)
-        break
-      }
 
       case 'settings-api': {
         const appServices: Apps = {
@@ -176,6 +165,7 @@ export default class DevRm extends Command {
         deleteApp(appServices, flags.verbose)
         break
       }
+
       case 'events-processing-platform': {
         const appServices: Apps = {
           deployments: ['events-processing-platform'],
@@ -185,6 +175,17 @@ export default class DevRm extends Command {
         deleteApp(appServices, flags.verbose)
         break
       }
+
+      case 'events-processing-platform-subscribers': {
+        const appServices: Apps = {
+          deployments: ['events-processing-platform-subscribers'],
+          services: [],
+          statefulsets: [],
+        }
+        deleteApp(appServices, flags.verbose)
+        break
+      }
+
       case 'jaeger': {
         const appServices: Apps = {
           deployments: ['jaeger'],
