@@ -62,7 +62,7 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
     return true
   }
 
-  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.apiDeployment
+  const DEPLOYMENT = config.customerOs.apiDeployment
   const SERVICE = CLI_RAW_REPO + config.customerOs.apiService
   const LOADBALANCER = CLI_RAW_REPO + config.customerOs.apiLoadbalancer
 
