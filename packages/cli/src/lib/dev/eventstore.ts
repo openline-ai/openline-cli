@@ -3,9 +3,7 @@ import * as shell from "shelljs";
 import {deployImage, Yaml, updateImageTag} from './deploy'
 import {logTerminal} from "../logs";
 import {getPlatform} from "../dependencies";
-import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
 const config = getConfig()
-const CLI_RAW_REPO = config.cli.rawRepo
 
 const NAMESPACE = config.namespace.name
 const EVENTSTORE_SERVICE = 'customer-db-eventstore'
@@ -15,10 +13,9 @@ function postgresqlServiceCheck() :boolean {
 }
 
 export function installEventStoreDB(verbose: boolean, location = config.setupDir) :boolean {
-  const REMOTE_DEPLOYMENT = CLI_RAW_REPO + config.customerOs.eventStoreDbDeployment
-  const DEPLOYMENT = "event-store.yaml"
-  const SERVICE = CLI_RAW_REPO + config.customerOs.eventStoreDbService
-  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.eventStoreDbLoadbalancer
+  const DEPLOYMENT = config.customerOs.eventStoreDbDeployment
+  const SERVICE = config.customerOs.eventStoreDbService
+  const LOADBALANCER = config.customerOs.eventStoreDbLoadbalancer
   let IMAGE_VERSION
   let ImageUpdate
   switch (getPlatform()) {
@@ -30,8 +27,7 @@ export function installEventStoreDB(verbose: boolean, location = config.setupDir
       break
   }
 
-  const eventStoreDeploymentFileName = waitForFileToBeDownloaded(REMOTE_DEPLOYMENT, verbose);
-  ImageUpdate = 'sed "s/\\$IMAGE_VERSION/' + IMAGE_VERSION + `/" `+ eventStoreDeploymentFileName + ` > event-store-temp.yaml && mv event-store-temp.yaml ` + eventStoreDeploymentFileName
+  ImageUpdate = 'sed "s/\\$IMAGE_VERSION/' + IMAGE_VERSION + `/" `+ DEPLOYMENT + ` > event-store-temp.yaml && mv event-store-temp.yaml ` + DEPLOYMENT
   shell.exec(ImageUpdate, {silent: !verbose})
 
   let image: string | null = config.customerOs.eventStoreDbImage+IMAGE_VERSION

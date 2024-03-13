@@ -1,6 +1,6 @@
 {
   "name": "openline",
-  "version": "0.7.32",
+  "version": "0.8.0",
   "description": "Openline CLI",
   "author": "mattbr0wn",
   "bin": "./bin/run",
@@ -87,7 +87,7 @@
     }
   },
   "scripts": {
-    "build": "shx rm -rf dist && tsc -b",
+    "build": "shx rm -rf dist && tsc -b && cp -r src/deployment dist",
     "lint": "eslint . --ext .ts --config .eslintrc",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "yarn lint",

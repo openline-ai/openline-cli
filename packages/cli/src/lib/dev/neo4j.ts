@@ -7,17 +7,13 @@ import {
   waitForEventsProcessingPlatformPodToBeReady,
   waitForUserAdminAppPodToBeReady
 } from "./customer-os";
-import {exec} from "shelljs";
-import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
 import * as demoTenantData from "./demo-tenant.json"
-import * as fs from "fs";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 const NEO4J_RELEASE_NAME = 'customer-db-neo4j'
 const NEO4J_POD = 'customer-db-neo4j-0'
 const NEO4J_NAME = 'openline-neo4j-db'
-const CLI_RAW_REPO = config.cli.rawRepo
 
 let retry = 1
 const maxAttempts = config.server.timeOuts / 2
@@ -28,7 +24,7 @@ function neo4jCheck() :boolean {
 
 export function installNeo4j(verbose :boolean, location = config.setupDir) :boolean {
   if (neo4jCheck()) return true
-  const HELM_VALUES_PATH = CLI_RAW_REPO + config.customerOs.neo4jHelmValues
+  const HELM_VALUES_PATH = config.customerOs.neo4jHelmValues
 
   const helmAdd = 'helm repo add neo4j https://helm.neo4j.com/neo4j --force-update'
   if (verbose) logTerminal('EXEC', helmAdd)
@@ -75,8 +71,8 @@ function cypherInsert(verbose: boolean, neo4jCypherFilename: string) {
 }
 
 export function provisionNeo4j(verbose :boolean, location = config.setupDir) :boolean {
-  const NEO4J_CYPHER = CLI_RAW_REPO + config.customerOs.neo4jCypher
-  const neo4jCypherFilename = waitForFileToBeDownloaded(NEO4J_CYPHER, verbose);
+  const NEO4J_CYPHER = config.customerOs.neo4jCypher
+  const neo4jCypherFilename = NEO4J_CYPHER;
 
   cypherInsert(verbose, neo4jCypherFilename);
 

@@ -6,7 +6,6 @@ import { logTerminal } from '../logs'
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 const TEMPORAL_SERVER = 'temporal'
-const CLI_RAW_REPO = config.cli.rawRepo
 
 function temporalServerCheck(): boolean {
     return (shell.exec(`kubectl get service ${TEMPORAL_SERVER} -n ${NAMESPACE}`, { silent: true }).code === 0)
@@ -15,7 +14,7 @@ function temporalServerCheck(): boolean {
 export function installTemporalServer(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
     if (temporalServerCheck()) return true
 
-    const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.temporalServerDeployment
+    const DEPLOYMENT = config.customerOs.temporalServerDeployment
 
     const CERT_MGR_CMD = `kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.9.1/cert-manager.yaml`
 

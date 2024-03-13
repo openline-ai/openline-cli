@@ -2,13 +2,10 @@ import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import {exit} from 'node:process'
-import {exec} from "shelljs";
-import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 const REDIS_SERVICE = 'customer-db-redis'
-const CLI_RAW_REPO = config.cli.rawRepo
 
 function redisServiceCheck() :boolean {
   return (shell.exec(`kubectl get service ${REDIS_SERVICE}-master -n ${NAMESPACE}`, {silent: true}).code === 0)
@@ -58,8 +55,8 @@ export function provisionRedis(verbose: boolean, location = config.setupDir) :bo
 
   cosDb = cosDb.slice(0, -1)
   if (verbose) logTerminal('INFO', `connecting to ${cosDb} pod`)
-  const REDIS_DB_SETUP = CLI_RAW_REPO + config.customerOs.redisSetup
-  const redisDbSetupFileName = waitForFileToBeDownloaded(REDIS_DB_SETUP, verbose);
+  const REDIS_DB_SETUP = config.customerOs.redisSetup
+  const redisDbSetupFileName = REDIS_DB_SETUP;
   let provision = ''
   while (provision === '') {
     if (retry < maxAttempts) {

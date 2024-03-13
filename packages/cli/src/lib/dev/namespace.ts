@@ -4,7 +4,6 @@ import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 
 const config = getConfig()
-const CLI_RAW_REPO = config.cli.rawRepo
 
 export function namespaceCheck() :boolean {
   const NAMESPACE = config.namespace.name
@@ -13,7 +12,7 @@ export function namespaceCheck() :boolean {
 
 export function installNamespace(verbose: boolean, location = config.setupDir) :boolean {
   if (namespaceCheck()) return true
-  const NAMESPACE_PATH = CLI_RAW_REPO + config.namespace.file
+  const NAMESPACE_PATH = config.namespace.file
   const kubeCreateNamespace = `kubectl create -f ${NAMESPACE_PATH}`
   if (verbose) logTerminal('EXEC', kubeCreateNamespace)
   const ns = shell.exec(kubeCreateNamespace, {silent: !verbose})
