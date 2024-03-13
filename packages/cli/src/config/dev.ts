@@ -1,3 +1,5 @@
+import * as path from 'path';
+import * as fs from "fs";
 
 export function getConfig(): any {
   const config: any = {}
@@ -13,7 +15,7 @@ export function getConfig(): any {
 
   config.namespace = {}
   config.namespace.name = 'openline'
-  config.namespace.file = 'deployment/infra/k8s/openline-namespace.json'
+  config.namespace.file = 'packages/cli/src/deployment/infra/k8s/openline-namespace.json'
 
   config.cli = {}
   config.cli.repo = 'https://github.com/openline-ai/openline-cli.git'
@@ -26,62 +28,62 @@ export function getConfig(): any {
   config.customerOs.analyticsApiImage = 'ghcr.io/openline-ai/openline-customer-os/analytics-api:'
   // customerOS API
   config.customerOs.apiImage = 'ghcr.io/openline-ai/openline-customer-os/customer-os-api:'
-  config.customerOs.apiDeployment = 'deployment/infra/k8s/customer-os-api/customer-os-api.yaml'
-  config.customerOs.apiService = 'deployment/infra/k8s/customer-os-api/customer-os-api-service.yaml'
-  config.customerOs.apiLoadbalancer = 'deployment/infra/k8s/customer-os-api/customer-os-api-loadbalancer.yaml'
+  config.customerOs.apiDeployment = path.join(__dirname, '../../src/packages/cli/src/deployment/infra/k8s/customer-os-api/customer-os-api.yaml')
+  config.customerOs.apiService = 'packages/cli/src/deployment/infra/k8s/customer-os-api/customer-os-api-service.yaml'
+  config.customerOs.apiLoadbalancer = 'packages/cli/src/deployment/infra/k8s/customer-os-api/customer-os-api-loadbalancer.yaml'
   // customerOS settings API
   config.customerOs.settingsImage = 'ghcr.io/openline-ai/openline-customer-os/settings-api:'
-  config.customerOs.settingsDeployment = 'deployment/infra/k8s/settings-api/settings-api.yaml'
-  config.customerOs.settingsService = 'deployment/infra/k8s/settings-api/settings-api-service.yaml'
-  config.customerOs.settingsLoadbalancer = 'deployment/infra/k8s/settings-api/settings-api-loadbalancer.yaml'
+  config.customerOs.settingsDeployment = 'packages/cli/src/deployment/infra/k8s/settings-api/settings-api.yaml'
+  config.customerOs.settingsService = 'packages/cli/src/deployment/infra/k8s/settings-api/settings-api-service.yaml'
+  config.customerOs.settingsLoadbalancer = 'packages/cli/src/deployment/infra/k8s/settings-api/settings-api-loadbalancer.yaml'
   // customerOS settings API
   config.customerOs.fileStoreImage = 'ghcr.io/openline-ai/openline-customer-os/file-store-api:'
-  config.customerOs.fileStoreDeployment = 'deployment/infra/k8s/file-store-api/file-store-api.yaml'
-  config.customerOs.fileStoreService = 'deployment/infra/k8s/file-store-api/file-store-api-service.yaml'
-  config.customerOs.fileStoreLoadbalancer = 'deployment/infra/k8s/file-store-api/file-store-api-loadbalancer.yaml'
+  config.customerOs.fileStoreDeployment = 'packages/cli/src/deployment/infra/k8s/file-store-api/file-store-api.yaml'
+  config.customerOs.fileStoreService = 'packages/cli/src/deployment/infra/k8s/file-store-api/file-store-api-service.yaml'
+  config.customerOs.fileStoreLoadbalancer = 'packages/cli/src/deployment/infra/k8s/file-store-api/file-store-api-loadbalancer.yaml'
   //customerOs Events Processing Platform
   config.customerOs.eventsProcessingPlatformImage = 'ghcr.io/openline-ai/openline-customer-os/events-processing-platform:'
-  config.customerOs.eventsProcessingPlatformDeployment = 'deployment/infra/k8s/events-processing-platform/events-processing-platform.yaml'
-  config.customerOs.eventsProcessingPlatformService = 'deployment/infra/k8s/events-processing-platform/events-processing-platform-service.yaml'
-  config.customerOs.eventsProcessingPlatformLoadbalancer = 'deployment/infra/k8s/events-processing-platform/events-processing-platform-loadbalancer.yaml'
+  config.customerOs.eventsProcessingPlatformDeployment = 'packages/cli/src/deployment/infra/k8s/events-processing-platform/events-processing-platform.yaml'
+  config.customerOs.eventsProcessingPlatformService = 'packages/cli/src/deployment/infra/k8s/events-processing-platform/events-processing-platform-service.yaml'
+  config.customerOs.eventsProcessingPlatformLoadbalancer = 'packages/cli/src/deployment/infra/k8s/events-processing-platform/events-processing-platform-loadbalancer.yaml'
   //customerOs Events Processing Platform Subscribers
   config.customerOs.eventsProcessingPlatformSubscribersImage = 'ghcr.io/openline-ai/openline-customer-os/events-processing-platform-subscribers:'
-  config.customerOs.eventsProcessingPlatformSubscribersDeployment = 'deployment/infra/k8s/events-processing-platform-subscribers/events-processing-platform-subscribers.yaml'
+  config.customerOs.eventsProcessingPlatformSubscribersDeployment = 'packages/cli/src/deployment/infra/k8s/events-processing-platform-subscribers/events-processing-platform-subscribers.yaml'
   // validation API
   config.customerOs.validationApiImage = 'ghcr.io/openline-ai/openline-customer-os/validation-api:'
-  config.customerOs.validationApiDeployment = 'deployment/infra/k8s/validation-api/validation-api.yaml'
-  config.customerOs.validationApiService = 'deployment/infra/k8s/validation-api/validation-api-service.yaml'
-  config.customerOs.validationApiLoadbalancer = 'deployment/infra/k8s/validation-api/validation-api-loadbalancer.yaml'
+  config.customerOs.validationApiDeployment = 'packages/cli/src/deployment/infra/k8s/validation-api/validation-api.yaml'
+  config.customerOs.validationApiService = 'packages/cli/src/deployment/infra/k8s/validation-api/validation-api-service.yaml'
+  config.customerOs.validationApiLoadbalancer = 'packages/cli/src/deployment/infra/k8s/validation-api/validation-api-loadbalancer.yaml'
   // user admin API
   config.customerOs.userAdminApiImage = 'ghcr.io/openline-ai/openline-customer-os/user-admin-api:'
-  config.customerOs.userAdminApiDeployment = 'deployment/infra/k8s/user-admin-api/user-admin-api.yaml'
-  config.customerOs.userAdminApiService = 'deployment/infra/k8s/user-admin-api/user-admin-api-service.yaml'
-  config.customerOs.userAdminApiLoadbalancer = 'deployment/infra/k8s/user-admin-api/user-admin-api-loadbalancer.yaml'
-  config.customerOs.userAdminApiSecrets = 'deployment/infra/k8s/user-admin-api/user-admin-api-secrets.sh'
+  config.customerOs.userAdminApiDeployment = 'packages/cli/src/deployment/infra/k8s/user-admin-api/user-admin-api.yaml'
+  config.customerOs.userAdminApiService = 'packages/cli/src/deployment/infra/k8s/user-admin-api/user-admin-api-service.yaml'
+  config.customerOs.userAdminApiLoadbalancer = 'packages/cli/src/deployment/infra/k8s/user-admin-api/user-admin-api-loadbalancer.yaml'
+  config.customerOs.userAdminApiSecrets = 'packages/cli/src/deployment/infra/k8s/user-admin-api/user-admin-api-secrets.sh'
   // Platform admin API
   config.customerOs.platformAdminApiImage = 'ghcr.io/openline-ai/openline-customer-os/customer-os-platform-admin-api:'
-  config.customerOs.platformAdminApiDeployment = 'deployment/infra/k8s/platform-admin-api/platform-admin-api.yaml'
-  config.customerOs.platformAdminApiService = 'deployment/infra/k8s/platform-admin-api/platform-admin-api-service.yaml'
-  config.customerOs.platformAdminApiLoadbalancer = 'deployment/infra/k8s/platform-admin-api/platform-admin-api-loadbalancer.yaml'
+  config.customerOs.platformAdminApiDeployment = 'packages/cli/src/deployment/infra/k8s/platform-admin-api/platform-admin-api.yaml'
+  config.customerOs.platformAdminApiService = 'packages/cli/src/deployment/infra/k8s/platform-admin-api/platform-admin-api-service.yaml'
+  config.customerOs.platformAdminApiLoadbalancer = 'packages/cli/src/deployment/infra/k8s/platform-admin-api/platform-admin-api-loadbalancer.yaml'
   // Webhooks
   config.customerOs.webhooksImage = 'ghcr.io/openline-ai/openline-customer-os/customer-os-webhooks:'
-  config.customerOs.webhooksDeployment = 'deployment/infra/k8s/customer-os-webhooks/customer-os-webhooks.yaml'
-  config.customerOs.webhooksService = 'deployment/infra/k8s/customer-os-webhooks/customer-os-webhooks-service.yaml'
-  config.customerOs.webhooksLoadbalancer = 'deployment/infra/k8s/customer-os-webhooks/customer-os-webhooks-loadbalancer.yaml'
+  config.customerOs.webhooksDeployment = 'packages/cli/src/deployment/infra/k8s/customer-os-webhooks/customer-os-webhooks.yaml'
+  config.customerOs.webhooksService = 'packages/cli/src/deployment/infra/k8s/customer-os-webhooks/customer-os-webhooks-service.yaml'
+  config.customerOs.webhooksLoadbalancer = 'packages/cli/src/deployment/infra/k8s/customer-os-webhooks/customer-os-webhooks-loadbalancer.yaml'
   // customerOS postgreSQL DB
-  config.customerOs.postgresqlPersistentVolume = 'deployment/infra/k8s/postgresql-persistent-volume.yaml'
-  config.customerOs.postgresqlPersistentVolumeClaim = 'deployment/infra/k8s/postgresql-persistent-volume-claim.yaml'
-  config.customerOs.postgresqlHelmValues = 'deployment/infra/helm/postgresql/postgresql-values.yaml'
-  config.customerOs.postgresqlSetup = 'deployment/scripts/postgresql/setup.sql'
+  config.customerOs.postgresqlPersistentVolume = 'packages/cli/src/deployment/infra/k8s/postgresql-persistent-volume.yaml'
+  config.customerOs.postgresqlPersistentVolumeClaim = 'packages/cli/src/deployment/infra/k8s/postgresql-persistent-volume-claim.yaml'
+  config.customerOs.postgresqlHelmValues = 'packages/cli/src/deployment/infra/helm/postgresql/postgresql-values.yaml'
+  config.customerOs.postgresqlSetup = 'packages/cli/src/deployment/scripts/postgresql/setup.sql'
   config.customerOs.sqlUser = 'postgres'
   config.customerOs.sqlPw = 'password'
   config.customerOs.sqlDb = 'openline'
   // customerOS Redis DB
-  config.customerOs.redisSetup = 'deployment/scripts/redis/tenants.redis'
+  config.customerOs.redisSetup = 'packages/cli/src/deployment/scripts/redis/tenants.redis'
   // customerOS Neo4j DB
-  config.customerOs.neo4jHelmValues = 'deployment/infra/helm/neo4j/neo4j-values.yaml'
-  config.customerOs.neo4jCypher = 'deployment/scripts/neo4j/customer-os.cypher'
-  config.customerOs.neo4jProvisioning = 'deployment/scripts/neo4j/provision-neo4j.sh'
+  config.customerOs.neo4jHelmValues = 'packages/cli/src/deployment/infra/helm/neo4j/neo4j-values.yaml'
+  config.customerOs.neo4jCypher = 'packages/cli/src/deployment/scripts/neo4j/customer-os.cypher'
+  config.customerOs.neo4jProvisioning = 'packages/cli/src/deployment/scripts/neo4j/provision-neo4j.sh'
   config.customerOs.neo4jDemoTenant = 'resources/demo-tenant.json'
 
   config.customerOs.repo = 'https://github.com/openline-ai/openline-customer-os.git'
@@ -90,15 +92,15 @@ export function getConfig(): any {
   config.customerOs.eventStoreDbImage = 'eventstore/eventstore:'
   config.customerOs.eventStoreMacImageVersion = '22.10.3-alpha-arm64v8'
   config.customerOs.eventStoreLinuxImageVersion = '22.10.3-bionic'
-  config.customerOs.eventStoreDbDeployment = 'deployment/infra/k8s/event-store/event-store.yaml'
-  config.customerOs.eventStoreDbService = 'deployment/infra/k8s/event-store/event-store-service.yaml'
-  config.customerOs.eventStoreDbLoadbalancer = 'deployment/infra/k8s/event-store/event-store-loadbalancer.yaml'
+  config.customerOs.eventStoreDbDeployment = 'packages/cli/src/deployment/infra/k8s/event-store/event-store.yaml'
+  config.customerOs.eventStoreDbService = 'packages/cli/src/deployment/infra/k8s/event-store/event-store-service.yaml'
+  config.customerOs.eventStoreDbLoadbalancer = 'packages/cli/src/deployment/infra/k8s/event-store/event-store-loadbalancer.yaml'
 
   // Comms API
   config.customerOs.commsApiImage = 'ghcr.io/openline-ai/openline-customer-os/comms-api:'
-  config.customerOs.commsApiDeployment = 'deployment/infra/k8s/comms-api/comms-api.yaml'
-  config.customerOs.commsApiService = 'deployment/infra/k8s/comms-api/comms-api-k8s-service.yaml'
-  config.customerOs.commsApiLoadbalancer = 'deployment/infra/k8s/comms-api/comms-api-k8s-loadbalancer-service.yaml'
+  config.customerOs.commsApiDeployment = 'packages/cli/src/deployment/infra/k8s/comms-api/comms-api.yaml'
+  config.customerOs.commsApiService = 'packages/cli/src/deployment/infra/k8s/comms-api/comms-api-k8s-service.yaml'
+  config.customerOs.commsApiLoadbalancer = 'packages/cli/src/deployment/infra/k8s/comms-api/comms-api-k8s-loadbalancer-service.yaml'
 
   config.webchat = {}
   config.webchat.repo = 'https://github.com/openline-ai/openline-web-chat.git'
@@ -108,12 +110,12 @@ export function getConfig(): any {
 
   // Jaeger
   config.customerOs.jaegerImage = 'jaegertracing/all-in-one:'
-  config.customerOs.jaegerDeployment = 'deployment/infra/k8s/jaeger/jaeger.yaml'
-  config.customerOs.jaegerService = 'deployment/infra/k8s/jaeger/jaeger-service.yaml'
-  config.customerOs.jaegerLoadbalancer = 'deployment/infra/k8s/jaeger/jaeger-loadbalancer.yaml'
+  config.customerOs.jaegerDeployment = 'packages/cli/src/deployment/infra/k8s/jaeger/jaeger.yaml'
+  config.customerOs.jaegerService = 'packages/cli/src/deployment/infra/k8s/jaeger/jaeger-service.yaml'
+  config.customerOs.jaegerLoadbalancer = 'packages/cli/src/deployment/infra/k8s/jaeger/jaeger-loadbalancer.yaml'
 
   // Temporal Server
-  config.customerOs.temporalServerDeployment = 'deployment/infra/k8s/temporal/temporal.yaml'
+  config.customerOs.temporalServerDeployment = 'packages/cli/src/deployment/infra/k8s/temporal/temporal.yaml'
 
   // CLI command dependencies
   config.dependencies = {}
