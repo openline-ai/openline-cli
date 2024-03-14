@@ -2,15 +2,12 @@ import * as shell from 'shelljs'
 import {getConfig} from '../../config/dev'
 import {logTerminal} from '../logs'
 import {exit} from 'node:process'
-import { exec } from 'shelljs';
-import {waitForFileToBeDownloaded} from "../../helpers/downloadChecker";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
 const POSTGRESQL_SERVICE = 'customer-db-postgresql'
 const PERSISTENT_VOLUME = 'customer-db-postgresql'
 const PERSISTENT_VOLUME_CLAIM = 'customer-db-postgresql-claim'
-const CLI_RAW_REPO = config.cli.rawRepo
 
 function postgresqlServiceCheck() :boolean {
   return (shell.exec(`kubectl get service ${POSTGRESQL_SERVICE} -n ${NAMESPACE}`, {silent: true}).code === 0)
@@ -33,7 +30,7 @@ export function installPostgresql(verbose: boolean, location = config.setupDir) 
 
 function setupPersistentVolume(verbose: boolean, location = config.setupDir) : boolean {
   if (postgresqlPersistentVolumeCheck()) return true
-  const PERSISTENT_VOLUME_PATH = CLI_RAW_REPO + config.customerOs.postgresqlPersistentVolume
+  const PERSISTENT_VOLUME_PATH = config.customerOs.postgresqlPersistentVolume
 
   const kubePV = `kubectl apply -f ${PERSISTENT_VOLUME_PATH} --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', kubePV)
@@ -48,7 +45,7 @@ function setupPersistentVolume(verbose: boolean, location = config.setupDir) : b
 
 function setupPersistentVolumeClaim(verbose: boolean, location = config.setupDir) :boolean {
   if (postgresqlPersistentVolumeClaimCheck()) return true
-  const PERSISTENT_VOLUME_CLAIM_PATH = CLI_RAW_REPO + config.customerOs.postgresqlPersistentVolumeClaim
+  const PERSISTENT_VOLUME_CLAIM_PATH = config.customerOs.postgresqlPersistentVolumeClaim
 
   const kubePVC = `kubectl apply -f ${PERSISTENT_VOLUME_CLAIM_PATH} --namespace ${NAMESPACE}`
   if (verbose) logTerminal('EXEC', kubePVC)
@@ -63,7 +60,7 @@ function setupPersistentVolumeClaim(verbose: boolean, location = config.setupDir
 
 function deployPostgresql(verbose: boolean, location = config.setupDir) {
   if (postgresqlServiceCheck()) return true
-  const HELM_VALUES_PATH = CLI_RAW_REPO + config.customerOs.postgresqlHelmValues
+  const HELM_VALUES_PATH = config.customerOs.postgresqlHelmValues
 
   const helmAdd = 'helm repo add bitnami https://charts.bitnami.com/bitnami'
   if (verbose) logTerminal('EXEC', helmAdd)
@@ -84,7 +81,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   const sqlUser = config.customerOs.sqlUser
   const sqlPw = config.customerOs.sqlPw
   const sqlDb = config.customerOs.sqlDb
-  const POSTGRESQL_DB_SETUP = CLI_RAW_REPO + config.customerOs.postgresqlSetup
+  const POSTGRESQL_DB_SETUP = config.customerOs.postgresqlSetup
 
   let ms = ''
   let retry = 1
@@ -108,7 +105,7 @@ export function provisionPostgresql(verbose: boolean, location = config.setupDir
   if (verbose) logTerminal('INFO', `connecting to ${cosDb} pod`)
 
   let provision = ''
-  const postgresqlDbSetupFilename = waitForFileToBeDownloaded(POSTGRESQL_DB_SETUP, verbose);
+  const postgresqlDbSetupFilename = config.customerOs.postgresqlSetup;
   while (provision === '') {
     if (retry < maxAttempts) {
       if (verbose) logTerminal('INFO', `attempting to provision message store db, please wait... ${retry}/${maxAttempts}`)

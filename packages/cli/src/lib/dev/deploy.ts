@@ -6,7 +6,6 @@ import { getPlatform } from '../dependencies'
 import * as fs from 'node:fs'
 import * as YAML from 'yaml'
 import * as k3d from './k3d'
-import { waitForFileToBeDownloaded } from "../../helpers/downloadChecker";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -47,20 +46,24 @@ export function deployImage(imageUrl: string | null, deployConfig: Yaml, verbose
     return false
   }
 
-  if(deployConfig && deployConfig.serviceYaml !== null) {
-    const kubeApplyServiceConfig = `kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`
-    if (verbose) logTerminal('EXEC', kubeApplyServiceConfig)
-    const service = shell.exec(kubeApplyServiceConfig, { silent: !verbose })
-    if (service.code !== 0) {
-      logTerminal('ERROR', service.stderr, 'dev:deploy:deployImage')
-      return false
+  if (deployConfig && deployConfig.serviceYaml !== null) {
+    if (deployConfig && deployConfig.serviceYaml !== undefined) {
+      const kubeApplyServiceConfig = `kubectl apply -f ${deployConfig.serviceYaml} --namespace ${NAMESPACE}`
+      if (verbose) logTerminal('EXEC', kubeApplyServiceConfig)
+      const service = shell.exec(kubeApplyServiceConfig, {silent: !verbose})
+      if (service.code !== 0) {
+        logTerminal('ERROR', service.stderr, 'dev:deploy:deployImage')
+        return false
+      }
     }
   }
 
   if ('loadbalancerYaml' in deployConfig && deployConfig.loadbalancerYaml !== null) {
-    const lb = deployLoadbalancer(deployConfig.loadbalancerYaml ? deployConfig.loadbalancerYaml : '', verbose)
-    if (!lb) {
-      return false
+    if ('loadbalancerYaml' in deployConfig && deployConfig.loadbalancerYaml !== undefined) {
+      const lb = deployLoadbalancer(deployConfig.loadbalancerYaml ? deployConfig.loadbalancerYaml : '', verbose)
+      if (!lb) {
+        return false
+      }
     }
   }
 
@@ -93,7 +96,7 @@ export function deployLoadbalancer(YamlConfigPath: string, verbose: boolean): bo
   }
 
   if (getPlatform() === 'linux') {
-    const yamlConfigPath = waitForFileToBeDownloaded(YamlConfigPath, verbose);
+    const yamlConfigPath = YamlConfigPath;
     const file = fs.readFileSync(yamlConfigPath ? yamlConfigPath : '', 'utf8')
     const config = YAML.parse(file)
     for (const val of config.spec.ports) {

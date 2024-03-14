@@ -3,7 +3,6 @@ import { getConfig } from '../../config/dev'
 import { deployImage, updateImageTag, Yaml } from './deploy'
 import { buildLocalImage } from './build-image'
 import { logTerminal } from '../logs'
-import { waitForFileToBeDownloaded } from "../../helpers/downloadChecker";
 
 const config = getConfig()
 const NAMESPACE = config.namespace.name
@@ -17,7 +16,6 @@ const VALIDATION_API = 'validation-api-service'
 const USER_ADMIN_API = 'user-admin-api-service'
 const CUSTOMER_OS_WEBHOOKS = 'customer-os-webhooks-service'
 const PLATFORM_ADMIN_API = 'platform-admin-api-service'
-const CLI_RAW_REPO = config.cli.rawRepo
 
 
 function customerOsApiCheck(): boolean {
@@ -63,8 +61,8 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
   }
 
   const DEPLOYMENT = config.customerOs.apiDeployment
-  const SERVICE = CLI_RAW_REPO + config.customerOs.apiService
-  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.apiLoadbalancer
+  const SERVICE = config.customerOs.apiService
+  const LOADBALANCER = config.customerOs.apiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -75,7 +73,7 @@ export function installCustomerOsApi(verbose: boolean, location = config.setupDi
 
   if (location !== config.setupDir) {
     // Need to come back to this after we standardize Dockerfiles
-    const buildPath = CLI_RAW_REPO + '/packages/server/customer-os-api'
+    const buildPath = '/packages/server/customer-os-api'
 
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
@@ -99,9 +97,9 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
     logTerminal('SUCCESS', 'settings-api already running')
     return true
   }
-  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.settingsDeployment
-  const SERVICE = CLI_RAW_REPO + config.customerOs.settingsService
-  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.settingsLoadbalancer
+  const DEPLOYMENT = config.customerOs.settingsDeployment
+  const SERVICE = config.customerOs.settingsService
+  const LOADBALANCER = config.customerOs.settingsLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -112,7 +110,7 @@ export function installSettingsApi(verbose: boolean, location = config.setupDir,
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = CLI_RAW_REPO + '/packages/server/settings-api'
+    const buildPath = '/packages/server/settings-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -135,9 +133,9 @@ export function installfileStoreApi(verbose: boolean, location = config.setupDir
     logTerminal('SUCCESS', 'file-store-api already running')
     return true
   }
-  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.fileStoreDeployment
-  const SERVICE = CLI_RAW_REPO + config.customerOs.fileStoreService
-  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.fileStoreLoadbalancer
+  const DEPLOYMENT = config.customerOs.fileStoreDeployment
+  const SERVICE = config.customerOs.fileStoreService
+  const LOADBALANCER = config.customerOs.fileStoreLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -148,7 +146,7 @@ export function installfileStoreApi(verbose: boolean, location = config.setupDir
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = CLI_RAW_REPO + '/packages/server/file-store-api'
+    const buildPath = '/packages/server/file-store-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -170,9 +168,9 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
     logTerminal('SUCCESS', 'events-processing-platform already running')
     return true
   }
-  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.eventsProcessingPlatformDeployment
-  const SERVICE = CLI_RAW_REPO + config.customerOs.eventsProcessingPlatformService
-  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.eventsProcessingPlatformLoadbalancer
+  const DEPLOYMENT = config.customerOs.eventsProcessingPlatformDeployment
+  const SERVICE = config.customerOs.eventsProcessingPlatformService
+  const LOADBALANCER = config.customerOs.eventsProcessingPlatformLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -183,7 +181,7 @@ export function installEventsProcessingPlatform(verbose: boolean, location = con
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = CLI_RAW_REPO + '/packages/server/events-processing-platform'
+    const buildPath = '/packages/server/events-processing-platform'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -205,7 +203,7 @@ export function installEventsProcessingPlatformSubscribers(verbose: boolean, loc
     logTerminal('SUCCESS', 'events-processing-platform-subscribers already running')
     return true
   }
-  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.eventsProcessingPlatformSubscribersDeployment
+  const DEPLOYMENT = config.customerOs.eventsProcessingPlatformSubscribersDeployment
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -216,7 +214,7 @@ export function installEventsProcessingPlatformSubscribers(verbose: boolean, loc
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = CLI_RAW_REPO + '/packages/server/events-processing-platform-subscribers'
+    const buildPath = '/packages/server/events-processing-platform-subscribers'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -234,9 +232,9 @@ export function installEventsProcessingPlatformSubscribers(verbose: boolean, loc
 
 export function installCommsApi(verbose: boolean, location = config.setupDir, imageVersion = 'latest'): boolean {
   if (commsApiCheck()) return true
-  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.commsApiDeployment
-  const SERVICE = CLI_RAW_REPO + config.customerOs.commsApiService
-  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.commsApiLoadbalancer
+  const DEPLOYMENT = config.customerOs.commsApiDeployment
+  const SERVICE = config.customerOs.commsApiService
+  const LOADBALANCER = config.customerOs.commsApiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -247,7 +245,7 @@ export function installCommsApi(verbose: boolean, location = config.setupDir, im
 
   if (location !== config.setupDir) {
     // come back to this when Dockerfiles are standardized
-    const buildPath = CLI_RAW_REPO + '/packages/server/comms-api'
+    const buildPath = '/packages/server/comms-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -270,9 +268,9 @@ export function installValidationApi(verbose: boolean, location = config.setupDi
     logTerminal('SUCCESS', 'validation-api already running')
     return true
   }
-  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.validationApiDeployment
-  const SERVICE = CLI_RAW_REPO + config.customerOs.validationApiService
-  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.validationApiLoadbalancer
+  const DEPLOYMENT = config.customerOs.validationApiDeployment
+  const SERVICE = config.customerOs.validationApiService
+  const LOADBALANCER = config.customerOs.validationApiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -283,7 +281,7 @@ export function installValidationApi(verbose: boolean, location = config.setupDi
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = CLI_RAW_REPO + '/packages/server/validation-api'
+    const buildPath = '/packages/server/validation-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -306,10 +304,10 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
     logTerminal('SUCCESS', 'user-admin-api already running')
     return true
   }
-  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.userAdminApiDeployment
-  const SERVICE = CLI_RAW_REPO + config.customerOs.userAdminApiService
-  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.userAdminApiLoadbalancer
-  const SECRETS = CLI_RAW_REPO + config.customerOs.userAdminApiSecrets
+  const DEPLOYMENT = config.customerOs.userAdminApiDeployment
+  const SERVICE = config.customerOs.userAdminApiService
+  const LOADBALANCER = config.customerOs.userAdminApiLoadbalancer
+  const SECRETS = config.customerOs.userAdminApiSecrets
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -320,12 +318,12 @@ export function installUserAdminApi(verbose: boolean, location = config.setupDir
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = CLI_RAW_REPO + '/packages/server/user-admin-api'
+    const buildPath = '/packages/server/user-admin-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
   }
-  const secretsFilename = waitForFileToBeDownloaded(SECRETS, verbose);
+  const secretsFilename = SECRETS;
 
   shell.exec(`bash ${secretsFilename}`, { silent: false })
   const kubeApplySecretsConfig = `kubectl apply -f user-admin-api-secret.yaml --namespace ${NAMESPACE}`
@@ -349,9 +347,9 @@ export function installWebhooks(verbose: boolean, location = config.setupDir, im
     return true
   }
 
-  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.webhooksDeployment
-  const SERVICE = CLI_RAW_REPO + config.customerOs.webhooksService
-  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.webhooksLoadbalancer
+  const DEPLOYMENT = config.customerOs.webhooksDeployment
+  const SERVICE = config.customerOs.webhooksService
+  const LOADBALANCER = config.customerOs.webhooksLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -362,7 +360,7 @@ export function installWebhooks(verbose: boolean, location = config.setupDir, im
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = CLI_RAW_REPO + '/packages/server/customer-os-webhooks'
+    const buildPath = '/packages/server/customer-os-webhooks'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
@@ -385,9 +383,9 @@ export function installPlatformAdminApi(verbose: boolean, location = config.setu
     return true
   }
 
-  const DEPLOYMENT = CLI_RAW_REPO + config.customerOs.platformAdminApiDeployment
-  const SERVICE = CLI_RAW_REPO + config.customerOs.platformAdminApiService
-  const LOADBALANCER = CLI_RAW_REPO + config.customerOs.platformAdminApiLoadbalancer
+  const DEPLOYMENT = config.customerOs.platformAdminApiDeployment
+  const SERVICE = config.customerOs.platformAdminApiService
+  const LOADBALANCER = config.customerOs.platformAdminApiLoadbalancer
 
   if (imageVersion.toLowerCase() !== 'latest') {
     const tag = updateImageTag([DEPLOYMENT], imageVersion)
@@ -398,7 +396,7 @@ export function installPlatformAdminApi(verbose: boolean, location = config.setu
 
   if (location !== config.setupDir) {
     // come back to this
-    const buildPath = CLI_RAW_REPO + '/packages/server/customer-os-platform-admin-api'
+    const buildPath = '/packages/server/customer-os-platform-admin-api'
     const build = buildLocalImage({ path: buildPath, context: buildPath + '/../', imageName: image, verbose })
     if (build === false) return false
     image = null
