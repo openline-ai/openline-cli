@@ -51,6 +51,13 @@ yarn build
 alias ol="node $(pwd)/bin/run"
 ol dev start
 ```
+If no alias is set, then the CLI will be stared with:
+```sh-session
+yarn install
+yarn build
+navigate to /openline-cli/packages/cli/bin
+./run dev start -v
+```
 
 afterwards you can run the locally build cli by calling "ol"
 

@@ -21,26 +21,6 @@ export function deployImage(imageUrl: string | null, deployConfig: Yaml, verbose
     logTerminal('INFO', 'deploying image', imageUrl?.toString())
   }
 
-  if (imageUrl !== null) {
-    const dockerPull = `docker pull ${imageUrl}`
-    if (verbose) logTerminal('EXEC', dockerPull)
-    const pull = shell.exec(dockerPull, { silent: true })
-    if (pull.code !== 0) {
-      logTerminal('ERROR', pull.stderr, 'dev:deploy:deployImage')
-      return false
-    }
-
-    if (getPlatform() === 'linux') {
-      const pushCmd = 'k3d image import ' + imageUrl + ' -c development'
-      if (verbose) logTerminal('EXEC', pushCmd)
-      const push = shell.exec(pushCmd, { silent: !verbose })
-      if (push.code !== 0) {
-        logTerminal('ERROR', push.stderr, 'dev:deploy:tagImage')
-        return false
-      }
-    }
-  }
-
   let ok = deployDeployment(deployConfig.deployYaml, verbose)
   if (!ok) {
     return false

@@ -62,8 +62,9 @@ export async function generateNewTag(tag: string) {
     },
   ]);
 
-  const regex = /^v(\d+)\.(\d+)\.(\d+)-/;
+  const regex = /^v(\d+)\.(\d+)\.(\d+)/;
   const match = tag.match(regex);
+
   let newTag = '';
   let stylizedNewTag = '';
 
@@ -74,10 +75,10 @@ export async function generateNewTag(tag: string) {
         let newMajorNo  = Number(firstDigits)+1;
         if (match) {
           newTag = tag.replace(regex, (match, _, secondDigits, thirdDigits) => {
-            return `v${newMajorNo}.${secondDigits}.${thirdDigits}-`;
+            return `v${newMajorNo}.${secondDigits}.${thirdDigits}`;
           });
           stylizedNewTag = tag.replace(regex, (match, _, secondDigits, thirdDigits) => {
-            return `v${colors.bgGreen(String(newMajorNo))}.${secondDigits}.${thirdDigits}-`;
+            return `v${colors.bgGreen(String(newMajorNo))}.${secondDigits}.${thirdDigits}`;
           });
         } else {
           console.log('No match found.');
@@ -87,10 +88,10 @@ export async function generateNewTag(tag: string) {
         let newMinorNo  = Number(secondDigits)+1;
         if (match) {
           newTag = tag.replace(regex, (match, firstDigits, _, thirdDigits) => {
-            return `v${firstDigits}.${newMinorNo}.${thirdDigits}-`;
+            return `v${firstDigits}.${newMinorNo}.${thirdDigits}`;
           });
           stylizedNewTag = tag.replace(regex, (match, firstDigits, _, thirdDigits) => {
-            return `v${firstDigits}.${colors.bgGreen(String(newMinorNo))}.${thirdDigits}-`;
+            return `v${firstDigits}.${colors.bgGreen(String(newMinorNo))}.${thirdDigits}`;
           });
         } else {
           console.log('No match found.');
@@ -100,10 +101,10 @@ export async function generateNewTag(tag: string) {
         let newPatchNo  = Number(thirdDigits)+1;
         if (match) {
           newTag = tag.replace(regex, (match, firstDigits, secondDigits, _) => {
-            return `v${firstDigits}.${secondDigits}.${newPatchNo}-`;
+            return `v${firstDigits}.${secondDigits}.${newPatchNo}`;
           });
           stylizedNewTag = tag.replace(regex, (match, firstDigits, secondDigits, _) => {
-            return `v${firstDigits}.${secondDigits}.${colors.bgGreen(String(newPatchNo))}-`;
+            return `v${firstDigits}.${secondDigits}.${colors.bgGreen(String(newPatchNo))}`;
           });
         } else {
           console.log('No match found.');

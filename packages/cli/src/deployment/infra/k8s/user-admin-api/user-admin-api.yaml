@@ -15,7 +15,7 @@ spec:
       containers:
         - image: ghcr.io/openline-ai/openline-customer-os/user-admin-api:latest
           name: user-admin-api
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 4001
           livenessProbe:

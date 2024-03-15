@@ -15,7 +15,7 @@ spec:
       containers:
         - image: ghcr.io/openline-ai/openline-customer-os/comms-api:latest
           name: comms-api
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8013  # Should match the port number that the Go application listens on
               name: http-port
@@ -57,9 +57,9 @@ spec:
             - name: WEBCHAT_API_KEY
               value: "nobody-will-guess-this-api-key"
             - name: WEBSOCKET_PING_INTERVAL
-              value: "30"              
+              value: "30"
             - name: VCON_API_KEY
-              value: "92c04073-17c3-4e91-8326-516bbd0750a4"   
+              value: "92c04073-17c3-4e91-8326-516bbd0750a4"
             - name: WEBRTC_AUTH_SECRET
               value: "2c42a1b6-d776-4083-b0b6-44fecea2d022"
             - name: WEBRTC_AUTH_TTL

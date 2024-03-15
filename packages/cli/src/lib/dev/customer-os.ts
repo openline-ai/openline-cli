@@ -471,7 +471,7 @@ export function waitForEventsProcessingPlatformPodToBeReady(verbose: boolean) {
   let eventsProcessingPlatformPodName
   let restarts = 0
   do {
-    eventsProcessingPlatformPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep events-processing-platform`, { silent: true })
+    eventsProcessingPlatformPodName = shell.exec(`kubectl -n ${NAMESPACE} get pods --no-headers -o custom-columns=":metadata.name" | grep events-processing-platform | grep -v subscribers`, { silent: true })
       .stdout
       .split(/\r?\n/)
       .filter(Boolean);

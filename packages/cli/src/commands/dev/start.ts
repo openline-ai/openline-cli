@@ -1,10 +1,10 @@
 /* eslint-disable complexity */
-import { Command, Flags } from '@oclif/core'
+import {Command, Flags} from '@oclif/core'
 import * as ns from '../../lib/dev/namespace'
 import * as neo from '../../lib/dev/neo4j'
 import * as sql from '../../lib/dev/postgres'
 import * as redis from '../../lib/dev/redis'
-import { getConfig } from '../../config/dev'
+import {getConfig} from '../../config/dev'
 import {
   installCustomerOsApi,
   installfileStoreApi,
@@ -16,11 +16,11 @@ import {
   installWebhooks,
   installPlatformAdminApi, installEventsProcessingPlatformSubscribers
 } from '../../lib/dev/customer-os'
-import { installEventStoreDB } from '../../lib/dev/eventstore'
+import {installEventStoreDB} from '../../lib/dev/eventstore'
 import * as start from '../../lib/dev/start'
-import { logTerminal } from '../../lib/logs'
-import { installJaeger } from "../../lib/dev/jaeger";
-import { installTemporalServer, runLocalTemporalServer } from '../../lib/dev/temporal-server'
+import {logTerminal} from '../../lib/logs'
+import {installJaeger} from "../../lib/dev/jaeger";
+import {installTemporalServer, runLocalTemporalServer} from '../../lib/dev/temporal-server'
 
 export default class DevStart extends Command {
   static description = 'Start an Openline development server'
@@ -30,7 +30,7 @@ export default class DevStart extends Command {
   ]
 
   static flags = {
-    all: Flags.boolean({ description: 'start all Openline apps & services' }),
+    all: Flags.boolean({description: 'start all Openline apps & services'}),
     tag: Flags.string({
       char: 't',
       description: 'version tag of the image you would like to deploy',
@@ -40,8 +40,12 @@ export default class DevStart extends Command {
       char: 'l',
       description: 'location for the source code to be used in the installation',
     }),
-    verbose: Flags.boolean({ char: 'v' }),
-    test: Flags.boolean({ hidden: true }),
+    demoTenant: Flags.boolean({
+      char: 'd',
+      description: 'populate neo4j with demo-tenant data'
+    }),
+    verbose: Flags.boolean({char: 'v'}),
+    test: Flags.boolean({hidden: true}),
   }
 
   static args = [
@@ -71,7 +75,7 @@ export default class DevStart extends Command {
   ]
 
   public async run(): Promise<void> {
-    const { flags, args } = await this.parse(DevStart)
+    const {flags, args} = await this.parse(DevStart)
     const config = getConfig()
     let location = flags.location
     let version = flags.tag
@@ -96,24 +100,53 @@ export default class DevStart extends Command {
       // install customerOS
       ns.installNamespace(flags.verbose, location)
       start.installDatabases(flags.verbose, location)
-      installTemporalServer(flags.verbose)
-      installCustomerOsApi(flags.verbose, location, version)
-      installfileStoreApi(flags.verbose, location, version)
-      installSettingsApi(flags.verbose, location, version)
-      installCommsApi(flags.verbose, location, version)
-      installEventStoreDB(flags.verbose, location)
-      installEventsProcessingPlatform(flags.verbose, location, version)
-      installEventsProcessingPlatformSubscribers(flags.verbose, location, version)
-      installValidationApi(flags.verbose, location, version)
-      installUserAdminApi(flags.verbose, location, version)
-      installPlatformAdminApi(flags.verbose, location, version)
-      installWebhooks(flags.verbose, location, version)
-      installJaeger(flags.verbose, location, version)
-      sql.provisionPostgresql(flags.verbose, location)
-      neo.provisionNeo4j(flags.verbose, location)
-      neo.provisionNeo4jWithDemoTenant(flags.verbose)
-      redis.provisionRedis(flags.verbose, location)
-      start.cleanupSetupFiles()
+      const servicesPromises = [
+        installTemporalServer(flags.verbose),
+        installCustomerOsApi(flags.verbose, location, version),
+        installfileStoreApi(flags.verbose, location, version),
+        installSettingsApi(flags.verbose, location, version),
+        installCommsApi(flags.verbose, location, version),
+        installEventStoreDB(flags.verbose, location),
+        installEventsProcessingPlatform(flags.verbose, location, version),
+        installEventsProcessingPlatformSubscribers(flags.verbose, location, version),
+        installValidationApi(flags.verbose, location, version),
+        installUserAdminApi(flags.verbose, location, version),
+        installPlatformAdminApi(flags.verbose, location, version),
+        installWebhooks(flags.verbose, location, version),
+        installJaeger(flags.verbose, location, version)
+      ]
+      Promise.all([...servicesPromises])
+        .then(() => {
+          // Core services started successfully
+          start.cleanupSetupFiles()
+          logTerminal('SUCCESS', 'Openline core services have started')
+          logTerminal('INFO', 'To ensure they were installed correctly, run => openline dev ping')
+          this.exit(0)
+        })
+        .catch(error => {
+          // Handle errors
+          console.error('Error starting services:', error)
+          this.exit(1)
+        })
+      const databasesPromises = [
+        sql.provisionPostgresql(flags.verbose, location),
+        neo.provisionNeo4j(flags.verbose, location),
+        redis.provisionRedis(flags.verbose, location),
+      ]
+      Promise.all([...databasesPromises])
+        .then(() => {
+          // Databases started successfully
+          start.cleanupSetupFiles()
+          logTerminal('SUCCESS', 'Openline databases have started')
+          logTerminal('INFO', 'To ensure they were installed correctly, run => openline dev ping')
+          this.exit(0)
+        })
+        .catch(error => {
+          // Handle errors
+          console.error('Error starting services:', error)
+          this.exit(1)
+        })
+      neo.provisionNeo4jWithDemoTenant(flags.verbose, flags.demoTenant)
       start.cleanupSetupFiles()
 
       logTerminal('SUCCESS', 'Openline dev server has been started')
@@ -145,7 +178,7 @@ export default class DevStart extends Command {
         installJaeger(flags.verbose, location, version)
         sql.provisionPostgresql(flags.verbose, location)
         neo.provisionNeo4j(flags.verbose, location)
-        neo.provisionNeo4jWithDemoTenant(flags.verbose)
+        neo.provisionNeo4jWithDemoTenant(flags.verbose, flags.demoTenant)
         redis.provisionRedis(flags.verbose, location)
         start.cleanupSetupFiles()
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -199,7 +232,7 @@ export default class DevStart extends Command {
         start.installDatabases(flags.verbose, location)
         sql.provisionPostgresql(flags.verbose, location)
         neo.provisionNeo4j(flags.verbose, location)
-        neo.provisionNeo4jWithDemoTenant(flags.verbose)
+        neo.provisionNeo4jWithDemoTenant(flags.verbose, flags.demoTenant)
         redis.provisionRedis(flags.verbose, location)
         start.cleanupSetupFiles()
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')
@@ -315,7 +348,7 @@ export default class DevStart extends Command {
         installPlatformAdminApi(flags.verbose, location, version)
         sql.provisionPostgresql(flags.verbose, location)
         neo.provisionNeo4j(flags.verbose, location)
-        neo.provisionNeo4jWithDemoTenant(flags.verbose)
+        neo.provisionNeo4jWithDemoTenant(flags.verbose, flags.demoTenant)
         redis.provisionRedis(flags.verbose, location)
         start.cleanupSetupFiles()
         logTerminal('INFO', 'to ensure everything was installed correctly, run => openline dev ping')

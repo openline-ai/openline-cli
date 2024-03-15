@@ -14,7 +14,7 @@ spec:
         app: event-store
     spec:                        # Spec for the container which will run in the Pod
       containers:
-        - image: eventstore/eventstore:$IMAGE_VERSION
+        - image: ghcr.io/openline-ai/external-apps/eventstore/eventstore:$IMAGE_VERSION
           name: event-store
           imagePullPolicy: IfNotPresent
           ports:

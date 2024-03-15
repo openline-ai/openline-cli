@@ -142,8 +142,9 @@ async function runDemoTenantProvisioningScript(verbose: boolean) {
 
 async function initiateDemoTenant(urlPath: string, stringifiedDemoTenantData: string, verbose: boolean) {
   const formData = new FormData();
+  console.log("Before formData.append!");
   formData.append('file', new Blob([stringifiedDemoTenantData], {type: 'application/json'}));
-
+  console.log("After formData.append!: " + urlPath);
   try {
     const res = await fetch("http://127.0.0.1:4001/" + urlPath, {
       method: "POST",
@@ -161,11 +162,13 @@ async function initiateDemoTenant(urlPath: string, stringifiedDemoTenantData: st
 
 }
 
-export async function provisionNeo4jWithDemoTenant(verbose:boolean){
+export async function provisionNeo4jWithDemoTenant(verbose:boolean, demoTenant:boolean){
+  if(demoTenant){
   waitForUserAdminAppPodToBeReady(verbose);
   waitForCustomerOsApiPodToBeReady(verbose);
   waitForEventsProcessingPlatformPodToBeReady(verbose);
   waitForNeo4jToBeInitialized(verbose)
   await runDemoTenantProvisioningScript(verbose);
+  }
 }
 

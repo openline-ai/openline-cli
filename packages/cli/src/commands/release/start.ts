@@ -28,7 +28,7 @@ export default class ReleaseStart extends Command {
     console.log(repo, '\'s current tag     : ', colors.bold.red(tag));
 
     let [newTag, stylizedNewTag, releaseType] = await generateNewTag(tag);
-    console.log(repo, '\'s New proposed tag: ', stylizedNewTag);
+    console.log(repo, '\'s new proposed tag: ', stylizedNewTag);
     await getReleaseConfirmation(repo, releaseType, newTag, stylizedNewTag, tokenIsSet);
   }
 }
